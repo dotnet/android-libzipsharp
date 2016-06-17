@@ -204,6 +204,26 @@ namespace Xamarin.ZipSharp
 			}
 		}
 
+		public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.DEFAULT, bool overwriteExisting = true)
+		{
+			string destPath = NormalizeArchivePath (false, archivePath);
+			if (String.IsNullOrEmpty (destPath))
+				throw new InvalidOperationException ("Archive destination path must not be empty");
+
+			IntPtr source = Native.zip_source_buffer (archive, data, 0);
+			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.OVERWRITE : OperationFlags.NONE);
+			if (index < 0)
+				throw GetErrorException ();
+			if (Native.zip_set_file_compression (archive, (ulong)index, method, 0) < 0)
+				throw GetErrorException ();
+
+			if (permissions == EntryPermissions.Default)
+				permissions = DefaultFilePermissions;
+			PlatformServices.Instance.SetEntryPermissions (this, (ulong)index, permissions, false);
+
+			return ReadEntry ((ulong)index);
+		}
+
 		public ZipEntry AddFile (string sourcePath, string archivePath = null, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.DEFAULT, bool overwriteExisting = true)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
