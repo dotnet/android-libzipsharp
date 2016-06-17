@@ -127,6 +127,7 @@ namespace Xamarin.ZipSharp
 
 			var perms = (UnixExternalPermissions)(xattr & (uint)UnixExternalPermissions.IFMT);
 			switch (perms) {
+				case 0:
 				case UnixExternalPermissions.IFREG:
 					entry.IsDirectory = false;
 					entry.IsSymlink = false;
@@ -286,9 +287,11 @@ namespace Xamarin.ZipSharp
 			throw new NotImplementedException ();
 		}
 
-		public bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions permissions, bool isDirectory)
+		public bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions requestedPermissions, bool isDirectory)
 		{
-			throw new NotImplementedException ();
+			var permissions = (uint)(requestedPermissions);
+			int ret = Native.zip_file_set_external_attributes (archive.ArchivePointer, index, OperationFlags.NONE, (byte)OperatingSystem.UNIX, permissions << 16);
+			return ret == 0;
 		}
 
 		public bool SetEntryPermissions (string sourcePath, ZipArchive archive, ulong index, EntryPermissions requestedPermissions)
