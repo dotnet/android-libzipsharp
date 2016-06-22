@@ -3,6 +3,7 @@
 //
 // Author:
 //       Marek Habersack <grendel@twistedcode.net>
+//       Dean Ellis <dellis1972@googlemail.com>
 //
 // Copyright (c) 2016 Xamarin, Inc (http://xamarin.com)
 //
@@ -24,8 +25,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
+using System.Text;
 using Xamarin.ZipSharp;
 
 namespace ZipTest
@@ -63,11 +66,35 @@ namespace ZipTest
 				}
 			}
 
+
+			if (File.Exists ("test-archive-write.zip"))
+				File.Delete ("test-archive-write.zip");
+
+			var t = "sdfjha;ouwrhewourfh;eajfbeouwfbdjabfkljdsbfakjsbfkjadsf";
+
+			var ms = new MemoryStream (Encoding.UTF8.GetBytes (t));
+
 			string asmPath = typeof (MainClass).GetType ().Assembly.Location;
 			using (var zip = ZipArchive.Open ("test-archive-write.zip", FileMode.CreateNew)) {
 				zip.AddFile (asmPath);
 				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy.exe");
-				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy2.exe/", permissions: EntryPermissions.OwnerRead | EntryPermissions.OwnerWrite);
+				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy2.exe", permissions: EntryPermissions.OwnerRead | EntryPermissions.OwnerWrite);
+				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy3.exe", method: CompressionMethod.STORE);
+				var text = "Hello World";
+				zip.AddEntry ("/in/archive/data/foo.txt", text, Encoding.UTF8, CompressionMethod.STORE);
+
+				using (var fs = File.OpenRead (asmPath)) {
+					zip.AddEntry ("/in/archive/foo/foo.exe", fs, CompressionMethod.STORE);
+				}
+				zip.AddStream (ms, "/in/archive/foo/foo1.txt", method: CompressionMethod.STORE);
+			}
+
+			if (File.Exists ("test-archive-write.zip")) {
+				using (var zip = ZipArchive.Open (File.OpenRead ("test-archive-write.zip"))) {
+					foreach (var e in zip) {
+						Console.WriteLine ($" {e.Name} {e.Size} {e.CompressedSize} {e.CompressionMethod}");
+					}
+				}
 			}
 		}
 	}

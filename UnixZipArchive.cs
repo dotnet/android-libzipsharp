@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.IO;
+
 namespace Xamarin.ZipSharp
 {
 	public class UnixZipArchive : ZipArchive
@@ -38,6 +40,10 @@ namespace Xamarin.ZipSharp
 		}
 
 		internal UnixZipArchive (string defaultExtractionDir, UnixPlatformOptions options) : base (defaultExtractionDir, options)
+		{
+		}
+
+		internal UnixZipArchive (Stream stream, OpenFlags flags) : base (stream, flags)
 		{
 		}
 	}

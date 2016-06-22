@@ -20,6 +20,11 @@ namespace Xamarin.ZipSharp
 
 			return new UnixZipArchive (defaultExtractionDir, opts);
 		}
+
+		static ZipArchive CreateInstanceFromStream (Stream stream, OpenFlags flags = OpenFlags.RDONLY)
+		{
+			return new UnixZipArchive (stream, flags);
+		}
 	}
 }
 

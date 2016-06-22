@@ -1,8 +1,8 @@
 ﻿//
-// Utilities.cs
+// Utilities.Unix.cs
 //
 // Author:
-//       Marek Habersack <grendel@twistedcode.net>
+//       Dean Ellis <dellis1972@googlemail.com>
 //
 // Copyright (c) 2016 Xamarin, Inc (http://xamarin.com)
 //
@@ -24,40 +24,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Runtime.InteropServices;
+using Mono.Unix.Native;
 
 namespace Xamarin.ZipSharp
 {
 	partial class Utilities
 	{
-		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-
-		public static bool IsUnix { get; } = Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix;
-
-		public static int Errno {
-			get { return Marshal.GetLastWin32Error (); }
-		}
-
-		static Utilities ()
+		public static Timeval TimevalFromDateTime (DateTime time)
 		{
-		}
-
-		public static string GetStringFromNativeAnsi (IntPtr data)
-		{
-			return Marshal.PtrToStringAnsi (data);
-		}
-
-		public static DateTime DateTimeFromUnixTime (ulong time)
-		{
-			return UnixEpoch.AddSeconds (time);
-		}
-
-		public static ulong UnixTimeFromDateTime (DateTime time)
-		{
-			if (time < UnixEpoch)
-				return 0;
-
-			return (ulong)((time - UnixEpoch).TotalSeconds);
+			ulong utime = Utilities.UnixTimeFromDateTime (time);
+			long usec = 0;
+			if (utime > 0) {
+				TimeSpan udt = time - Utilities.UnixEpoch;
+				usec = udt.Milliseconds * 1000;
+			}
+			return new Timeval {
+				tv_sec = (long)(utime == 0 ? 0 : utime),
+				tv_usec = usec
+			};
 		}
 	}
 }
