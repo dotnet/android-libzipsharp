@@ -167,6 +167,30 @@ namespace Xamarin.ZipSharp
 			PlatformServices.Instance.ReadAndProcessExtraFields (this);
 		}
 
+		public void Extract (Stream stream)
+		{
+			var args = new EntryExtractEventArgs {
+				Entry = this,
+				ProcessedSoFar = 0
+			};
+
+			OnExtract (args);
+			if (!IsDirectory) {
+				OperationFlags flags = OperationFlags.NONE;
+				IntPtr file = IntPtr.Zero;
+				try {
+					file = Native.zip_fopen_index (archive.ArchivePointer, Index, flags);
+					if (file == IntPtr.Zero)
+						throw archive.GetErrorException ();
+					DoExtract (file, stream, args);
+				}
+				finally {
+					if (file != IntPtr.Zero)
+						Native.zip_fclose (file);
+				}
+			}
+			OnExtract (args);
+		}
 		/// <summary>
 		/// Extract this entry in directory specified by <paramref name="destinationDir"/>, optionally changing the entry's name to the
 		/// one given in <paramref name="destinationFileName"/>. The destination file is opened using mode specified in the

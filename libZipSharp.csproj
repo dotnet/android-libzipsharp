@@ -13,7 +13,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>bin\$(OS)\Debug</OutputPath>
+    <IntermediateOutputPath>obj\$(OS)\Debug</IntermediateOutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -23,14 +24,18 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>bin\$(OS)\Release</OutputPath>
+    <IntermediateOutputPath>obj\$(OS)\Release</IntermediateOutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' == 'Unix'">
-	  <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Unix'">
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
 	  <Reference Include="System" />
@@ -56,50 +61,64 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OpenFlags.cs" />
-    <Compile Include="OperationFlags.cs" />
     <Compile Include="ArchiveGlobalFlags.cs" />
-    <Compile Include="ErrorCode.cs" />
-    <Compile Include="ErrorType.cs" />
     <Compile Include="CompressionMethod.cs" />
     <Compile Include="EncryptionMethod.cs" />
+    <Compile Include="EntryExtractEventArgs.cs" />
+    <Compile Include="EntryPermissions.cs" />
+    <Compile Include="ErrorCode.cs" />
+    <Compile Include="ErrorType.cs" />
+    <Compile Include="ExtraField.cs" />
+    <Compile Include="ExtraField_ExtendedTimestamp.cs" />
+    <Compile Include="ExtraField_InfoZipUnix3rdGeneration.cs" />
+    <Compile Include="ExtraField_InfoZipUnixOriginal.cs" />
+    <Compile Include="ExtraField_InfoZipUnixType2.cs" />
+    <Compile Include="ExtraField_UnixIDBase.cs" />
+    <Compile Include="IPlatformOptions.cs" />
+    <Compile Include="IPlatformServices.cs" />
+    <Compile Include="KnownExtraFields.cs" />
+    <Compile Include="Native.cs" />
+    <Compile Include="OpenFlags.cs" />
     <Compile Include="OperatingSystem.cs" />
+    <Compile Include="OperationFlags.cs" />
+    <Compile Include="PlatformServices.cs" />
     <Compile Include="SourceCommand.cs" />
     <Compile Include="StatFlags.cs" />
-    <Compile Include="Native.cs" />
     <Compile Include="ZipArchive.cs" />
-    <Compile Include="ZipIOException.cs" />
-    <Compile Include="Utilities.cs" />
     <Compile Include="ZipEntry.cs" />
     <Compile Include="ZipEntryEnumerator.cs" />
     <Compile Include="ZipException.cs" />
-    <Compile Include="EntryExtractEventArgs.cs" />
-    <Compile Include="EntryPermissions.cs" />
-    <Compile Include="IPlatformServices.cs" />
-    <Compile Include="PlatformServices.cs" />
-    <Compile Include="ExtraField.cs" />
-    <Compile Include="KnownExtraFields.cs" />
     <Compile Include="ZipHeaderLocation.cs" />
-    <Compile Include="ExtraField_ExtendedTimestamp.cs" />
-    <Compile Include="UnixZipEntry.cs" />
-    <Compile Include="ExtraField_InfoZipUnixOriginal.cs" />
-    <Compile Include="ExtraField_InfoZipUnix3rdGeneration.cs" />
-    <Compile Include="UnixZipArchive.cs" />
-    <Compile Include="IPlatformOptions.cs" />
-    <Compile Include="UnixPlatformOptions.cs" />
-    <Compile Include="UnixZipEntry.Unix.cs" />
-    <Compile Include="ExtraField_InfoZipUnixType2.cs" />
-    <Compile Include="ExtraField_UnixIDBase.cs" />
+    <Compile Include="UnixExternalPermissions.cs" />
+    <Compile Include="ZipIOException.cs" />
+    <Compile Include="Utilities.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(OS)' != 'Unix'">
+    <Compile Include="WindowsPlatformOptions.cs" />
+    <Compile Include="WindowsPlatformServices.cs" />
+    <Compile Include="WindowsZipArchive.cs" />
+    <Compile Include="WindowsZipEntry.cs" />
+    <Compile Include="ZipArchive.Windows.cs" />
+    <Compile Include="ZipEntry.Windows.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(OS)' == 'Unix'">
     <Compile Include="ZipArchive.Unix.cs" />
     <Compile Include="ZipEntry.Unix.cs" />
     <Compile Include="PlatformServices.Unix.cs" />
     <Compile Include="UnixPlatformServices.cs" />
-    <Compile Include="UnixExternalPermissions.cs" />
+    <Compile Include="UnixZipEntry.Unix.cs" />
+    <Compile Include="UnixZipEntry.cs" />
+    <Compile Include="UnixZipArchive.cs" />
+    <Compile Include="UnixPlatformOptions.cs" />
+    <Compile Include="Utilities.Unix.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="libZipSharp.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

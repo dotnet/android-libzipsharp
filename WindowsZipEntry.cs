@@ -1,8 +1,8 @@
 ﻿//
-// Utilities.cs
+// WindowsZipEntry.cs
 //
 // Author:
-//       Marek Habersack <grendel@twistedcode.net>
+//       Dean Ellis <dellis1972@googlemail.com>
 //
 // Copyright (c) 2016 Xamarin, Inc (http://xamarin.com)
 //
@@ -24,41 +24,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Runtime.InteropServices;
-
 namespace Xamarin.ZipSharp
 {
-	partial class Utilities
+	public class WindowsZipEntry : ZipEntry
 	{
-		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+		/// <summary>
+		/// Gets the last access time of the ZIP entry. The value is in the UTC timezone.
+		/// </summary>
+		/// <value>Last access time or <see cref="DateTime.MinValue"/> if invalid/unset</value>
+		public DateTime AccessTime { get; internal set; } = DateTime.MinValue;
 
-		public static bool IsUnix { get; } = Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix;
+		/// <summary>
+		/// Gets the creation time of the ZIP entry. The value is in the UTC timezone.
+		/// </summary>
+		/// <value>Creation time or <see cref="DateTime.MinValue"/> if invalid/unset</value>
+		public DateTime CreationTime { get; internal set; } = DateTime.MinValue;
 
-		public static int Errno {
-			get { return Marshal.GetLastWin32Error (); }
-		}
-
-		static Utilities ()
-		{
-		}
-
-		public static string GetStringFromNativeAnsi (IntPtr data)
-		{
-			return Marshal.PtrToStringAnsi (data);
-		}
-
-		public static DateTime DateTimeFromUnixTime (ulong time)
-		{
-			return UnixEpoch.AddSeconds (time);
-		}
-
-		public static ulong UnixTimeFromDateTime (DateTime time)
-		{
-			if (time < UnixEpoch)
-				return 0;
-
-			return (ulong)((time - UnixEpoch).TotalSeconds);
-		}
+		internal WindowsZipEntry (ZipArchive archive, Native.zip_stat_t stat)
+			: base (archive, stat)
+		{ }
 	}
 }
 

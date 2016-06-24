@@ -1,8 +1,8 @@
 ﻿//
-// Utilities.cs
+// ZipEntry.Windows.cs
 //
 // Author:
-//       Marek Habersack <grendel@twistedcode.net>
+//       Dean Ellis <dellis1972@googlemail.com>
 //
 // Copyright (c) 2016 Xamarin, Inc (http://xamarin.com)
 //
@@ -24,40 +24,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Runtime.InteropServices;
-
 namespace Xamarin.ZipSharp
 {
-	partial class Utilities
+	partial class ZipEntry
 	{
-		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-
-		public static bool IsUnix { get; } = Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix;
-
-		public static int Errno {
-			get { return Marshal.GetLastWin32Error (); }
-		}
-
-		static Utilities ()
+		internal static ZipEntry Create (ZipArchive owner, Native.zip_stat_t stat)
 		{
-		}
-
-		public static string GetStringFromNativeAnsi (IntPtr data)
-		{
-			return Marshal.PtrToStringAnsi (data);
-		}
-
-		public static DateTime DateTimeFromUnixTime (ulong time)
-		{
-			return UnixEpoch.AddSeconds (time);
-		}
-
-		public static ulong UnixTimeFromDateTime (DateTime time)
-		{
-			if (time < UnixEpoch)
-				return 0;
-
-			return (ulong)((time - UnixEpoch).TotalSeconds);
+			return new WindowsZipEntry (owner, stat);
 		}
 	}
 }
