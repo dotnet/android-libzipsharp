@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -7,7 +7,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Xamarin.ZipSharp</RootNamespace>
     <AssemblyName>libZipSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -18,7 +19,8 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -38,26 +40,26 @@
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-	  <Reference Include="System" />
-	  <Reference Include="Mono.Posix" Condition=" '$(OS)' == 'Unix'" />
-	  <Reference Include="nunit.engine">
-	    <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit.engine.dll</HintPath>
-	  </Reference>
-	  <Reference Include="nunit.engine.api">
-	    <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit.engine.api.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Mono.Cecil">
-	    <HintPath>packages\NUnit.Engine.3.2.0\lib\Mono.Cecil.dll</HintPath>
-	  </Reference>
-	  <Reference Include="nunit-agent">
-	    <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit-agent.exe</HintPath>
-	  </Reference>
-	  <Reference Include="nunit-agent-x86">
-	    <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit-agent-x86.exe</HintPath>
-	  </Reference>
-	  <Reference Include="nunit.framework">
-	    <HintPath>packages\NUnit.3.2.0\lib\net45\nunit.framework.dll</HintPath>
-	  </Reference>
+    <Reference Include="System" />
+    <Reference Include="Mono.Posix" Condition=" '$(OS)' == 'Unix'" />
+    <Reference Include="nunit.engine">
+      <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit.engine.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.engine.api">
+      <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit.engine.api.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>packages\NUnit.Engine.3.2.0\lib\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit-agent">
+      <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit-agent.exe</HintPath>
+    </Reference>
+    <Reference Include="nunit-agent-x86">
+      <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit-agent-x86.exe</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>packages\NUnit.3.2.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -122,3 +124,4 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
+
