@@ -43,6 +43,36 @@ namespace Xamarin.ZipSharp
 				tv_usec = usec
 			};
 		}
+
+		public static UnixExternalPermissions GetFileType (Stat sbuf)
+		{
+			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFBLK))
+				return UnixExternalPermissions.IFBLK;
+
+			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFCHR))
+				return UnixExternalPermissions.IFCHR;
+
+			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFDIR))
+				return UnixExternalPermissions.IFDIR;
+
+			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFIFO))
+				return UnixExternalPermissions.IFIFO;
+
+			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFLNK))
+				return UnixExternalPermissions.IFLNK;
+
+			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFSOCK))
+				return UnixExternalPermissions.IFSOCK;
+
+			return UnixExternalPermissions.IFREG;
+		}
+
+		public static UnixExternalPermissions GetFilePermissions (Stat sbuf)
+		{
+			var ret = (UnixExternalPermissions)(0);
+
+			return ret;
+		}
 	}
 }
 

@@ -41,6 +41,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="path">Path to the filesystem location</param>
 		bool IsRegularFile (string path, out bool result);
 		bool IsDirectory (string path, out bool result);
+		bool GetFilesystemPermissions (string path, out EntryPermissions permissions);
 		bool StoreSpecialFile (ZipArchive archive, string sourcePath, string archivePath, out long index, out CompressionMethod compressionMethod);
 		bool SetEntryPermissions (string sourcePath, ZipArchive archive, ulong index, EntryPermissions permissions);
 		bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions permissions, bool isDirectory);

@@ -25,12 +25,13 @@
 // THE SOFTWARE.
 using System;
 using System.IO;
+using System.Text;
 
 namespace Xamarin.ZipSharp
 {
 	public class UnixZipArchive : ZipArchive
 	{
-		internal UnixPlatformOptions UnixOptions { 
+		public UnixPlatformOptions UnixOptions {
 			get {
 				var opts = Options as UnixPlatformOptions;
 				if (opts == null)
@@ -43,8 +44,26 @@ namespace Xamarin.ZipSharp
 		{
 		}
 
-		internal UnixZipArchive (Stream stream, OpenFlags flags) : base (stream, flags)
+		internal UnixZipArchive (Stream stream, UnixPlatformOptions options, OpenFlags flags) : base (stream, options, flags)
 		{
+		}
+
+		public ZipEntry CreateSymbolicLink (string linkName, string linkDestination, EntryPermissions requestedPermissions= EntryPermissions.Default, Encoding encoding = null)
+		{
+			long index = -1;
+			ZipEntry entry = AddEntry (linkName, linkDestination, encoding ?? Encoding.UTF8, CompressionMethod.STORE);
+			if (!SetEntryUnixPermissions (entry.Index, requestedPermissions == EntryPermissions.Default ? DefaultFilePermissions : requestedPermissions, UnixExternalPermissions.IFLNK))
+				throw GetErrorException ();
+
+			// We read it again to update permissions, flags, extra fields etc
+			return ReadEntry ((ulong)index);
+		}
+
+		internal bool SetEntryUnixPermissions (ulong index, EntryPermissions requestedPermissions, UnixExternalPermissions unixPermissions)
+		{
+			var permissions = (uint)requestedPermissions | (uint)unixPermissions;
+			int ret = Native.zip_file_set_external_attributes (ArchivePointer, index, OperationFlags.NONE, (byte)OperatingSystem.UNIX, permissions << 16);
+			return ret == 0;
 		}
 	}
 }

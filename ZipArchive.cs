@@ -78,8 +78,11 @@ namespace Xamarin.ZipSharp
 			Options = options;
 		}
 
-		internal ZipArchive (Stream stream, OpenFlags flags = OpenFlags.RDONLY)
+		internal ZipArchive (Stream stream, IPlatformOptions options, OpenFlags flags = OpenFlags.RDONLY)
 		{
+			if (options == null)
+				throw new ArgumentNullException (nameof (options));
+
 			Native.zip_error_t errorp;
 			var streamHandle = GCHandle.Alloc (stream, GCHandleType.Pinned);
 			IntPtr h = GCHandle.ToIntPtr (streamHandle);
@@ -161,18 +164,20 @@ namespace Xamarin.ZipSharp
 		/// Open an archive from the stream provided. This stream should contain an existing zip archive.
 		/// </summary>
 		/// <param name="stream">The stream to open</param>
-		public static ZipArchive Open (Stream stream)
+		/// <param name="options">Platform-specific options</param>
+		public static ZipArchive Open (Stream stream, IPlatformOptions options = null)
 		{
-			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.NONE);
+			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.NONE, options);
 		}
 
 		/// <summary>
 		/// Create a new archive using the Stream provided. The steam should be an empty stream, any existing data will be overwritten.
 		/// </summary>
 		/// <param name="stream">The stream to create the arhive in</param>
-		public static ZipArchive Create (Stream stream)
+		/// <param name="options">Platform-specific options</param>
+		public static ZipArchive Create (Stream stream, IPlatformOptions options = null)
 		{
-			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.CREATE | OpenFlags.TRUNCATE);
+			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.CREATE | OpenFlags.TRUNCATE, options);
 		}
 
 		/// <summary>
@@ -367,8 +372,11 @@ namespace Xamarin.ZipSharp
 			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.STORE : method, 0) < 0)
 				throw GetErrorException ();
 
-			if (permissions == EntryPermissions.Default)
-				permissions = isDir ? DefaultDirectoryPermissions : DefaultFilePermissions;
+			if (permissions == EntryPermissions.Default) {
+				permissions = PlatformServices.Instance.GetFilesystemPermissions (sourcePath);
+				if (permissions == EntryPermissions.Default)
+					permissions = isDir ? DefaultDirectoryPermissions : DefaultFilePermissions;
+			}
 			PlatformServices.Instance.SetEntryPermissions (sourcePath, this, (ulong)index, permissions);
 
 			return ReadEntry ((ulong)index);
@@ -380,11 +388,11 @@ namespace Xamarin.ZipSharp
 		/// <param name="entryName">The name of the entry with in the archive</param>
 		/// <param name="data">A stream containing the data to add to the archive</param>
 		/// <param name="method">The compression method to use</param>
-		public void AddEntry (string entryName, Stream data, CompressionMethod method = CompressionMethod.DEFAULT)
+		public ZipEntry AddEntry (string entryName, Stream data, CompressionMethod method = CompressionMethod.DEFAULT)
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
-			AddStream (data, entryName, method: method);
+			return AddStream (data, entryName, method: method);
 		}
 
 		/// <summary>
@@ -397,14 +405,14 @@ namespace Xamarin.ZipSharp
 		/// <param name="text">The text to add to the entry</param>
 		/// <param name="encoding">The Encoding to use for the data.</param>
 		/// <param name="method">The compression method to use</param>
-		public void AddEntry (string entryName, string text, Encoding encoding, CompressionMethod method = CompressionMethod.DEFAULT)
+		public ZipEntry AddEntry (string entryName, string text, Encoding encoding, CompressionMethod method = CompressionMethod.DEFAULT)
 		{
-			if (string.IsNullOrEmpty (text)) {
-				throw new ArgumentNullException (nameof (text));
-			}
+			if (string.IsNullOrEmpty (text))
+				throw new ArgumentException ("must not be null or empty", nameof (text));
+
 			if (encoding == null)
 				encoding = Encoding.Default;
-			AddEntry (encoding.GetBytes (text), entryName, method: method);
+			return AddEntry (encoding.GetBytes (text), entryName, method: method);
 		}
 
 		/// <summary>
@@ -414,9 +422,8 @@ namespace Xamarin.ZipSharp
 		/// <param name="directoryPathInZip">The root directory path in archive.</param>
 		public void AddFiles (IEnumerable<string> fileNames, string directoryPathInZip = null)
 		{
-			if (fileNames == null) {
+			if (fileNames == null)
 				throw new ArgumentNullException (nameof (fileNames));
-			}
 
 			foreach (var file in fileNames) {
 				AddFile (file, archivePath: directoryPathInZip);
@@ -478,17 +485,21 @@ namespace Xamarin.ZipSharp
 			foreach (string dir in Directory.GetDirectories (folder)) {
 				var internalDir = dir.Replace ("./", string.Empty).Replace (folder, string.Empty);
 				string fullDirPath = folderInArchive + internalDir;
-				CreateDirectory (fullDirPath);
+				CreateDirectory (fullDirPath, PlatformServices.Instance.GetFilesystemPermissions (dir));
 				AddDirectory (dir, fullDirPath, method);
 			}
 		}
 
-		public void CreateDirectory (string directoryName)
+		public void CreateDirectory (string directoryName, EntryPermissions permissions = EntryPermissions.Default)
 		{
 			string dir = EnsureArchivePath (directoryName, true);
 			long index = Native.zip_dir_add (archive, dir, OperationFlags.NONE);
 			if (index < 0)
 				throw GetErrorException ();
+
+			if (permissions == EntryPermissions.Default)
+				permissions = DefaultDirectoryPermissions;
+			PlatformServices.Instance.SetEntryPermissions (this, (ulong)index, permissions, true);
 		}
 
 		string EnsureArchivePath (string archivePath, bool isDir = false)

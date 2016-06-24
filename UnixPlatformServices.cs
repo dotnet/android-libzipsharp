@@ -45,6 +45,20 @@ namespace Xamarin.ZipSharp
 			return IsFileOfType (path, FilePermissions.S_IFREG, out result);
 		}
 
+		public bool GetFilesystemPermissions (string path, out EntryPermissions permissions)
+		{
+			permissions = EntryPermissions.Default;
+			if (String.IsNullOrEmpty (path))
+				return false;
+
+			Stat sbuf;
+			// Should we signal an error if stat fails? Is it important enough?
+			if (Syscall.stat (path, out sbuf) == 0)
+				permissions = (EntryPermissions)(Utilities.GetFilePermissions (sbuf) & UnixExternalPermissions.IMODE);
+
+			return true;
+		}
+
 		public bool ReadAndProcessExtraFields (ZipEntry zipEntry)
 		{
 			var entry = zipEntry as UnixZipEntry;
@@ -289,39 +303,29 @@ namespace Xamarin.ZipSharp
 
 		public bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions requestedPermissions, bool isDirectory)
 		{
-			var permissions = (uint)(requestedPermissions);
-			int ret = Native.zip_file_set_external_attributes (archive.ArchivePointer, index, OperationFlags.NONE, (byte)OperatingSystem.UNIX, permissions << 16);
-			return ret == 0;
+			return SetEntryPermissions (archive, index, requestedPermissions, isDirectory ? UnixExternalPermissions.IFDIR : UnixExternalPermissions.IFREG);
 		}
 
 		public bool SetEntryPermissions (string sourcePath, ZipArchive archive, ulong index, EntryPermissions requestedPermissions)
 		{
-			var permissions = (uint)(requestedPermissions);
+			UnixExternalPermissions ftype = UnixExternalPermissions.IFREG;
 
 			if (!String.IsNullOrEmpty (sourcePath)) {
-				UnixExternalPermissions ftype = UnixExternalPermissions.IFREG;
-
 				Stat sbuf;
-				if (Syscall.stat (sourcePath, out sbuf) == 0) {
-					if (sbuf.st_mode.HasFlag (FilePermissions.S_IFBLK))
-						ftype = UnixExternalPermissions.IFBLK;
-					else if (sbuf.st_mode.HasFlag (FilePermissions.S_IFCHR))
-						ftype = UnixExternalPermissions.IFCHR;
-					else if (sbuf.st_mode.HasFlag (FilePermissions.S_IFDIR))
-						ftype = UnixExternalPermissions.IFDIR;
-					else if (sbuf.st_mode.HasFlag (FilePermissions.S_IFIFO))
-						ftype = UnixExternalPermissions.IFIFO;
-					else if (sbuf.st_mode.HasFlag (FilePermissions.S_IFLNK))
-						ftype = UnixExternalPermissions.IFLNK;
-					else if (sbuf.st_mode.HasFlag (FilePermissions.S_IFSOCK))
-						ftype = UnixExternalPermissions.IFSOCK;
-				}
-
-				permissions |= (uint)ftype;
+				if (Syscall.stat (sourcePath, out sbuf) == 0)
+					ftype = Utilities.GetFileType (sbuf);
 			}
 
-			int ret = Native.zip_file_set_external_attributes (archive.ArchivePointer, index, OperationFlags.NONE, (byte)OperatingSystem.UNIX, permissions << 16);
-			return ret == 0;
+			return SetEntryPermissions (archive, index, requestedPermissions, ftype);
+		}
+
+		bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions requestedPermissions, UnixExternalPermissions unixPermissions)
+		{
+			var unixArchive = archive as UnixZipArchive;
+			if (unixArchive == null)
+				throw new InvalidOperationException ("Expected instance of UnixZipArchive");
+
+			return unixArchive.SetEntryUnixPermissions (index, requestedPermissions, unixPermissions);
 		}
 
 		public bool StoreSpecialFile (ZipArchive zipArchive, string sourcePath, string archivePath, out long index, out CompressionMethod compressionMethod)

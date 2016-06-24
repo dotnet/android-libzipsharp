@@ -43,7 +43,7 @@ namespace Xamarin.ZipSharp
 		{
 		}
 
-		internal WindowsZipArchive (Stream stream, OpenFlags flags) : base (stream, flags)
+		internal WindowsZipArchive (Stream stream, WindowsPlatformOptions options, OpenFlags flags) : base (stream, options, flags)
 		{
 		}
 	}

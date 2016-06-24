@@ -88,6 +88,18 @@ namespace Xamarin.ZipSharp
 			return File.Exists (path);
 		}
 
+		public EntryPermissions GetFilesystemPermissions (string path)
+		{
+			if (String.IsNullOrEmpty (path))
+				throw new ArgumentException ("must not be null or empty", nameof (path));
+
+			EntryPermissions permissions = EntryPermissions.Default;
+			if (!CallServices ((IPlatformServices services) => services.GetFilesystemPermissions (path, out permissions)))
+				return EntryPermissions.Default;
+
+			return permissions;
+		}
+
 		public void SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions permissions, bool isDirectory)
 		{
 			CallServices ((IPlatformServices services) => services.SetEntryPermissions (archive, index, permissions, isDirectory));

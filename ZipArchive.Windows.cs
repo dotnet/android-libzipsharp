@@ -32,21 +32,24 @@ namespace Xamarin.ZipSharp
 	{
 		static ZipArchive CreateArchiveInstance (string defaultExtractionDir, IPlatformOptions options)
 		{
-			WindowsPlatformOptions opts;
-			if (options == null)
-				opts = new WindowsPlatformOptions ();
-			else {
-				opts = options as WindowsPlatformOptions;
-				if (opts == null)
-					throw new ArgumentException ("must be an instance of UnixPlatformOptions", nameof (options));
-			}
-
-			return new WindowsZipArchive (defaultExtractionDir, opts);
+			return new WindowsZipArchive (defaultExtractionDir, EnsureOptions (options));
 		}
 
-		static ZipArchive CreateInstanceFromStream (Stream stream, OpenFlags flags = OpenFlags.RDONLY)
+		static ZipArchive CreateInstanceFromStream (Stream stream, OpenFlags flags = OpenFlags.RDONLY, IPlatformOptions options = null)
 		{
-			return new WindowsZipArchive (stream, flags);
+			return new WindowsZipArchive (stream, EnsureOptions (options), flags);
+		}
+
+		static WindowsPlatformOptions EnsureOptions (IPlatformOptions options)
+		{
+			if (options == null)
+				return new WindowsPlatformOptions ();
+			else {
+				var opts = options as WindowsPlatformOptions;
+				if (opts == null)
+					throw new ArgumentException ("must be an instance of WindowsPlatformOptions", nameof (options));
+				return opts;
+			}
 		}
 	}
 }

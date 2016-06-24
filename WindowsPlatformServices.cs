@@ -211,6 +211,35 @@ namespace Xamarin.ZipSharp
 		{
 			return true;
 		}
+
+		public bool GetFilesystemPermissions (string path, out EntryPermissions permissions)
+		{
+			permissions = EntryPermissions.Default;
+
+			if (String.IsNullOrEmpty (path))
+				return false;
+
+			FileSystemInfo fi;
+			if (File.Exists (path))
+				fi = new FileInfo (path);
+			else if (Directory.Exists (path))
+				fi = new DirectoryInfo (path);
+			else
+				return false;
+
+			if (fi.Attributes == FileAttributes.Normal) {
+				permissions = fi is FileInfo ? ZipArchive.DefaultFilePermissions : ZipArchive.DefaultDirectoryPermissions;
+				return true;
+			}
+
+			permissions = EntryPermissions.OwnerRead | EntryPermissions.GroupRead | EntryPermissions.WorldRead;
+			if (!fi.Attributes.HasFlag (FileAttributes.ReadOnly))
+				permissions |= EntryPermissions.OwnerWrite | EntryPermissions.GroupWrite;
+			if (fi is DirectoryInfo)
+				permissions |= EntryPermissions.OwnerExecute | EntryPermissions.GroupExecute | EntryPermissions.WorldExecute;
+
+			return true;
+		}
 	}
 }
 
