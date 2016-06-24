@@ -31,8 +31,6 @@ namespace Xamarin.ZipSharp
 {
 	partial class ZipEntry
 	{
-		
-
 		internal static ZipEntry Create (ZipArchive owner, Native.zip_stat_t stat)
 		{
 			return new UnixZipEntry (owner, stat);

@@ -324,12 +324,15 @@ namespace Xamarin.ZipSharp
 			return ret == 0;
 		}
 
-		public bool StoreSpecialFile (ZipArchive zipArchive, string sourcePath, string archivePath)
+		public bool StoreSpecialFile (ZipArchive zipArchive, string sourcePath, string archivePath, out long index, out CompressionMethod compressionMethod)
 		{
 			var archive = zipArchive as UnixZipArchive;
 			if (archive == null)
 				throw new ArgumentException ("must be an instance of UnixZipArchive", nameof (zipArchive));
 			
+			index = -1;
+			compressionMethod = CompressionMethod.DEFAULT;
+
 			throw new NotImplementedException ();
 		}
 

@@ -295,10 +295,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
 		public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.DEFAULT, bool overwriteExisting = true)
 		{
-			string destPath = NormalizeArchivePath (false, archivePath);
-			if (String.IsNullOrEmpty (destPath))
-				throw new InvalidOperationException ("Archive destination path must not be empty");
-
+			string destPath = EnsureArchivePath (archivePath);
 			IntPtr source = Native.zip_source_buffer (archive, data, 0);
 			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.OVERWRITE : OperationFlags.NONE);
 			if (index < 0)
@@ -325,9 +322,7 @@ namespace Xamarin.ZipSharp
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
-			string destPath = NormalizeArchivePath (false, archivePath);
-			if (String.IsNullOrEmpty (destPath))
-				throw new InvalidOperationException ("Archive destination path must not be empty");
+			string destPath = EnsureArchivePath (archivePath);
 			var handle = GCHandle.Alloc (stream, GCHandleType.Pinned);
 			IntPtr h = GCHandle.ToIntPtr (handle);
 			IntPtr source = Native.zip_source_function (archive, stream_callback, h);
@@ -358,17 +353,20 @@ namespace Xamarin.ZipSharp
 				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
 
 			bool isDir = PlatformServices.Instance.IsDirectory (sourcePath);
-			string destPath = NormalizeArchivePath (isDir, archivePath ?? sourcePath);
-			if (String.IsNullOrEmpty (destPath))
-				throw new InvalidOperationException ("Archive destination path must not be empty");
-
-			IntPtr source = Native.zip_source_file (archive, sourcePath, 0, -1);
-			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.OVERWRITE : OperationFlags.NONE);
+			string destPath = EnsureArchivePath (archivePath ?? sourcePath, isDir);
+			long index;
+			IntPtr source;
+			if (PlatformServices.Instance.IsRegularFile (sourcePath)) {
+				source = Native.zip_source_file (archive, sourcePath, 0, -1);
+				index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.OVERWRITE : OperationFlags.NONE);
+			} else {
+				index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out method);
+			}
 			if (index < 0)
 				throw GetErrorException ();
-			if (Native.zip_set_file_compression (archive, (ulong)index, method, 0) < 0)
+			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.STORE : method, 0) < 0)
 				throw GetErrorException ();
-			
+
 			if (permissions == EntryPermissions.Default)
 				permissions = isDir ? DefaultDirectoryPermissions : DefaultFilePermissions;
 			PlatformServices.Instance.SetEntryPermissions (sourcePath, this, (ulong)index, permissions);
@@ -382,8 +380,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="entryName">The name of the entry with in the archive</param>
 		/// <param name="data">A stream containing the data to add to the archive</param>
 		/// <param name="method">The compression method to use</param>
-		public void AddEntry (string entryName, Stream data,
-			CompressionMethod method = CompressionMethod.DEFAULT)
+		public void AddEntry (string entryName, Stream data, CompressionMethod method = CompressionMethod.DEFAULT)
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
@@ -400,15 +397,14 @@ namespace Xamarin.ZipSharp
 		/// <param name="text">The text to add to the entry</param>
 		/// <param name="encoding">The Encoding to use for the data.</param>
 		/// <param name="method">The compression method to use</param>
-		public void AddEntry (string entryName, string text, Encoding encoding,
-			CompressionMethod method = CompressionMethod.DEFAULT)
+		public void AddEntry (string entryName, string text, Encoding encoding, CompressionMethod method = CompressionMethod.DEFAULT)
 		{
 			if (string.IsNullOrEmpty (text)) {
 				throw new ArgumentNullException (nameof (text));
 			}
 			if (encoding == null)
 				encoding = Encoding.Default;
-			AddEntry (encoding.GetBytes (text),entryName, method: method);
+			AddEntry (encoding.GetBytes (text), entryName, method: method);
 		}
 
 		/// <summary>
@@ -427,14 +423,38 @@ namespace Xamarin.ZipSharp
 			}
 		}
 
+		long LookupEntry (string entryName, bool caseSensitive)
+		{
+			if (String.IsNullOrEmpty (entryName))
+				return -1;
+
+			return Native.zip_name_locate (archive, entryName, caseSensitive ? OperationFlags.NONE : OperationFlags.NOCASE);
+		}
+
 		/// <summary>
-		/// Checks to see if an entryName exists in the archive. This is done case-insensitively
+		/// Checks to see if an entryName exists in the archive. The comparison is done case-insensitively by
+		/// default.
 		/// </summary>
 		/// <returns>Returns true if the entry exists, false otherwise</returns>
 		/// <param name="entryName">The name of the entry to check for</param>
-		public bool ContainsEntry (string entryName)
+		/// <param name="caseSensitive">Compare names case-insensitively if set to <c>true</c></param>
+		public bool ContainsEntry (string entryName, bool caseSensitive = false)
 		{
-			return this.Any (x => string.Compare (x.Name, entryName, StringComparison.OrdinalIgnoreCase) == 0);
+			return LookupEntry (entryName, caseSensitive) >= 0;
+		}
+
+		/// <summary>
+		/// Checks to see if an entryName exists in the archive. The comparison is done case-insensitively by
+		/// default. Additionally checks whether the entry represents a directory.
+		/// </summary>
+		/// <returns>Returns true if the entry exists, false otherwise</returns>
+		/// <param name="entryName">The name of the entry to check for</param>
+		/// <param name="index">Entry index in the archive or <c>-1</c> when not found</param>
+		/// <param name="caseSensitive">Compare names case-insensitively if set to <c>true</c></param>
+		public bool ContainsEntry (string entryName, out long index, bool caseSensitive = false)
+		{
+			index = LookupEntry (entryName, caseSensitive);
+			return index >= 0;
 		}
 
 		/// <summary>
@@ -445,20 +465,38 @@ namespace Xamarin.ZipSharp
 		/// <param name="method">The compresison method to use when adding files</param>
 		public void AddDirectory (string folder, string folderInArchive, CompressionMethod method = CompressionMethod.DEFAULT)
 		{
-			if (string.IsNullOrEmpty (folder)) {
-				throw new ArgumentNullException (nameof (folder));
-			}
-			if (string.IsNullOrEmpty (folderInArchive)) {
-				throw new ArgumentNullException (nameof (folderInArchive));
-			}
+			if (string.IsNullOrEmpty (folder))
+				throw new ArgumentException ("must not be null or empty", nameof (folder));
+
+			if (string.IsNullOrEmpty (folderInArchive))
+				throw new ArgumentException ("must not be null or empty", nameof (folderInArchive));
+
 			string root = folderInArchive;
-			foreach (var fileName in Directory.GetFiles (folder)) {
+			foreach (string fileName in Directory.GetFiles (folder)) {
 				AddFile (fileName, ArchiveNameForFile (fileName, root), method: method);
 			}
-			foreach (var dir in Directory.GetDirectories (folder)) {
+			foreach (string dir in Directory.GetDirectories (folder)) {
 				var internalDir = dir.Replace ("./", string.Empty).Replace (folder, string.Empty);
-				AddDirectory (dir, folderInArchive + internalDir, method);
+				string fullDirPath = folderInArchive + internalDir;
+				CreateDirectory (fullDirPath);
+				AddDirectory (dir, fullDirPath, method);
 			}
+		}
+
+		public void CreateDirectory (string directoryName)
+		{
+			string dir = EnsureArchivePath (directoryName, true);
+			long index = Native.zip_dir_add (archive, dir, OperationFlags.NONE);
+			if (index < 0)
+				throw GetErrorException ();
+		}
+
+		string EnsureArchivePath (string archivePath, bool isDir = false)
+		{
+			string destPath = NormalizeArchivePath (isDir, archivePath);
+			if (String.IsNullOrEmpty (destPath))
+				throw new InvalidOperationException ("Archive destination path must not be empty");
+			return destPath;
 		}
 
 		string ArchiveNameForFile (string filename, string directoryPathInZip)

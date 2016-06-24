@@ -101,14 +101,19 @@ namespace Xamarin.ZipSharp
 			CallServices ((IPlatformServices services) => services.SetEntryPermissions (sourcePath, archive, index, permissions));
 		}
 
-		public void StoreSpecialFile (ZipArchive archive, string sourcePath, string archivePath = null)
+		public long StoreSpecialFile (ZipArchive archive, string sourcePath, string archivePath, out CompressionMethod compressionMethod)
 		{
 			if (archive == null)
 				throw new ArgumentNullException (nameof (archive));
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException ("must not be null or empty", nameof (sourcePath));
-			
-			CallServices ((IPlatformServices services) => services.StoreSpecialFile (archive, sourcePath, archivePath));
+
+			long index = -1;
+			CompressionMethod cm = CompressionMethod.DEFAULT;
+			CallServices ((IPlatformServices services) => services.StoreSpecialFile (archive, sourcePath, archivePath, out index, out cm));
+			compressionMethod = cm;
+
+			return index;
 		}
 
 		public void ReadAndProcessExtraFields (ZipEntry entry)

@@ -200,8 +200,10 @@ namespace Xamarin.ZipSharp
 			return true;
 		}
 
-		public bool StoreSpecialFile (ZipArchive archive, string sourcePath, string archivePath)
+		public bool StoreSpecialFile (ZipArchive archive, string sourcePath, string archivePath, out long index, out CompressionMethod compressionMethod)
 		{
+			index = -1;
+			compressionMethod = CompressionMethod.DEFAULT;
 			return true;
 		}
 
