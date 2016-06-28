@@ -50,13 +50,14 @@ namespace Xamarin.ZipSharp
 
 		public ZipEntry CreateSymbolicLink (string linkName, string linkDestination, EntryPermissions requestedPermissions= EntryPermissions.Default, Encoding encoding = null)
 		{
-			long index = -1;
 			ZipEntry entry = AddEntry (linkName, linkDestination, encoding ?? Encoding.UTF8, CompressionMethod.Store);
+			if (entry == null)
+				return null;
 			if (!SetEntryUnixPermissions (entry.Index, requestedPermissions == EntryPermissions.Default ? DefaultFilePermissions : requestedPermissions, UnixExternalPermissions.IFLNK))
 				throw GetErrorException ();
 
 			// We read it again to update permissions, flags, extra fields etc
-			return ReadEntry ((ulong)index);
+			return ReadEntry (entry.Index);
 		}
 
 		internal bool SetEntryUnixPermissions (ulong index, EntryPermissions requestedPermissions, UnixExternalPermissions unixPermissions)
