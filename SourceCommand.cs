@@ -37,81 +37,81 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Prepare for reading.
 		/// </summary>
-		ZIP_SOURCE_OPEN,
+		Open,
 
 		/// <summary>
 		/// Read data into the buffer data of size len. Return the number of bytes placed into data on success.
 		/// </summary>
-		ZIP_SOURCE_READ,            /*  */
+		Read,
 
 		/// <summary>
 		/// Reading is done
 		/// </summary>
-		ZIP_SOURCE_CLOSE,           /*  */
+		Close,
 
 		/// <summary>
 		/// Get meta information
 		/// </summary>
-		ZIP_SOURCE_STAT,            /*  */
+		Stat,
 
 		/// <summary>
 		/// Get error information
 		/// </summary>
-		ZIP_SOURCE_ERROR,           /*  */
+		Error,
 
 		/// <summary>
 		/// Cleanup and free resources
 		/// </summary>
-		ZIP_SOURCE_FREE,            /*  */
+		Free,
 
 		/// <summary>
 		/// Set position for reading
 		/// </summary>
-		ZIP_SOURCE_SEEK,            /*  */
+		Seek,
 
 		/// <summary>
 		/// Get read position
 		/// </summary>
-		ZIP_SOURCE_TELL,            /*  */
+		Tell,
 
 		/// <summary>
 		/// Prepare for writing
 		/// </summary>
-		ZIP_SOURCE_BEGIN_WRITE,     /*  */
+		BeginWrite,
 
 		/// <summary>
 		/// Writing is done
 		/// </summary>
-		ZIP_SOURCE_COMMIT_WRITE,    /*  */
+		CommitWrite,
 
 		/// <summary>
 		/// Discard written changes
 		/// </summary>
-		ZIP_SOURCE_ROLLBACK_WRITE,  /*  */
+		RollbackWrite,
 
 		/// <summary>
 		/// Write data
 		/// </summary>
-		ZIP_SOURCE_WRITE,           /*  */
+		Write,
 
 		/// <summary>
 		/// Set position for writing
 		/// </summary>
-		ZIP_SOURCE_SEEK_WRITE,      /*  */
+		SeekWrite,
 
 		/// <summary>
 		/// Get write position
 		/// </summary>
-		ZIP_SOURCE_TELL_WRITE,      /*  */
+		TellWrite,
 
 		/// <summary>
 		/// Check whether source supports command
 		/// </summary>
-		ZIP_SOURCE_SUPPORTS,        /*  */
+		Supports,
 
 		/// <summary>
 		/// Remove the underlying file. This is called if a zip archive is empty when closed.
 		/// </summary>
-		ZIP_SOURCE_REMOVE
+		Remove
 	}
 }

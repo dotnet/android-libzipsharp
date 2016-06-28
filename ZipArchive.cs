@@ -63,7 +63,7 @@ namespace Xamarin.ZipSharp
 		/// </summary>
 		/// <value>The number of entries. <c>-1</c> is returned if the archive isn't open.</value>
 		public long NumberOfEntries {
-			get { return Native.zip_get_num_entries (archive, OperationFlags.NONE); }
+			get { return Native.zip_get_num_entries (archive, OperationFlags.None); }
 		}
 
 		public IPlatformOptions Options { get; private set; }
@@ -78,7 +78,7 @@ namespace Xamarin.ZipSharp
 			Options = options;
 		}
 
-		internal ZipArchive (Stream stream, IPlatformOptions options, OpenFlags flags = OpenFlags.RDONLY)
+		internal ZipArchive (Stream stream, IPlatformOptions options, OpenFlags flags = OpenFlags.RDOnly)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -93,35 +93,35 @@ namespace Xamarin.ZipSharp
 				string message = null;
 				var error = (ErrorCode)errorp.zip_err;
 				switch (error) {
-					case ErrorCode.EXISTS:
+					case ErrorCode.Exists:
 						message = $"The file already exists";
 						break;
 
-					case ErrorCode.INCONS:
+					case ErrorCode.Incons:
 						message = $"The stream failed consistency checks";
 						break;
 
-					case ErrorCode.MEMORY:
+					case ErrorCode.Memory:
 						message = "libzip returned out of memory error";
 						break;
 
-					case ErrorCode.NOENT:
+					case ErrorCode.NoEnt:
 						message = $"Stream does not exist and file creation wasn't requested";
 						break;
 
-					case ErrorCode.NOZIP:
+					case ErrorCode.NoZip:
 						message = $"Stream is not a ZIP archive";
 						break;
 
-					case ErrorCode.OPEN:
+					case ErrorCode.Open:
 						message = $"Stream could not be opened";
 						break;
 
-					case ErrorCode.READ:
+					case ErrorCode.Read:
 						message = $"Error occured while reading the Stream";
 						break;
 
-					case ErrorCode.SEEK:
+					case ErrorCode.Seek:
 						message = $"Stream does not support seeking";
 						break;
 
@@ -167,7 +167,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="options">Platform-specific options</param>
 		public static ZipArchive Open (Stream stream, IPlatformOptions options = null)
 		{
-			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.NONE, options);
+			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.None, options);
 		}
 
 		/// <summary>
@@ -177,7 +177,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="options">Platform-specific options</param>
 		public static ZipArchive Create (Stream stream, IPlatformOptions options = null)
 		{
-			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.CREATE | OpenFlags.TRUNCATE, options);
+			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.Create | OpenFlags.Truncate, options);
 		}
 
 		/// <summary>
@@ -198,64 +198,64 @@ namespace Xamarin.ZipSharp
 				throw new ArgumentException ("Must not be null or empty", nameof (path));
 			var zip = CreateArchiveInstance (defaultExtractionDir, options);
 
-			OpenFlags flags = OpenFlags.NONE;
+			OpenFlags flags = OpenFlags.None;
 			switch (mode) {
 				case FileMode.Append:
 				case FileMode.Open:
 					break;
 					
 				case FileMode.Create:
-					flags = OpenFlags.CREATE;
+					flags = OpenFlags.Create;
 					break;
 					
 				case FileMode.CreateNew:
-					flags = OpenFlags.CREATE | OpenFlags.EXCL;
+					flags = OpenFlags.Create | OpenFlags.Excl;
 					break;
 					
 				case FileMode.OpenOrCreate:
-					flags = OpenFlags.CREATE;
+					flags = OpenFlags.Create;
 					break;
 					
 				case FileMode.Truncate:
-					flags = OpenFlags.TRUNCATE;
+					flags = OpenFlags.Truncate;
 					break;
 			}
 
 			if (strictConsistencyChecks)
-				flags |= OpenFlags.CHECKCONS;
+				flags |= OpenFlags.CheckCons;
 			
 			ErrorCode error = zip.Open (path, flags);
 			string message = null;
 			switch (error) {
-				case ErrorCode.EXISTS:
+				case ErrorCode.Exists:
 					message = $"The file {path} already exists";
 					break;
 
-				case ErrorCode.INCONS:
+				case ErrorCode.Incons:
 					message = $"The file {path} failed consistency checks";
 					break;
 
-				case ErrorCode.MEMORY:
+				case ErrorCode.Memory:
 					message = "libzip returned out of memory error";
 					break;
 
-				case ErrorCode.NOENT:
+				case ErrorCode.NoEnt:
 					message = $"File {path} does not exist and file creation wasn't requested";
 					break;
 
-				case ErrorCode.NOZIP:
+				case ErrorCode.NoZip:
 					message = $"File {path} is not a ZIP archive";
 					break;
 
-				case ErrorCode.OPEN:
+				case ErrorCode.Open:
 					message = $"File {path} could not be opened";
 					break;
 
-				case ErrorCode.READ:
+				case ErrorCode.Read:
 					message = $"Error occured while reading {path}";
 					break;
 
-				case ErrorCode.SEEK:
+				case ErrorCode.Seek:
 					message = $"File {path} does not support seeking";
 					break;
 
@@ -298,11 +298,11 @@ namespace Xamarin.ZipSharp
 		/// <param name="permissions">The permissions which the stream should have when extracted (Unix Only)</param>
 		/// <param name="method">The compression method to use</param>
 		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
-		public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.DEFAULT, bool overwriteExisting = true)
+		public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.Default, bool overwriteExisting = true)
 		{
 			string destPath = EnsureArchivePath (archivePath);
 			IntPtr source = Native.zip_source_buffer (archive, data, 0);
-			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.OVERWRITE : OperationFlags.NONE);
+			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
 			if (index < 0)
 				throw GetErrorException ();
 			if (Native.zip_set_file_compression (archive, (ulong)index, method, 0) < 0)
@@ -323,7 +323,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="permissions">The permissions which the stream should have when extracted (Unix Only)</param>
 		/// <param name="method">The compression method to use</param>
 		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
-		public ZipEntry AddStream (Stream stream, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.DEFAULT, bool overwriteExisting = true)
+		public ZipEntry AddStream (Stream stream, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.Default, bool overwriteExisting = true)
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
@@ -331,7 +331,7 @@ namespace Xamarin.ZipSharp
 			var handle = GCHandle.Alloc (stream, GCHandleType.Pinned);
 			IntPtr h = GCHandle.ToIntPtr (handle);
 			IntPtr source = Native.zip_source_function (archive, stream_callback, h);
-			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.OVERWRITE : OperationFlags.NONE);
+			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
 			if (index < 0)
 				throw GetErrorException ();
 			if (Native.zip_set_file_compression (archive, (ulong)index, method, 0) < 0)
@@ -352,7 +352,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="permissions">Permissions.</param>
 		/// <param name="method">Method.</param>
 		/// <param name="overwriteExisting">Overwrite existing.</param>
-		public ZipEntry AddFile (string sourcePath, string archivePath = null, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.DEFAULT, bool overwriteExisting = true)
+		public ZipEntry AddFile (string sourcePath, string archivePath = null, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.Default, bool overwriteExisting = true)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
@@ -363,13 +363,13 @@ namespace Xamarin.ZipSharp
 			IntPtr source;
 			if (PlatformServices.Instance.IsRegularFile (sourcePath)) {
 				source = Native.zip_source_file (archive, sourcePath, 0, -1);
-				index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.OVERWRITE : OperationFlags.NONE);
+				index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
 			} else {
 				index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out method);
 			}
 			if (index < 0)
 				throw GetErrorException ();
-			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.STORE : method, 0) < 0)
+			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : method, 0) < 0)
 				throw GetErrorException ();
 
 			if (permissions == EntryPermissions.Default) {
@@ -388,7 +388,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="entryName">The name of the entry with in the archive</param>
 		/// <param name="data">A stream containing the data to add to the archive</param>
 		/// <param name="method">The compression method to use</param>
-		public ZipEntry AddEntry (string entryName, Stream data, CompressionMethod method = CompressionMethod.DEFAULT)
+		public ZipEntry AddEntry (string entryName, Stream data, CompressionMethod method = CompressionMethod.Default)
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
@@ -405,7 +405,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="text">The text to add to the entry</param>
 		/// <param name="encoding">The Encoding to use for the data.</param>
 		/// <param name="method">The compression method to use</param>
-		public ZipEntry AddEntry (string entryName, string text, Encoding encoding, CompressionMethod method = CompressionMethod.DEFAULT)
+		public ZipEntry AddEntry (string entryName, string text, Encoding encoding, CompressionMethod method = CompressionMethod.Default)
 		{
 			if (string.IsNullOrEmpty (text))
 				throw new ArgumentException ("must not be null or empty", nameof (text));
@@ -435,7 +435,7 @@ namespace Xamarin.ZipSharp
 			if (String.IsNullOrEmpty (entryName))
 				return -1;
 
-			return Native.zip_name_locate (archive, entryName, caseSensitive ? OperationFlags.NONE : OperationFlags.NOCASE);
+			return Native.zip_name_locate (archive, entryName, caseSensitive ? OperationFlags.None : OperationFlags.NoCase);
 		}
 
 		/// <summary>
@@ -470,7 +470,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="folder">The root of the directory to add</param>
 		/// <param name="folderInArchive">The root name of the folder in the zip.</param>
 		/// <param name="method">The compresison method to use when adding files</param>
-		public void AddDirectory (string folder, string folderInArchive, CompressionMethod method = CompressionMethod.DEFAULT)
+		public void AddDirectory (string folder, string folderInArchive, CompressionMethod method = CompressionMethod.Default)
 		{
 			if (string.IsNullOrEmpty (folder))
 				throw new ArgumentException ("must not be null or empty", nameof (folder));
@@ -493,7 +493,7 @@ namespace Xamarin.ZipSharp
 		public void CreateDirectory (string directoryName, EntryPermissions permissions = EntryPermissions.Default)
 		{
 			string dir = EnsureArchivePath (directoryName, true);
-			long index = Native.zip_dir_add (archive, dir, OperationFlags.NONE);
+			long index = Native.zip_dir_add (archive, dir, OperationFlags.None);
 			if (index < 0)
 				throw GetErrorException ();
 
@@ -547,7 +547,7 @@ namespace Xamarin.ZipSharp
 		internal ZipEntry ReadEntry (ulong index)
 		{
 			Native.zip_stat_t stat;
-			int ret = Native.zip_stat_index (archive, index, OperationFlags.NONE, out stat);
+			int ret = Native.zip_stat_index (archive, index, OperationFlags.None, out stat);
 			if (ret < 0)
 				throw GetErrorException ();
 
@@ -574,44 +574,44 @@ namespace Xamarin.ZipSharp
 			return new ZipException (Utilities.GetStringFromNativeAnsi (Native.zip_strerror (archive)) ?? "Unknown error", zip_error, system_error);
 		}
 
-		internal unsafe Int64 stream_callback (IntPtr state, IntPtr data, UInt64 len, Native.zip_source_cmd cmd)
+		internal unsafe Int64 stream_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd)
 		{
 			byte [] buffer = null;
 			var handle = GCHandle.FromIntPtr (state);
 			var stream = (Stream)handle.Target;
 
 			switch (cmd) {
-				case Native.zip_source_cmd.ZIP_SOURCE_STAT:
+				case SourceCommand.Stat:
 					if (len < (UInt64)sizeof (Native.zip_stat_t))
 						return -1;
-					var stat = Native.ZIP_SOURCE_GET_ARGS<Native.zip_stat_t> (data, len);
+					var stat = Native.ZipSourceGetArgs<Native.zip_stat_t> (data, len);
 					stat.size = (UInt64)stream.Length;
-					stat.valid |= (UInt64)Native.ZIP_STAT_SIZE;
+					stat.valid |= (UInt64)Native.ZipStatSize;
 					Marshal.StructureToPtr<Native.zip_stat_t> (stat, data, false);
 					return (Int64)sizeof (Native.zip_stat_t);
 
-				case Native.zip_source_cmd.ZIP_SOURCE_TELL:
-				case Native.zip_source_cmd.ZIP_SOURCE_TELL_WRITE:
+				case SourceCommand.Tell:
+				case SourceCommand.TellWrite:
 					return (Int64)stream.Position;
 
-				case Native.zip_source_cmd.ZIP_SOURCE_WRITE:
+				case SourceCommand.Write:
 					buffer = new byte [len];
 					Marshal.Copy (data, buffer, 0, (int)len);
 					stream.Write (buffer, 0, buffer.Length);
 					return buffer.Length;
 
-				case Native.zip_source_cmd.ZIP_SOURCE_SEEK_WRITE:
-				case Native.zip_source_cmd.ZIP_SOURCE_SEEK:
+				case SourceCommand.SeekWrite:
+				case SourceCommand.Seek:
 					Native.zip_error_t error;
 					UInt64 offset = Native.zip_source_seek_compute_offset ((UInt64)stream.Position, (UInt64)stream.Length, data, len, out error);
 					stream.Seek ((long)offset, SeekOrigin.Begin);
 					break;
 
-				case Native.zip_source_cmd.ZIP_SOURCE_COMMIT_WRITE:
+				case SourceCommand.CommitWrite:
 					stream.Flush ();
 					break;
 
-				case Native.zip_source_cmd.ZIP_SOURCE_READ:
+				case SourceCommand.Read:
 					var length = (int)len;
 					if (length > stream.Length - stream.Position) {
 						length = (int)(stream.Length - stream.Position);
@@ -621,44 +621,44 @@ namespace Xamarin.ZipSharp
 					Marshal.Copy (buffer, 0, data, length);
 					return length;
 
-				case Native.zip_source_cmd.ZIP_SOURCE_BEGIN_WRITE:
-				case Native.zip_source_cmd.ZIP_SOURCE_OPEN:
+				case SourceCommand.BeginWrite:
+				case SourceCommand.Open:
 					stream.Position = 0;
 					return 0;
 
-				case Native.zip_source_cmd.ZIP_SOURCE_CLOSE:
+				case SourceCommand.Close:
 					stream.Flush ();
 					break;
 
-				case Native.zip_source_cmd.ZIP_SOURCE_FREE:
+				case SourceCommand.Free:
 					handle.Free ();
 					break;
 
-				case Native.zip_source_cmd.ZIP_SOURCE_SUPPORTS:
+				case SourceCommand.Supports:
 					var supports = (Int64)Native.zip_source_make_command_bitmap (
-						Native.zip_source_cmd.ZIP_SOURCE_OPEN,
-						Native.zip_source_cmd.ZIP_SOURCE_READ,
-						Native.zip_source_cmd.ZIP_SOURCE_CLOSE,
-						Native.zip_source_cmd.ZIP_SOURCE_STAT,
-						Native.zip_source_cmd.ZIP_SOURCE_ERROR,
-						Native.zip_source_cmd.ZIP_SOURCE_FREE
+						SourceCommand.Open,
+						SourceCommand.Read,
+						SourceCommand.Close,
+						SourceCommand.Stat,
+						SourceCommand.Error,
+						SourceCommand.Free
 					);
 					if (stream.CanSeek) {
 						supports |= (Int64)Native.zip_source_make_command_bitmap (
-							Native.zip_source_cmd.ZIP_SOURCE_SEEK,
-							Native.zip_source_cmd.ZIP_SOURCE_TELL,
-							Native.zip_source_cmd.ZIP_SOURCE_SUPPORTS
+							SourceCommand.Seek,
+							SourceCommand.Tell,
+							SourceCommand.Supports
 						);
 					}
 					if (stream.CanWrite) {
 						supports |= (Int64)Native.zip_source_make_command_bitmap (
-							Native.zip_source_cmd.ZIP_SOURCE_BEGIN_WRITE,
-							Native.zip_source_cmd.ZIP_SOURCE_COMMIT_WRITE,
-							Native.zip_source_cmd.ZIP_SOURCE_ROLLBACK_WRITE,
-							Native.zip_source_cmd.ZIP_SOURCE_WRITE,
-							Native.zip_source_cmd.ZIP_SOURCE_SEEK_WRITE,
-							Native.zip_source_cmd.ZIP_SOURCE_TELL_WRITE,
-							Native.zip_source_cmd.ZIP_SOURCE_REMOVE
+							SourceCommand.BeginWrite,
+							SourceCommand.CommitWrite,
+							SourceCommand.RollbackWrite,
+							SourceCommand.Write,
+							SourceCommand.SeekWrite,
+							SourceCommand.TellWrite,
+							SourceCommand.Remove
 						);
 					}
 					return supports;

@@ -335,7 +335,7 @@ namespace Xamarin.ZipSharp
 				throw new ArgumentException ("must be an instance of UnixZipArchive", nameof (zipArchive));
 			
 			index = -1;
-			compressionMethod = CompressionMethod.DEFAULT;
+			compressionMethod = CompressionMethod.Default;
 
 			throw new NotImplementedException ();
 		}

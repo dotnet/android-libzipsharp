@@ -51,7 +51,7 @@ namespace Xamarin.ZipSharp
 		public ZipEntry CreateSymbolicLink (string linkName, string linkDestination, EntryPermissions requestedPermissions= EntryPermissions.Default, Encoding encoding = null)
 		{
 			long index = -1;
-			ZipEntry entry = AddEntry (linkName, linkDestination, encoding ?? Encoding.UTF8, CompressionMethod.STORE);
+			ZipEntry entry = AddEntry (linkName, linkDestination, encoding ?? Encoding.UTF8, CompressionMethod.Store);
 			if (!SetEntryUnixPermissions (entry.Index, requestedPermissions == EntryPermissions.Default ? DefaultFilePermissions : requestedPermissions, UnixExternalPermissions.IFLNK))
 				throw GetErrorException ();
 
@@ -62,7 +62,7 @@ namespace Xamarin.ZipSharp
 		internal bool SetEntryUnixPermissions (ulong index, EntryPermissions requestedPermissions, UnixExternalPermissions unixPermissions)
 		{
 			var permissions = (uint)requestedPermissions | (uint)unixPermissions;
-			int ret = Native.zip_file_set_external_attributes (ArchivePointer, index, OperationFlags.NONE, (byte)OperatingSystem.UNIX, permissions << 16);
+			int ret = Native.zip_file_set_external_attributes (ArchivePointer, index, OperationFlags.None, (byte)OperatingSystem.UNIX, permissions << 16);
 			return ret == 0;
 		}
 	}

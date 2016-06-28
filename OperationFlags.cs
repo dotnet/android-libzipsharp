@@ -37,77 +37,77 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// No flags are set/used
 		/// </summary>
-		NONE             = 0u,
+		None             = 0u,
 
 		/// <summary>
 		/// Ignore case on name lookup
 		/// </summary>
-		NOCASE           = 1u,
+		NoCase           = 1u,
 
 		/// <summary>
 		/// Ignore directory component
 		/// </summary>
-		NODIR            = 2u,
+		NoDir            = 2u,
 
 		/// <summary>
 		/// Read compressed data
 		/// </summary>
-		COMPRESSED       = 4u,
+		Compressed       = 4u,
 
 		/// <summary>
 		/// Use original data, ignoring changes
 		/// </summary>
-		UNCHANGED        = 8u,
+		Unchanged        = 8u,
 
 		/// <summary>
 		/// Force recompression of data
 		/// </summary>
-		RECOMPRESS       = 16u,
+		Recompress       = 16u,
 
 		/// <summary>
 		/// Read encrypted data (implies COMPRESSED)
 		/// </summary>
-		ENCRYPTED        = 32u,
+		Encrypted        = 32u,
 
 		/// <summary>
 		/// Guess string encoding (is default)
 		/// </summary>
-		ENC_GUESS        = 0u,
+		Enc_Guess        = 0u,
 
 		/// <summary>
 		/// Get unmodified string
 		/// </summary>
-		ENC_RAW          = 64u,
+		Enc_Raw          = 64u,
 
 		/// <summary>
 		/// Follow specification strictly
 		/// </summary>
-		ENC_STRICT       = 128u,
+		Enc_Strict       = 128u,
 
 		/// <summary>
 		/// In local header
 		/// </summary>
-		LOCAL            = 256u,
+		Local            = 256u,
 
 		/// <summary>
 		/// In central directory
 		/// </summary>
-		CENTRAL          = 512u,
+		Central          = 512u,
 
 		/// <summary>
 		/// String is UTF-8 encoded
 		/// </summary>
-		ENC_UTF_8        = 2048u,
+		Enc_UTF_8        = 2048u,
 
 		/// <summary>
 		/// String is CP437 encoded
 		/// </summary>
-		ENC_CP437        = 4096u,
+		Enc_CP437        = 4096u,
 
 		/// <summary>
 		/// Zip_file_add: if file with name exists, overwrite (replace) it
 		/// </summary>
-		OVERWRITE        = 8192u,
+		Overwrite        = 8192u,
 	}
 }
 

@@ -79,14 +79,14 @@ namespace ZipTest
 				zip.AddFile (asmPath);
 				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy.exe");
 				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy2.exe", permissions: EntryPermissions.OwnerRead | EntryPermissions.OwnerWrite);
-				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy3.exe", method: CompressionMethod.STORE);
+				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy3.exe", method: CompressionMethod.Store);
 				var text = "Hello World";
-				zip.AddEntry ("/in/archive/data/foo.txt", text, Encoding.UTF8, CompressionMethod.STORE);
+				zip.AddEntry ("/in/archive/data/foo.txt", text, Encoding.UTF8, CompressionMethod.Store);
 
 				using (var fs = File.OpenRead (asmPath)) {
-					zip.AddEntry ("/in/archive/foo/foo.exe", fs, CompressionMethod.STORE);
+					zip.AddEntry ("/in/archive/foo/foo.exe", fs, CompressionMethod.Store);
 				}
-				zip.AddStream (ms, "/in/archive/foo/foo1.txt", method: CompressionMethod.STORE);
+				zip.AddStream (ms, "/in/archive/foo/foo1.txt", method: CompressionMethod.Store);
 			}
 
 			if (File.Exists ("test-archive-write.zip")) {

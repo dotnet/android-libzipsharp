@@ -35,17 +35,17 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Error code field is unused
 		/// </summary>
-		NONE           = 0,
+		None           = 0,
 
 		/// <summary>
 		/// Error code field is the value of <c>errno</c>
 		/// </summary>
-		SYS            = 1,
+		Sys            = 1,
 
 		/// <summary>
 		/// Error code field is zlib error code
 		/// </summary>
-		ZLIB           = 2,
+		Zlib           = 2,
 	}
 }
 

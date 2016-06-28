@@ -36,71 +36,71 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Unknown compression method (not present in the native libzip)
 		/// </summary>
-		UNKNOWN        = -2,
+		Unknown        = -2,
 
 		/// <summary>
 		/// Better of deflate or store
 		/// </summary>
-		DEFAULT        = -1,
+		Default        = -1,
 
 		/// <summary>
 		/// Stored (uncompressed)
 		/// </summary>
-		STORE          = 0,
+		Store          = 0,
 
 		/// <summary>
 		/// Shrunk
 		/// </summary>
-		SHRINK         = 1,
+		Shrink         = 1,
 
 		/// <summary>
 		/// Reduced with factor 1
 		/// </summary>
-		REDUCE_1       = 2,
+		Reduce_1       = 2,
 
 		/// <summary>
 		/// Reduced with factor 2
 		/// </summary>
-		REDUCE_2       = 3,
+		Reduce_2       = 3,
 
 		/// <summary>
 		/// Reduced with factor 3
 		/// </summary>
-		REDUCE_3       = 4,
+		Reduce_3       = 4,
 
 		/// <summary>
 		/// Reduced with factor 4
 		/// </summary>
-		REDUCE_4       = 5,
+		Reduce_4       = 5,
 
 		/// <summary>
 		/// Imploded
 		/// </summary>
-		IMPLODE        = 6,
+		Implode        = 6,
 
 		/* 7 - Reserved for Tokenizing compression algorithm */
 
 		/// <summary>
 		/// Deflated
 		/// </summary>
-		DEFLATE        = 8,
+		Deflate        = 8,
 
 		/// <summary>
 		/// Deflate (64-bit)
 		/// </summary>
-		DEFLATE64      = 9,
+		Deflate64      = 9,
 
 		/// <summary>
 		/// PKWARE imploding
 		/// </summary>
-		PKWARE_IMPLODE = 10,
+		PKWare_Implode = 10,
 
 		/* 11 - Reserved by PKWARE */
 
 		/// <summary>
 		/// Compressed using BZIP2 algorithm
 		/// </summary>
-		BZIP2          = 12,
+		Bzip2          = 12,
 
 		/* 13 - Reserved by PKWARE */
 
@@ -114,7 +114,7 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Compressed using IBM TERSE (new)
 		/// </summary>
-		TERSE          = 18,
+		Terse          = 18,
 
 		/// <summary>
 		/// IBM LZ77 z Architecture (PFS)
@@ -124,7 +124,7 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// WavPack compressed data
 		/// </summary>
-		WAVPACK        = 97,
+		WavPack        = 97,
 
 		/// <summary>
 		/// PPMd version I, Rev 1

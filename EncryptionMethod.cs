@@ -36,12 +36,12 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Not encrypted
 		/// </summary>
-		NONE            = 0,
+		None            = 0,
 
 		/// <summary>
 		/// Traditional PKWARE encryption
 		/// </summary>
-		TRAD_PKWARE     = 1,
+		Trad_PKWare     = 1,
 
 		/// <summary>
 		/// Strong encryption: DES
@@ -53,19 +53,19 @@ namespace Xamarin.ZipSharp
 		/// Strong encryption: RC2, version &lt; 5.2
 		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
 		/// </summary>
-		RC2_OLD         = 0x6602,
+		RC2_Old         = 0x6602,
 
 		/// <summary>
 		/// Strong encryption: 3DES (168-bit key)
 		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
 		/// </summary>
-		THREE_DES_168   = 0x6603,
+		Three_DES_168   = 0x6603,
 
 		/// <summary>
 		/// Strong encryption: 3DES (112-bit key)
 		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
 		/// </summary>
-		THREE_DES_112   = 0x6609,
+		Three_DES_112   = 0x6609,
 
 		/// <summary>
 		/// Strong encryption: AES (128-bit key)
@@ -100,7 +100,7 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Unknown algorithm
 		/// </summary>
-		UNKNOWN         = 0xffff,
+		Unknown         = 0xffff,
 	}
 }
 

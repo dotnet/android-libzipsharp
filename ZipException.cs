@@ -37,11 +37,11 @@ namespace Xamarin.ZipSharp
 		/// Native libzip error code, if any.
 		/// </summary>
 		/// <value>The zip error code.</value>
-		public ErrorCode ZipErrorCode { get; private set; } = ErrorCode.UNKNOWN;
+		public ErrorCode ZipErrorCode { get; private set; } = ErrorCode.Unknown;
 
 		/// <summary>
 		/// Gets the raw ZIP error code. Consult this value if <see cref="ZipErrorCode"/> is set
-		/// to <see cref="ErrorCode.UNKNOWN"/>
+		/// to <see cref="ErrorCode.Unknown"/>
 		/// </summary>
 		/// <value>The raw zip error code.</value>
 		public int RawZipErrorCode { get; private set; } = -1;
@@ -106,7 +106,7 @@ namespace Xamarin.ZipSharp
 
 		void CommonInit (int errorCode, int system_error)
 		{
-			ErrorCode ec = ErrorCode.UNKNOWN;
+			ErrorCode ec = ErrorCode.Unknown;
 			if (Enum.IsDefined (typeof (ErrorCode), errorCode))
 				ec = (ErrorCode)errorCode;
 

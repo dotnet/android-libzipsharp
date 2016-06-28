@@ -59,45 +59,24 @@ namespace Xamarin.ZipSharp
 			public UInt32 flags;                 /* reserved for future use */ 
 		};
 
-		public const uint ZIP_STAT_NAME              = 0x0001u;
-		public const uint ZIP_STAT_INDEX             = 0x0002u;
-		public const uint ZIP_STAT_SIZE              = 0x0004u;
-		public const uint ZIP_STAT_COMP_SIZE         = 0x0008u;
-		public const uint ZIP_STAT_MTIME             = 0x0010u;
-		public const uint ZIP_STAT_CRC               = 0x0020u;
-		public const uint ZIP_STAT_COMP_METHOD       = 0x0040u;
-		public const uint ZIP_STAT_ENCRYPTION_METHOD = 0x0080u;
-		public const uint ZIP_STAT_FLAGS             = 0x0100u;
+		public const uint ZipStatName             = 0x0001u;
+		public const uint ZipStatIndex            = 0x0002u;
+		public const uint ZipStatSize             = 0x0004u;
+		public const uint ZipStatCompSize         = 0x0008u;
+		public const uint ZipStatMtime            = 0x0010u;
+		public const uint ZipStatCRC              = 0x0020u;
+		public const uint ZipStatCompMethod       = 0x0040u;
+		public const uint ZipStatEncryptionMethod = 0x0080u;
+		public const uint ZipStatFlags            = 0x0100u;
 
-		[Flags]
-		public enum zip_source_cmd
-		{
-			ZIP_SOURCE_OPEN,            /* prepare for reading */
-			ZIP_SOURCE_READ,            /* read data */
-			ZIP_SOURCE_CLOSE,           /* reading is done */
-			ZIP_SOURCE_STAT,            /* get meta information */
-			ZIP_SOURCE_ERROR,           /* get error information */
-			ZIP_SOURCE_FREE,            /* cleanup and free resources */
-			ZIP_SOURCE_SEEK,            /* set position for reading */
-			ZIP_SOURCE_TELL,            /* get read position */
-			ZIP_SOURCE_BEGIN_WRITE,     /* prepare for writing */
-			ZIP_SOURCE_COMMIT_WRITE,    /* writing is done */
-			ZIP_SOURCE_ROLLBACK_WRITE,  /* discard written changes */
-			ZIP_SOURCE_WRITE,           /* write data */
-			ZIP_SOURCE_SEEK_WRITE,      /* set position for writing */
-			ZIP_SOURCE_TELL_WRITE,      /* get write position */
-			ZIP_SOURCE_SUPPORTS,        /* check whether source supports command */
-			ZIP_SOURCE_REMOVE,           /* remove file */
-		};
+		public delegate Int64 zip_source_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd);
 
-		public delegate Int64 zip_source_callback (IntPtr state, IntPtr data, UInt64 len, zip_source_cmd cmd);
-
-		public static int ZIP_SOURCE_MAKE_COMMAND_BITMASK (zip_source_cmd cmd)
+		public static int ZipSourceMakeCommandBitmask (SourceCommand cmd)
 		{
 			return 1 << (int)cmd;
 		}
 
-		public static T ZIP_SOURCE_GET_ARGS<T> (IntPtr data, UInt64 len)
+		public static T ZipSourceGetArgs<T> (IntPtr data, UInt64 len)
 		{
 			return Marshal.PtrToStructure<T> (data);
 		}
@@ -292,13 +271,13 @@ namespace Xamarin.ZipSharp
 		[DllImport (ZIP_LIBNAME)]
 		public static extern int zip_error_code_system (IntPtr error);
 
-		public static long zip_source_make_command_bitmap (params zip_source_cmd[] cmd)
+		public static long zip_source_make_command_bitmap (params SourceCommand[] cmd)
 		{
 			if (cmd == null)
 				throw new ArgumentNullException (nameof(cmd));
 			int bitmap = 0;
 			for (int i = 0; i < cmd.Length; i++) {
-				bitmap |= ZIP_SOURCE_MAKE_COMMAND_BITMASK (cmd [i]);
+				bitmap |= ZipSourceMakeCommandBitmask (cmd [i]);
 			}
 			return bitmap;
 		}

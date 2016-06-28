@@ -142,18 +142,18 @@ namespace Xamarin.ZipSharp
 			CompressionMethod = GetStatField (StatFlags.COMP_METHOD, () => {
 				if (Enum.IsDefined (typeof (CompressionMethod), stat.comp_method))
 					return (CompressionMethod)stat.comp_method;
-				return CompressionMethod.UNKNOWN;
+				return CompressionMethod.Unknown;
 			});
 			EncryptionMethod = GetStatField (StatFlags.ENCRYPTION_METHOD, () => {
 				if (Enum.IsDefined (typeof (EncryptionMethod), stat.encryption_method))
 					return (EncryptionMethod)stat.encryption_method;
-				return EncryptionMethod.UNKNOWN;
+				return EncryptionMethod.Unknown;
 			});
 			IsDirectory = Size == 0 && CompressedSize == 0 && Name.EndsWith ("/", StringComparison.Ordinal);
 			
 			byte opsys;
 			uint xattr;
-			if (Native.zip_file_get_external_attributes (archive.ArchivePointer, Index, OperationFlags.NONE, out opsys, out xattr) == 0) {
+			if (Native.zip_file_get_external_attributes (archive.ArchivePointer, Index, OperationFlags.None, out opsys, out xattr) == 0) {
 				ExternalAttributes = xattr;
 				OperatingSystem = (OperatingSystem)opsys;
 			} else {
@@ -161,8 +161,8 @@ namespace Xamarin.ZipSharp
 				ExternalAttributes = 0;
 			}
 			
-			localExtraFieldsCount = Native.zip_file_extra_fields_count (archive.ArchivePointer, Index, OperationFlags.LOCAL);
-			centralExtraFieldsCount = Native.zip_file_extra_fields_count (archive.ArchivePointer, Index, OperationFlags.CENTRAL);
+			localExtraFieldsCount = Native.zip_file_extra_fields_count (archive.ArchivePointer, Index, OperationFlags.Local);
+			centralExtraFieldsCount = Native.zip_file_extra_fields_count (archive.ArchivePointer, Index, OperationFlags.Central);
 			
 			PlatformServices.Instance.ReadAndProcessExtraFields (this);
 		}
@@ -176,7 +176,7 @@ namespace Xamarin.ZipSharp
 
 			OnExtract (args);
 			if (!IsDirectory) {
-				OperationFlags flags = OperationFlags.NONE;
+				OperationFlags flags = OperationFlags.None;
 				IntPtr file = IntPtr.Zero;
 				try {
 					file = Native.zip_fopen_index (archive.ArchivePointer, Index, flags);
@@ -217,7 +217,7 @@ namespace Xamarin.ZipSharp
 			OnExtract (args);
 			if (!IsDirectory) {
 				// TODO: handle non-regular files
-				OperationFlags flags = OperationFlags.NONE;
+				OperationFlags flags = OperationFlags.None;
 				IntPtr file = IntPtr.Zero;
 				try {
 					file = Native.zip_fopen_index (archive.ArchivePointer, Index, flags);
@@ -237,7 +237,7 @@ namespace Xamarin.ZipSharp
 
 		bool TranslateLocation (ZipHeaderLocation location, out OperationFlags flags)
 		{
-			flags = OperationFlags.NONE;
+			flags = OperationFlags.None;
 			switch (location) {
 				case ZipHeaderLocation.Both:
 				case ZipHeaderLocation.Any:
@@ -249,13 +249,13 @@ namespace Xamarin.ZipSharp
 				case ZipHeaderLocation.Central:
 					if (centralExtraFieldsCount <= 0)
 						return false;
-					flags = OperationFlags.CENTRAL;
+					flags = OperationFlags.Central;
 					break;
 
 				case ZipHeaderLocation.Local:
 					if (localExtraFieldsCount <= 0)
 						return false;
-					flags = OperationFlags.LOCAL;
+					flags = OperationFlags.Local;
 					break;
 			}
 
@@ -272,27 +272,27 @@ namespace Xamarin.ZipSharp
 
 		public bool ExtraFieldPresent (ushort fieldID, ZipHeaderLocation location = ZipHeaderLocation.Any)
 		{
-			OperationFlags flags = OperationFlags.NONE;
+			OperationFlags flags = OperationFlags.None;
 
 			if (!TranslateLocation (location, out flags))
 				return false;
 
-			if (flags != OperationFlags.CENTRAL && GetFieldCount (fieldID, location, OperationFlags.LOCAL) > 0)
+			if (flags != OperationFlags.Central && GetFieldCount (fieldID, location, OperationFlags.Local) > 0)
 				return true;
-			return GetFieldCount (fieldID, location, OperationFlags.CENTRAL) > 0;
+			return GetFieldCount (fieldID, location, OperationFlags.Central) > 0;
 		}
 
 		public IList <ExtraField> GetExtraField (ushort fieldID, ZipHeaderLocation location = ZipHeaderLocation.Any, bool required = false)
 		{
-			OperationFlags flags = OperationFlags.NONE;
+			OperationFlags flags = OperationFlags.None;
 			if (!TranslateLocation (location, out flags))
 				return null;
 			var ret = new List<ExtraField> ();
-			if (flags == OperationFlags.NONE) {
-				GatherExtraFields (GetFieldCount (fieldID, location, OperationFlags.LOCAL), fieldID, OperationFlags.LOCAL, ret, required);
+			if (flags == OperationFlags.None) {
+				GatherExtraFields (GetFieldCount (fieldID, location, OperationFlags.Local), fieldID, OperationFlags.Local, ret, required);
 				if (location == ZipHeaderLocation.Any && ret.Count > 0)
 					return ret;
-				GatherExtraFields (GetFieldCount (fieldID, location, OperationFlags.CENTRAL), fieldID, OperationFlags.CENTRAL, ret, required);
+				GatherExtraFields (GetFieldCount (fieldID, location, OperationFlags.Central), fieldID, OperationFlags.Central, ret, required);
 			} else
 				GatherExtraFields (GetFieldCount (fieldID, location, flags), fieldID, flags, ret, required);
 

@@ -36,7 +36,7 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Unknown error code
 		/// </summary>
-		UNKNOWN        = -1,
+		Unknown        = -1,
 
 		/// <summary>
 		/// No error
@@ -46,32 +46,32 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Multi-disk zip archives not supported
 		/// </summary>
-		MULTIDISK      = 1,
+		MultiDisk      = 1,
 
 		/// <summary>
 		/// Renaming temporary file failed
 		/// </summary>
-		RENAME         = 2,
+		Rename         = 2,
 
 		/// <summary>
 		/// Closing zip archive failed
 		/// </summary>
-		CLOSE          = 3,
+		Close          = 3,
 
 		/// <summary>
 		/// Seek error
 		/// </summary>
-		SEEK           = 4,
+		Seek           = 4,
 
 		/// <summary>
 		/// Read error
 		/// </summary>
-		READ           = 5,
+		Read           = 5,
 
 		/// <summary>
 		/// Write error
 		/// </summary>
-		WRITE          = 6,
+		Write          = 6,
 
 		/// <summary>
 		/// CRC error
@@ -81,47 +81,47 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Containing zip archive was closed
 		/// </summary>
-		ZIPCLOSED      = 8,
+		ZipClosed      = 8,
 
 		/// <summary>
 		/// No such file
 		/// </summary>
-		NOENT          = 9,
+		NoEnt          = 9,
 
 		/// <summary>
 		/// File already exists
 		/// </summary>
-		EXISTS         = 10,
+		Exists         = 10,
 
 		/// <summary>
 		/// Can't open file
 		/// </summary>
-		OPEN           = 11,
+		Open           = 11,
 
 		/// <summary>
 		/// Failure to create temporary file
 		/// </summary>
-		TMPOPEN        = 12,
+		TmpOpen        = 12,
 
 		/// <summary>
 		/// Zlib error
 		/// </summary>
-		ZLIB           = 13,
+		Zlib           = 13,
 
 		/// <summary>
 		/// Malloc failure
 		/// </summary>
-		MEMORY         = 14,
+		Memory         = 14,
 
 		/// <summary>
 		/// Entry has been changed
 		/// </summary>
-		CHANGED        = 15,
+		Changed        = 15,
 
 		/// <summary>
 		/// Compression method not supported
 		/// </summary>
-		COMPNOTSUPP    = 16,
+		CompNotSupp    = 16,
 
 		/// <summary>
 		/// Premature end of file
@@ -131,66 +131,66 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Invalid argument
 		/// </summary>
-		INVAL          = 18,
+		Inval          = 18,
 
 		/// <summary>
 		/// Not a zip archive
 		/// </summary>
-		NOZIP          = 19,
+		NoZip          = 19,
 
 		/// <summary>
 		/// Internal error
 		/// </summary>
-		INTERNAL       = 20,
+		Internal       = 20,
 
 		/// <summary>
 		/// Zip archive inconsistent
 		/// </summary>
-		INCONS         = 21,
+		Incons         = 21,
 
 		/// <summary>
 		/// Can't remove file
 		/// </summary>
-		REMOVE         = 22,
+		Remove         = 22,
 
 		/// <summary>
 		/// Entry has been deleted
 		/// </summary>
-		DELETED        = 23,
+		Deleted        = 23,
 
 		/// <summary>
 		/// Encryption method not supported
 		/// </summary>
-		ENCRNOTSUPP    = 24,
+		EncrNotSupp    = 24,
 
 		/// <summary>
 		/// Read-only archive
 		/// </summary>
-		RDONLY         = 25,
+		RDOnly         = 25,
 
 		/// <summary>
 		/// No password provided
 		/// </summary>
-		NOPASSWD       = 26,
+		NoPasswd       = 26,
 
 		/// <summary>
 		/// Wrong password provided
 		/// </summary>
-		WRONGPASSWD    = 27,
+		WrongPasswd    = 27,
 
 		/// <summary>
 		/// Operation not supported
 		/// </summary>
-		OPNOTSUPP      = 28,
+		OptNotSup      = 28,
 
 		/// <summary>
 		/// Resource still in use
 		/// </summary>
-		INUSE          = 29,
+		InUse          = 29,
 
 		/// <summary>
 		/// Tell error
 		/// </summary>
-		TELL           = 30,
+		Tell           = 30,
 	}
 }

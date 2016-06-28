@@ -121,7 +121,7 @@ namespace Xamarin.ZipSharp
 				throw new ArgumentException ("must not be null or empty", nameof (sourcePath));
 
 			long index = -1;
-			CompressionMethod cm = CompressionMethod.DEFAULT;
+			CompressionMethod cm = CompressionMethod.Default;
 			CallServices ((IPlatformServices services) => services.StoreSpecialFile (archive, sourcePath, archivePath, out index, out cm));
 			compressionMethod = cm;
 

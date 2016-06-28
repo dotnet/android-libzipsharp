@@ -37,31 +37,31 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// No flags are set
 		/// </summary>
-		NONE          = 0,
+		None          = 0,
 
 		/// <summary>
 		/// Create the archive if it does not exist.
 		/// </summary>
-		CREATE        = 1,
+		Create        = 1,
 
 		/// <summary>
 		/// Error if archive already exists.
 		/// </summary>
-		EXCL          = 2,
+		Excl          = 2,
 
 		/// <summary>
 		/// Perform additional stricter consistency checks on the archive, and error if they fail.
 		/// </summary>
-		CHECKCONS     = 4,
+		CheckCons     = 4,
 
 		/// <summary>
 		/// If archive exists, ignore its current contents. In other words, handle it the same way as an empty archive.
 		/// </summary>
-		TRUNCATE      = 8,
+		Truncate      = 8,
 
 		/// <summary>
 		/// Open archive in read-only mode.
 		/// </summary>
-		RDONLY        = 16,
+		RDOnly        = 16,
 	}
 }
