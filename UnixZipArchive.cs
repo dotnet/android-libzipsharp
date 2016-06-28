@@ -48,7 +48,7 @@ namespace Xamarin.ZipSharp
 		{
 		}
 
-		public ZipEntry CreateSymbolicLink (string linkName, string linkDestination, EntryPermissions requestedPermissions= EntryPermissions.Default, Encoding encoding = null)
+		public ZipEntry CreateSymbolicLink (string linkName, string linkDestination, EntryPermissions requestedPermissions = EntryPermissions.Default, Encoding encoding = null)
 		{
 			ZipEntry entry = AddEntry (linkName, linkDestination, encoding ?? Encoding.UTF8, CompressionMethod.Store);
 			if (entry == null)

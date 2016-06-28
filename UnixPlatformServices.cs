@@ -35,17 +35,17 @@ namespace Xamarin.ZipSharp
 {
 	class UnixPlatformServices : IPlatformServices
 	{
-		public bool IsDirectory (string path, out bool result)
+		public bool IsDirectory (ZipArchive archive, string path, out bool result)
 		{
 			return IsFileOfType (path, FilePermissions.S_IFDIR, out result);
 		}
 
-		public bool IsRegularFile (string path, out bool result)
+		public bool IsRegularFile (ZipArchive archive, string path, out bool result)
 		{
 			return IsFileOfType (path, FilePermissions.S_IFREG, out result);
 		}
 
-		public bool GetFilesystemPermissions (string path, out EntryPermissions permissions)
+		public bool GetFilesystemPermissions (ZipArchive archive, string path, out EntryPermissions permissions)
 		{
 			permissions = EntryPermissions.Default;
 			if (String.IsNullOrEmpty (path))
@@ -306,14 +306,17 @@ namespace Xamarin.ZipSharp
 			return SetEntryPermissions (archive, index, requestedPermissions, isDirectory ? UnixExternalPermissions.IFDIR : UnixExternalPermissions.IFREG);
 		}
 
-		public bool SetEntryPermissions (string sourcePath, ZipArchive archive, ulong index, EntryPermissions requestedPermissions)
+		public bool SetEntryPermissions (ZipArchive zipArchive, string sourcePath, ulong index, EntryPermissions requestedPermissions)
 		{
+			var archive = zipArchive as UnixZipArchive;
+			if (archive == null)
+				throw new ArgumentException ("must be an instance of UnixZipArchive", nameof (zipArchive));
 			UnixExternalPermissions ftype = UnixExternalPermissions.IFREG;
 
 			if (!String.IsNullOrEmpty (sourcePath)) {
-				Stat sbuf;
-				if (Syscall.stat (sourcePath, out sbuf) == 0)
-					ftype = Utilities.GetFileType (sbuf);
+				UnixExternalPermissions ft;
+				if (Utilities.GetFileType (sourcePath, !archive.UnixOptions.StoreSymlinks, out ft))
+					ftype = ft;
 			}
 
 			return SetEntryPermissions (archive, index, requestedPermissions, ftype);
@@ -333,11 +336,34 @@ namespace Xamarin.ZipSharp
 			var archive = zipArchive as UnixZipArchive;
 			if (archive == null)
 				throw new ArgumentException ("must be an instance of UnixZipArchive", nameof (zipArchive));
-			
-			index = -1;
-			compressionMethod = CompressionMethod.Default;
 
-			throw new NotImplementedException ();
+			bool followSymlinks = !archive.UnixOptions.StoreSymlinks;
+			FilePermissions fileType;
+			if (!Utilities.GetFileType (sourcePath, followSymlinks, out fileType))
+				throw new InvalidOperationException ($"Failed to determine type of the '{sourcePath}' file");
+
+			ZipEntry entry;
+			switch (fileType) {
+				case FilePermissions.S_IFLNK:
+					compressionMethod = CompressionMethod.Store;
+					var sb = new StringBuilder ();
+					if (Syscall.readlink (sourcePath, sb) < 0)
+						throw new InvalidOperationException ($"Failed to read the '{sourcePath}' symbolic link: {Utilities.GetLastErrorMessage ()}");
+					EntryPermissions permissions;
+					UnixExternalPermissions unixPermissions;
+					if (!Utilities.GetFilePermissions (sourcePath, followSymlinks, out unixPermissions))
+						permissions = ZipArchive.DefaultFilePermissions;
+					else
+						permissions = (EntryPermissions)unixPermissions;
+					entry = archive.CreateSymbolicLink (String.IsNullOrEmpty (archivePath) ? sourcePath : archivePath, sb.ToString (), permissions);
+					break;
+
+				default:
+					throw new NotSupportedException ($"Storing files of type {fileType} is not supported");
+			}
+			index = (long)entry.Index;
+
+			return true;
 		}
 
 		public bool SetFileProperties (ZipEntry zipEntry, string extractedFilePath, bool throwOnNativeExceptions = true)
@@ -391,11 +417,11 @@ namespace Xamarin.ZipSharp
 			if (String.IsNullOrEmpty (path))
 				return false;
 
-			Stat sbuf;
-			if (Syscall.stat (path, out sbuf) != 0)
+			FilePermissions fileType;
+			if (!Utilities.GetFileType (path, false, out fileType))
 				return false;
 
-			result = (sbuf.st_mode & mode) == mode;
+			result = fileType == mode;
 			return true;
 		}
 

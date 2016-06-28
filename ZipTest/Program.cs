@@ -29,6 +29,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+
+#if UNIX
+using Mono.Unix.Native;
+#endif
 using Xamarin.ZipSharp;
 
 namespace ZipTest
@@ -89,7 +93,6 @@ namespace ZipTest
 
 			if (File.Exists ("test-archive-write.zip")) {
 				using (var newzip = ZipArchive.Open ("test-archive-copy.zip", FileMode.Create)) {
-
 					using (var zip = ZipArchive.Open (File.OpenRead ("test-archive-write.zip"))) {
 						foreach (var e in zip) {
 							Console.WriteLine ($" {e.Name} {e.Size} {e.CompressedSize} {e.CompressionMethod}");
@@ -101,6 +104,21 @@ namespace ZipTest
 					}
 				}
 			}
+
+#if UNIX
+			if (File.Exists ("test-archive-symlinks.zip"))
+				File.Delete ("test-archive-symlinks.zip");
+			using (var zip = ZipArchive.Open ("test-archive-symlinks.zip", FileMode.OpenOrCreate)) {
+				var uzip = zip as UnixZipArchive;
+				if (uzip != null) {
+					uzip.CreateSymbolicLink ("broken-symlink-created.txt", "/tmp/path/link/destinatinon1.txt");
+					Syscall.symlink ("/tmp/path/link/destination2.txt", "broken-symlink-from-fs.txt");
+
+					// Use the "standard" zip here to test adding special files
+					zip.AddFile ("broken-symlink-from-fs.txt");
+				}
+			}
+#endif
 		}
 	}
 }

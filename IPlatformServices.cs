@@ -39,11 +39,11 @@ namespace Xamarin.ZipSharp
 		/// </summary>
 		/// <returns><c>true</c> if <paramref name="path"/> points to regular file</returns>
 		/// <param name="path">Path to the filesystem location</param>
-		bool IsRegularFile (string path, out bool result);
-		bool IsDirectory (string path, out bool result);
-		bool GetFilesystemPermissions (string path, out EntryPermissions permissions);
+		bool IsRegularFile (ZipArchive archive, string path, out bool result);
+		bool IsDirectory (ZipArchive archive, string path, out bool result);
+		bool GetFilesystemPermissions (ZipArchive archive, string path, out EntryPermissions permissions);
 		bool StoreSpecialFile (ZipArchive archive, string sourcePath, string archivePath, out long index, out CompressionMethod compressionMethod);
-		bool SetEntryPermissions (string sourcePath, ZipArchive archive, ulong index, EntryPermissions permissions);
+		bool SetEntryPermissions (ZipArchive archive, string sourcePath, ulong index, EntryPermissions permissions);
 		bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions permissions, bool isDirectory);
 		bool ReadAndProcessExtraFields (ZipEntry entry);
 		bool WriteExtraFields (ZipEntry entry, IList<ExtraField> extraFields);

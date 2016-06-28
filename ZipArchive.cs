@@ -360,11 +360,11 @@ namespace Xamarin.ZipSharp
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
 
-			bool isDir = PlatformServices.Instance.IsDirectory (sourcePath);
+			bool isDir = PlatformServices.Instance.IsDirectory (this, sourcePath);
 			string destPath = EnsureArchivePath (archivePath ?? sourcePath, isDir);
 			long index;
 			IntPtr source;
-			if (PlatformServices.Instance.IsRegularFile (sourcePath)) {
+			if (PlatformServices.Instance.IsRegularFile (this, sourcePath)) {
 				source = Native.zip_source_file (archive, sourcePath, 0, -1);
 				index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
 			} else {
@@ -376,11 +376,11 @@ namespace Xamarin.ZipSharp
 				throw GetErrorException ();
 
 			if (permissions == EntryPermissions.Default) {
-				permissions = PlatformServices.Instance.GetFilesystemPermissions (sourcePath);
+				permissions = PlatformServices.Instance.GetFilesystemPermissions (this, sourcePath);
 				if (permissions == EntryPermissions.Default)
 					permissions = isDir ? DefaultDirectoryPermissions : DefaultFilePermissions;
 			}
-			PlatformServices.Instance.SetEntryPermissions (sourcePath, this, (ulong)index, permissions);
+			PlatformServices.Instance.SetEntryPermissions (this, sourcePath, (ulong)index, permissions);
 
 			return ReadEntry ((ulong)index);
 		}
@@ -488,7 +488,7 @@ namespace Xamarin.ZipSharp
 			foreach (string dir in Directory.GetDirectories (folder)) {
 				var internalDir = dir.Replace ("./", string.Empty).Replace (folder, string.Empty);
 				string fullDirPath = folderInArchive + internalDir;
-				CreateDirectory (fullDirPath, PlatformServices.Instance.GetFilesystemPermissions (dir));
+				CreateDirectory (fullDirPath, PlatformServices.Instance.GetFilesystemPermissions (this, dir));
 				AddDirectory (dir, fullDirPath, method);
 			}
 		}

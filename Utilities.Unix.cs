@@ -44,24 +44,142 @@ namespace Xamarin.ZipSharp
 			};
 		}
 
+		public static string GetLastErrorMessage ()
+		{
+			return Syscall.strerror (Syscall.GetLastError ());
+		}
+
+		static bool StatFile (string path, bool followSymlinks, out Stat sbuf)
+		{
+			int rv;
+			if (followSymlinks)
+				rv = Syscall.stat (path, out sbuf);
+			else
+				rv = Syscall.lstat (path, out sbuf);
+
+			if (rv < 0) {
+				// TODO: log properly. Maybe throw exception?
+				Console.WriteLine ($"Warning: failed to stat file '{path}': {GetLastErrorMessage ()}");
+				return false;
+			}
+
+			return true;
+		}
+
+		public static bool GetFilePermissions (string path, bool followSymlinks, out FilePermissions filePermissions)
+		{
+			if (String.IsNullOrEmpty (path))
+				throw new ArgumentException ("must not be null or empty", nameof (path));
+
+			Stat sbuf;
+			if (!StatFile (path, followSymlinks, out sbuf)) {
+				filePermissions = FilePermissions.DEFFILEMODE;
+				return false;
+			}
+
+			filePermissions = sbuf.st_mode & FilePermissions.ALLPERMS;
+			return true;
+		}
+
+		public static bool GetFilePermissions (string path, bool followSymlinks, out UnixExternalPermissions filePermissions)
+		{
+			FilePermissions fp;
+			if (!GetFileType (path, followSymlinks, out fp)) {
+				filePermissions = (UnixExternalPermissions)FilePermissions.DEFFILEMODE;
+				return false;
+			}
+
+			filePermissions = 0;
+			if (fp.HasFlag (FilePermissions.S_ISUID))
+				filePermissions |= UnixExternalPermissions.ISUID;
+
+			if (fp.HasFlag (FilePermissions.S_ISGID))
+				filePermissions |= UnixExternalPermissions.ISGID;
+
+			if (fp.HasFlag (FilePermissions.S_ISVTX))
+				filePermissions |= UnixExternalPermissions.ISVTX;
+
+			if (fp.HasFlag (FilePermissions.S_IRUSR))
+				filePermissions |= UnixExternalPermissions.IRUSR;
+
+			if (fp.HasFlag (FilePermissions.S_IWUSR))
+				filePermissions |= UnixExternalPermissions.IWUSR;
+
+			if (fp.HasFlag (FilePermissions.S_IXUSR))
+				filePermissions |= UnixExternalPermissions.IXUSR;
+
+			if (fp.HasFlag (FilePermissions.S_IRGRP))
+				filePermissions |= UnixExternalPermissions.IRGRP;
+
+			if (fp.HasFlag (FilePermissions.S_IWGRP))
+				filePermissions |= UnixExternalPermissions.IWGRP;
+
+			if (fp.HasFlag (FilePermissions.S_IXGRP))
+				filePermissions |= UnixExternalPermissions.IXGRP;
+
+			if (fp.HasFlag (FilePermissions.S_IROTH))
+				filePermissions |= UnixExternalPermissions.IROTH;
+
+			if (fp.HasFlag (FilePermissions.S_IWOTH))
+				filePermissions |= UnixExternalPermissions.IWOTH;
+
+			if (fp.HasFlag (FilePermissions.S_IXOTH))
+				filePermissions |= UnixExternalPermissions.IXOTH;
+			
+			return true;
+		}
+
+		public static bool GetFileType (string path, bool followSymlinks, out FilePermissions fileType)
+		{
+			if (String.IsNullOrEmpty (path))
+				throw new ArgumentException ("must not be null or empty", nameof (path));
+
+			Stat sbuf;
+			if (!StatFile (path, followSymlinks, out sbuf)) {
+				fileType = FilePermissions.S_IFREG;
+				return false;
+			}
+
+			fileType = sbuf.st_mode & ~FilePermissions.ALLPERMS;
+			return true;
+		}
+
+		public static bool GetFileType (string path, bool followSymlinks, out UnixExternalPermissions fileType)
+		{
+			if (String.IsNullOrEmpty (path))
+				throw new ArgumentException ("must not be null or empty", nameof (path));
+
+			Stat sbuf;
+			if (!StatFile (path, followSymlinks, out sbuf)) {
+				fileType = UnixExternalPermissions.IFREG;
+				return false;
+			}
+
+			fileType =  GetFileType (sbuf);
+			return true;
+		}
+
 		public static UnixExternalPermissions GetFileType (Stat sbuf)
 		{
-			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFBLK))
+			if (sbuf == null)
+				throw new ArgumentNullException (nameof (sbuf));
+			FilePermissions mode = sbuf.st_mode & ~FilePermissions.ALLPERMS;
+			if (mode == FilePermissions.S_IFBLK)
 				return UnixExternalPermissions.IFBLK;
 
-			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFCHR))
+			if (mode == FilePermissions.S_IFCHR)
 				return UnixExternalPermissions.IFCHR;
 
-			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFDIR))
+			if (mode == FilePermissions.S_IFDIR)
 				return UnixExternalPermissions.IFDIR;
 
-			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFIFO))
+			if (mode == FilePermissions.S_IFIFO)
 				return UnixExternalPermissions.IFIFO;
 
-			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFLNK))
+			if (mode == FilePermissions.S_IFLNK)
 				return UnixExternalPermissions.IFLNK;
 
-			if (sbuf.st_mode.HasFlag (FilePermissions.S_IFSOCK))
+			if (mode == FilePermissions.S_IFSOCK)
 				return UnixExternalPermissions.IFSOCK;
 
 			return UnixExternalPermissions.IFREG;

@@ -35,7 +35,7 @@ namespace Xamarin.ZipSharp
 			return new WindowsZipArchive (defaultExtractionDir, EnsureOptions (options));
 		}
 
-		static ZipArchive CreateInstanceFromStream (Stream stream, OpenFlags flags = OpenFlags.RDONLY, IPlatformOptions options = null)
+		static ZipArchive CreateInstanceFromStream (Stream stream, OpenFlags flags = OpenFlags.RDOnly, IPlatformOptions options = null)
 		{
 			return new WindowsZipArchive (stream, EnsureOptions (options), flags);
 		}

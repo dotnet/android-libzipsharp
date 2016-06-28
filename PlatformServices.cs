@@ -64,37 +64,37 @@ namespace Xamarin.ZipSharp
 			serviceRegistry.Remove (services);
 		}
 
-		public bool IsDirectory (string path)
+		public bool IsDirectory (ZipArchive archive, string path)
 		{
 			if (String.IsNullOrEmpty (path))
 				return false;
 
 			bool isDir = false;
-			if (CallServices ((IPlatformServices services) => services.IsDirectory (path, out isDir)))
+			if (CallServices ((IPlatformServices services) => services.IsDirectory (archive, path, out isDir)))
 				return isDir;
 
 			return Directory.Exists (path);
 		}
 
-		public bool IsRegularFile (string path)
+		public bool IsRegularFile (ZipArchive archive, string path)
 		{
 			if (String.IsNullOrEmpty (path))
 				return false;
 
 			bool isFile = false;
-			if (CallServices ((IPlatformServices services) => services.IsRegularFile (path, out isFile)))
+			if (CallServices ((IPlatformServices services) => services.IsRegularFile (archive, path, out isFile)))
 				return isFile;
 
 			return File.Exists (path);
 		}
 
-		public EntryPermissions GetFilesystemPermissions (string path)
+		public EntryPermissions GetFilesystemPermissions (ZipArchive archive, string path)
 		{
 			if (String.IsNullOrEmpty (path))
 				throw new ArgumentException ("must not be null or empty", nameof (path));
 
 			EntryPermissions permissions = EntryPermissions.Default;
-			if (!CallServices ((IPlatformServices services) => services.GetFilesystemPermissions (path, out permissions)))
+			if (!CallServices ((IPlatformServices services) => services.GetFilesystemPermissions (archive, path, out permissions)))
 				return EntryPermissions.Default;
 
 			return permissions;
@@ -105,12 +105,12 @@ namespace Xamarin.ZipSharp
 			CallServices ((IPlatformServices services) => services.SetEntryPermissions (archive, index, permissions, isDirectory));
 		}
 
-		public void SetEntryPermissions (string sourcePath, ZipArchive archive, ulong index, EntryPermissions permissions)
+		public void SetEntryPermissions (ZipArchive archive, string sourcePath, ulong index, EntryPermissions permissions)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException ("must not be null or empty", nameof (sourcePath));
 			
-			CallServices ((IPlatformServices services) => services.SetEntryPermissions (sourcePath, archive, index, permissions));
+			CallServices ((IPlatformServices services) => services.SetEntryPermissions (archive, sourcePath, index, permissions));
 		}
 
 		public long StoreSpecialFile (ZipArchive archive, string sourcePath, string archivePath, out CompressionMethod compressionMethod)

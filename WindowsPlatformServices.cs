@@ -37,7 +37,7 @@ namespace Xamarin.ZipSharp
 			return true;
 		}
 
-		public bool IsDirectory (string path, out bool result)
+		public bool IsDirectory (ZipArchive archive, string path, out bool result)
 		{
 			result = false;
 			if (String.IsNullOrEmpty (path))
@@ -47,7 +47,7 @@ namespace Xamarin.ZipSharp
 			return true;
 		}
 
-		public bool IsRegularFile (string path, out bool result)
+		public bool IsRegularFile (ZipArchive archive, string path, out bool result)
 		{
 			result = false;
 			if (String.IsNullOrEmpty (path))
@@ -190,7 +190,7 @@ namespace Xamarin.ZipSharp
 			return true;
 		}
 
-		public bool SetEntryPermissions (string sourcePath, ZipArchive archive, ulong index, EntryPermissions permissions)
+		public bool SetEntryPermissions (ZipArchive archive, string sourcePath, ulong index, EntryPermissions permissions)
 		{
 			return true;
 		}
@@ -203,7 +203,7 @@ namespace Xamarin.ZipSharp
 		public bool StoreSpecialFile (ZipArchive archive, string sourcePath, string archivePath, out long index, out CompressionMethod compressionMethod)
 		{
 			index = -1;
-			compressionMethod = CompressionMethod.DEFAULT;
+			compressionMethod = CompressionMethod.Default;
 			return true;
 		}
 
@@ -212,7 +212,7 @@ namespace Xamarin.ZipSharp
 			return true;
 		}
 
-		public bool GetFilesystemPermissions (string path, out EntryPermissions permissions)
+		public bool GetFilesystemPermissions (ZipArchive archive, string path, out EntryPermissions permissions)
 		{
 			permissions = EntryPermissions.Default;
 
