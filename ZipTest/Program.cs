@@ -83,16 +83,21 @@ namespace ZipTest
 				var text = "Hello World";
 				zip.AddEntry ("/in/archive/data/foo.txt", text, Encoding.UTF8, CompressionMethod.Store);
 
-				using (var fs = File.OpenRead (asmPath)) {
-					zip.AddEntry ("/in/archive/foo/foo.exe", fs, CompressionMethod.Store);
-				}
+				zip.AddEntry ("/in/archive/foo/foo.exe", File.OpenRead (asmPath), CompressionMethod.Store);
 				zip.AddStream (ms, "/in/archive/foo/foo1.txt", method: CompressionMethod.Store);
 			}
 
 			if (File.Exists ("test-archive-write.zip")) {
-				using (var zip = ZipArchive.Open (File.OpenRead ("test-archive-write.zip"))) {
-					foreach (var e in zip) {
-						Console.WriteLine ($" {e.Name} {e.Size} {e.CompressedSize} {e.CompressionMethod}");
+				using (var newzip = ZipArchive.Open ("test-archive-copy.zip", FileMode.Create)) {
+
+					using (var zip = ZipArchive.Open (File.OpenRead ("test-archive-write.zip"))) {
+						foreach (var e in zip) {
+							Console.WriteLine ($" {e.Name} {e.Size} {e.CompressedSize} {e.CompressionMethod}");
+							ms = new MemoryStream ();
+							e.Extract (ms);
+							ms.Position = 0;
+							newzip.AddStream (ms, e.Name, method: CompressionMethod.Store);
+						}
 					}
 				}
 			}

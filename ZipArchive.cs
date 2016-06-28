@@ -44,6 +44,7 @@ namespace Xamarin.ZipSharp
 
 		IntPtr          archive = IntPtr.Zero;
 		bool            disposed;
+		HashSet<object> sources = new HashSet<object> ();
 
 		internal IntPtr ArchivePointer {
 			get { return archive; }
@@ -300,6 +301,7 @@ namespace Xamarin.ZipSharp
 		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
 		public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.Default, bool overwriteExisting = true)
 		{
+			sources.Add (data);
 			string destPath = EnsureArchivePath (archivePath);
 			IntPtr source = Native.zip_source_buffer (archive, data, 0);
 			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
@@ -327,6 +329,7 @@ namespace Xamarin.ZipSharp
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
+			sources.Add (stream);
 			string destPath = EnsureArchivePath (archivePath);
 			var handle = GCHandle.Alloc (stream, GCHandleType.Pinned);
 			IntPtr h = GCHandle.ToIntPtr (handle);
@@ -574,12 +577,15 @@ namespace Xamarin.ZipSharp
 			return new ZipException (Utilities.GetStringFromNativeAnsi (Native.zip_strerror (archive)) ?? "Unknown error", zip_error, system_error);
 		}
 
-		internal unsafe Int64 stream_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd)
+		internal static unsafe Int64 stream_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd)
 		{
 			byte [] buffer = null;
 			var handle = GCHandle.FromIntPtr (state);
-			var stream = (Stream)handle.Target;
-
+			if (!handle.IsAllocated)
+				return -1;
+			var stream = handle.Target as Stream;
+			if (stream == null)
+				return -1;
 			switch (cmd) {
 				case SourceCommand.Stat:
 					if (len < (UInt64)sizeof (Native.zip_stat_t))
@@ -617,9 +623,9 @@ namespace Xamarin.ZipSharp
 						length = (int)(stream.Length - stream.Position);
 					}
 					buffer = new byte [length];
-					stream.Read (buffer, 0, length);
-					Marshal.Copy (buffer, 0, data, length);
-					return length;
+					int bytesRead = stream.Read (buffer, 0, length);
+					Marshal.Copy (buffer, 0, data, bytesRead);
+					return bytesRead;
 
 				case SourceCommand.BeginWrite:
 				case SourceCommand.Open:
@@ -631,7 +637,8 @@ namespace Xamarin.ZipSharp
 					break;
 
 				case SourceCommand.Free:
-					handle.Free ();
+					if (handle.IsAllocated)
+						handle.Free ();
 					break;
 
 				case SourceCommand.Supports:
@@ -681,6 +688,7 @@ namespace Xamarin.ZipSharp
 				return;
 
 			Native.zip_close (archive);
+			sources.Clear ();
 			archive = IntPtr.Zero;
 		}
 
