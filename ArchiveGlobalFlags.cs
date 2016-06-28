@@ -37,7 +37,7 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// Read only -- cannot be cleared
 		/// </summary>
-		RDONLY          = 2u,
+		RDOnly          = 2u,
 	}
 }
 

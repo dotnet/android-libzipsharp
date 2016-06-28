@@ -131,20 +131,20 @@ namespace Xamarin.ZipSharp
 			valid = (StatFlags)stat.valid;
 			
 			// We mustn't free stat.name, it's handled by libzip and freeing it here would cause a crash.
-			Name = GetStatField (StatFlags.NAME, () => Utilities.GetStringFromNativeAnsi (stat.name), String.Empty);
-			Index = GetStatField (StatFlags.INDEX, () => stat.index);
-			Size = GetStatField (StatFlags.SIZE, () => stat.size);
-			CompressedSize = GetStatField (StatFlags.COMP_SIZE, () => stat.comp_size);
+			Name = GetStatField (StatFlags.Name, () => Utilities.GetStringFromNativeAnsi (stat.name), String.Empty);
+			Index = GetStatField (StatFlags.Index, () => stat.index);
+			Size = GetStatField (StatFlags.Size, () => stat.size);
+			CompressedSize = GetStatField (StatFlags.CompSize, () => stat.comp_size);
 			
 			// This value may be overriden on Unix systems if the extended fields with ID 0x000d, 0x5455 or 0x5855 are found for this entry
-			ModificationTime = GetStatField (StatFlags.MTIME, () => Utilities.DateTimeFromUnixTime ((ulong)stat.mtime.ToInt64 ()), Utilities.UnixEpoch);
+			ModificationTime = GetStatField (StatFlags.MTime, () => Utilities.DateTimeFromUnixTime ((ulong)stat.mtime.ToInt64 ()), Utilities.UnixEpoch);
 			CRC = GetStatField (StatFlags.CRC, () => stat.crc);
-			CompressionMethod = GetStatField (StatFlags.COMP_METHOD, () => {
+			CompressionMethod = GetStatField (StatFlags.CompMethod, () => {
 				if (Enum.IsDefined (typeof (CompressionMethod), stat.comp_method))
 					return (CompressionMethod)stat.comp_method;
 				return CompressionMethod.Unknown;
 			});
-			EncryptionMethod = GetStatField (StatFlags.ENCRYPTION_METHOD, () => {
+			EncryptionMethod = GetStatField (StatFlags.EncryptionMethod, () => {
 				if (Enum.IsDefined (typeof (EncryptionMethod), stat.encryption_method))
 					return (EncryptionMethod)stat.encryption_method;
 				return EncryptionMethod.Unknown;

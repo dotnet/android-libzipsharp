@@ -59,16 +59,6 @@ namespace Xamarin.ZipSharp
 			public UInt32 flags;                 /* reserved for future use */ 
 		};
 
-		public const uint ZipStatName             = 0x0001u;
-		public const uint ZipStatIndex            = 0x0002u;
-		public const uint ZipStatSize             = 0x0004u;
-		public const uint ZipStatCompSize         = 0x0008u;
-		public const uint ZipStatMtime            = 0x0010u;
-		public const uint ZipStatCRC              = 0x0020u;
-		public const uint ZipStatCompMethod       = 0x0040u;
-		public const uint ZipStatEncryptionMethod = 0x0080u;
-		public const uint ZipStatFlags            = 0x0100u;
-
 		public delegate Int64 zip_source_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd);
 
 		public static int ZipSourceMakeCommandBitmask (SourceCommand cmd)

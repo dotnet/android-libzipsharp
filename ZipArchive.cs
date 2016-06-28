@@ -586,7 +586,7 @@ namespace Xamarin.ZipSharp
 						return -1;
 					var stat = Native.ZipSourceGetArgs<Native.zip_stat_t> (data, len);
 					stat.size = (UInt64)stream.Length;
-					stat.valid |= (UInt64)Native.ZipStatSize;
+					stat.valid |= (ulong)StatFlags.Size;
 					Marshal.StructureToPtr<Native.zip_stat_t> (stat, data, false);
 					return (Int64)sizeof (Native.zip_stat_t);
 

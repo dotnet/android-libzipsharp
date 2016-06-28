@@ -32,32 +32,32 @@ namespace Xamarin.ZipSharp
 	/// correspond to the <c>ZIP_STAT_*</c> macros in the <c>zip.h</c> header file.
 	/// </summary>
 	[Flags]
-	public enum StatFlags : uint
+	public enum StatFlags : ulong
 	{
 		/// <summary>
 		/// The Name field is valid
 		/// </summary>
-		NAME                   = 0x0001u,
+		Name                   = 0x0001u,
 
 		/// <summary>
 		/// The Index field is valid
 		/// </summary>
-		INDEX                  = 0x0002u,
+		Index                  = 0x0002u,
 
 		/// <summary>
 		/// The Size field is valid
 		/// </summary>
-		SIZE                   = 0x0004u,
+		Size                   = 0x0004u,
 
 		/// <summary>
 		/// The CompressedSize field is valid
 		/// </summary>
-		COMP_SIZE              = 0x0008u,
+		CompSize               = 0x0008u,
 
 		/// <summary>
 		/// The MTime field is valid
 		/// </summary>
-		MTIME                  = 0x0010u,
+		MTime                  = 0x0010u,
 
 		/// <summary>
 		/// The CRC field is valid
@@ -67,16 +67,16 @@ namespace Xamarin.ZipSharp
 		/// <summary>
 		/// The CompressionMethod field is valid
 		/// </summary>
-		COMP_METHOD            = 0x0040u,
+		CompMethod             = 0x0040u,
 
 		/// <summary>
 		/// The EncryptionMethod field is valid
 		/// </summary>
-		ENCRYPTION_METHOD      = 0x0080u,
+		EncryptionMethod       = 0x0080u,
 
 		/// <summary>
 		/// The Flags field is valid
 		/// </summary>
-		FLAGS                  = 0x0100u,
+		Flags                  = 0x0100u,
 	}
 }
