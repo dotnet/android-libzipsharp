@@ -57,7 +57,7 @@ namespace ZipTest
 				zip.EntryExtract += (object sender, EntryExtractEventArgs e) => {
 					ZipEntry ze = e.Entry;
 					if (e.ProcessedSoFar == 0) {
-						Console.Write ($"{(ze.IsDirectory ? "Directory" : "     File")}: {ze.Name} {ze.Size} {ze.CompressedSize} {ze.CompressionMethod} {ze.EncryptionMethod} {ze.CRC:X} {ze.ModificationTime} {ze.ExternalAttributes:X}               ");
+						Console.Write ($"{(ze.IsDirectory ? "Directory" : "     File")}: {ze.FullName} {ze.Size} {ze.CompressedSize} {ze.CompressionMethod} {ze.EncryptionMethod} {ze.CRC:X} {ze.ModificationTime} {ze.ExternalAttributes:X}               ");
 						cursorLeft = Console.CursorLeft;
 					} else if (e.ProcessedSoFar < ze.Size) {
 						Console.SetCursorPosition (cursorLeft, Console.CursorTop);
@@ -95,11 +95,11 @@ namespace ZipTest
 				using (var newzip = ZipArchive.Open ("test-archive-copy.zip", FileMode.Create)) {
 					using (var zip = ZipArchive.Open (File.OpenRead ("test-archive-write.zip"))) {
 						foreach (var e in zip) {
-							Console.WriteLine ($" {e.Name} {e.Size} {e.CompressedSize} {e.CompressionMethod}");
+							Console.WriteLine ($" {e.FullName} {e.Size} {e.CompressedSize} {e.CompressionMethod}");
 							ms = new MemoryStream ();
 							e.Extract (ms);
 							ms.Position = 0;
-							newzip.AddStream (ms, e.Name, method: CompressionMethod.Store);
+							newzip.AddStream (ms, e.FullName, method: CompressionMethod.Store);
 						}
 					}
 				}

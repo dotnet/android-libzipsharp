@@ -59,10 +59,10 @@ namespace Xamarin.Tools.Zip
 		public ulong Index { get; private set; }
 
 		/// <summary>
-		/// Gets the entry name.
+		/// Gets the full entry name.
 		/// </summary>
 		/// <value>The entry name.</value>
-		public string Name { get; private set; }
+		public string FullName { get; private set; }
 
 		/// <summary>
 		/// Gets the uncompressed entry size.
@@ -131,7 +131,7 @@ namespace Xamarin.Tools.Zip
 			valid = (StatFlags)stat.valid;
 			
 			// We mustn't free stat.name, it's handled by libzip and freeing it here would cause a crash.
-			Name = GetStatField (StatFlags.Name, () => Utilities.GetStringFromNativeAnsi (stat.name), String.Empty);
+			FullName = GetStatField (StatFlags.Name, () => Utilities.GetStringFromNativeAnsi (stat.name), String.Empty);
 			Index = GetStatField (StatFlags.Index, () => stat.index);
 			Size = GetStatField (StatFlags.Size, () => stat.size);
 			CompressedSize = GetStatField (StatFlags.CompSize, () => stat.comp_size);
@@ -149,7 +149,7 @@ namespace Xamarin.Tools.Zip
 					return (EncryptionMethod)stat.encryption_method;
 				return EncryptionMethod.Unknown;
 			});
-			IsDirectory = Size == 0 && CompressedSize == 0 && Name.EndsWith ("/", StringComparison.Ordinal);
+			IsDirectory = Size == 0 && CompressedSize == 0 && FullName.EndsWith ("/", StringComparison.Ordinal);
 			
 			byte opsys;
 			uint xattr;
@@ -205,7 +205,7 @@ namespace Xamarin.Tools.Zip
 			if (String.IsNullOrEmpty (destinationDir))
 				destinationDir = String.IsNullOrEmpty (archive.DefaultExtractionDir) ? "." : archive.DefaultExtractionDir;
 			destinationFileName = destinationFileName?.Trim ();
-			string path = Path.Combine (destinationDir, String.IsNullOrEmpty (destinationFileName) ? Name : destinationFileName);
+			string path = Path.Combine (destinationDir, String.IsNullOrEmpty (destinationFileName) ? FullName : destinationFileName);
 			string dir = Path.GetDirectoryName (path);
 			Directory.CreateDirectory (dir);
 
