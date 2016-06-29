@@ -161,8 +161,6 @@ namespace Xamarin.Tools.Zip
 
 		public static UnixExternalPermissions GetFileType (Stat sbuf)
 		{
-			if (sbuf == null)
-				throw new ArgumentNullException (nameof (sbuf));
 			FilePermissions mode = sbuf.st_mode & ~FilePermissions.ALLPERMS;
 			if (mode == FilePermissions.S_IFBLK)
 				return UnixExternalPermissions.IFBLK;
