@@ -429,7 +429,7 @@ namespace Xamarin.Tools.Zip
 				throw new ArgumentNullException (nameof (fileNames));
 
 			foreach (var file in fileNames) {
-				AddFile (file, archivePath: directoryPathInZip);
+				AddFile (file, archivePath: String.IsNullOrEmpty (directoryPathInZip) ? Path.GetFileName (file) : directoryPathInZip);
 			}
 		}
 
