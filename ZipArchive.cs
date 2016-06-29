@@ -83,7 +83,7 @@ namespace Xamarin.ZipSharp
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
-
+			Options = options;
 			Native.zip_error_t errorp;
 			var streamHandle = GCHandle.Alloc (stream, GCHandleType.Pinned);
 			IntPtr h = GCHandle.ToIntPtr (streamHandle);
