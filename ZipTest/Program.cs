@@ -83,12 +83,12 @@ namespace ZipTest
 				zip.AddFile (asmPath);
 				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy.exe");
 				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy2.exe", permissions: EntryPermissions.OwnerRead | EntryPermissions.OwnerWrite);
-				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy3.exe", method: CompressionMethod.Store);
+				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy3.exe", compressionMethod: CompressionMethod.Store);
 				var text = "Hello World";
 				zip.AddEntry ("/in/archive/data/foo.txt", text, Encoding.UTF8, CompressionMethod.Store);
 
 				zip.AddEntry ("/in/archive/foo/foo.exe", File.OpenRead (asmPath), CompressionMethod.Store);
-				zip.AddStream (ms, "/in/archive/foo/foo1.txt", method: CompressionMethod.Store);
+				zip.AddStream (ms, "/in/archive/foo/foo1.txt", compressionMethod: CompressionMethod.Store);
 			}
 
 			if (File.Exists ("test-archive-write.zip")) {
@@ -99,7 +99,7 @@ namespace ZipTest
 							ms = new MemoryStream ();
 							e.Extract (ms);
 							ms.Position = 0;
-							newzip.AddStream (ms, e.FullName, method: CompressionMethod.Store);
+							newzip.AddStream (ms, e.FullName, compressionMethod: CompressionMethod.Store);
 						}
 					}
 				}

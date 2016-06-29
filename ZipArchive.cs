@@ -297,9 +297,9 @@ namespace Xamarin.Tools.Zip
 		/// <param name="data">A byte[] array containing the data to add</param>
 		/// <param name="archivePath">the full path for the entry in the archive.</param>
 		/// <param name="permissions">The permissions which the stream should have when extracted (Unix Only)</param>
-		/// <param name="method">The compression method to use</param>
+		/// <param name="compressionMethod">The compression method to use</param>
 		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
-		public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.Default, bool overwriteExisting = true)
+		public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true)
 		{
 			sources.Add (data);
 			string destPath = EnsureArchivePath (archivePath);
@@ -307,7 +307,7 @@ namespace Xamarin.Tools.Zip
 			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
 			if (index < 0)
 				throw GetErrorException ();
-			if (Native.zip_set_file_compression (archive, (ulong)index, method, 0) < 0)
+			if (Native.zip_set_file_compression (archive, (ulong)index, compressionMethod, 0) < 0)
 				throw GetErrorException ();
 
 			if (permissions == EntryPermissions.Default)
@@ -323,9 +323,9 @@ namespace Xamarin.Tools.Zip
 		/// <param name="stream">The stream to add to the archive.</param>
 		/// <param name="archivePath">The fullpath for the entry in the archive</param>
 		/// <param name="permissions">The permissions which the stream should have when extracted (Unix Only)</param>
-		/// <param name="method">The compression method to use</param>
+		/// <param name="compressionMethod">The compression method to use</param>
 		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
-		public ZipEntry AddStream (Stream stream, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.Default, bool overwriteExisting = true)
+		public ZipEntry AddStream (Stream stream, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true)
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
@@ -337,7 +337,7 @@ namespace Xamarin.Tools.Zip
 			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
 			if (index < 0)
 				throw GetErrorException ();
-			if (Native.zip_set_file_compression (archive, (ulong)index, method, 0) < 0)
+			if (Native.zip_set_file_compression (archive, (ulong)index, compressionMethod, 0) < 0)
 				throw GetErrorException ();
 
 			if (permissions == EntryPermissions.Default)
@@ -353,9 +353,9 @@ namespace Xamarin.Tools.Zip
 		/// <param name="sourcePath">Source path.</param>
 		/// <param name="archivePath">Archive path.</param>
 		/// <param name="permissions">Permissions.</param>
-		/// <param name="method">Method.</param>
+		/// <param name="compressionMethod">Method.</param>
 		/// <param name="overwriteExisting">Overwrite existing.</param>
-		public ZipEntry AddFile (string sourcePath, string archivePath = null, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod method = CompressionMethod.Default, bool overwriteExisting = true)
+		public ZipEntry AddFile (string sourcePath, string archivePath = null, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
@@ -368,11 +368,11 @@ namespace Xamarin.Tools.Zip
 				source = Native.zip_source_file (archive, sourcePath, 0, -1);
 				index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
 			} else {
-				index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out method);
+				index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out compressionMethod);
 			}
 			if (index < 0)
 				throw GetErrorException ();
-			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : method, 0) < 0)
+			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : compressionMethod, 0) < 0)
 				throw GetErrorException ();
 
 			if (permissions == EntryPermissions.Default) {
@@ -390,12 +390,12 @@ namespace Xamarin.Tools.Zip
 		/// </summary>
 		/// <param name="entryName">The name of the entry with in the archive</param>
 		/// <param name="data">A stream containing the data to add to the archive</param>
-		/// <param name="method">The compression method to use</param>
-		public ZipEntry AddEntry (string entryName, Stream data, CompressionMethod method = CompressionMethod.Default)
+		/// <param name="compressionMethod">The compression method to use</param>
+		public ZipEntry AddEntry (string entryName, Stream data, CompressionMethod compressionMethod = CompressionMethod.Default)
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
-			return AddStream (data, entryName, method: method);
+			return AddStream (data, entryName, compressionMethod: compressionMethod);
 		}
 
 		/// <summary>
@@ -407,15 +407,15 @@ namespace Xamarin.Tools.Zip
 		/// <param name="entryName">The name of the entry with in the archive</param>
 		/// <param name="text">The text to add to the entry</param>
 		/// <param name="encoding">The Encoding to use for the data.</param>
-		/// <param name="method">The compression method to use</param>
-		public ZipEntry AddEntry (string entryName, string text, Encoding encoding, CompressionMethod method = CompressionMethod.Default)
+		/// <param name="compressionMethod">The compression method to use</param>
+		public ZipEntry AddEntry (string entryName, string text, Encoding encoding, CompressionMethod compressionMethod = CompressionMethod.Default)
 		{
 			if (string.IsNullOrEmpty (text))
 				throw new ArgumentException ("must not be null or empty", nameof (text));
 
 			if (encoding == null)
 				encoding = Encoding.Default;
-			return AddEntry (encoding.GetBytes (text), entryName, method: method);
+			return AddEntry (encoding.GetBytes (text), entryName, compressionMethod: compressionMethod);
 		}
 
 		/// <summary>
@@ -472,8 +472,8 @@ namespace Xamarin.Tools.Zip
 		/// </summary>
 		/// <param name="folder">The root of the directory to add</param>
 		/// <param name="folderInArchive">The root name of the folder in the zip.</param>
-		/// <param name="method">The compresison method to use when adding files</param>
-		public void AddDirectory (string folder, string folderInArchive, CompressionMethod method = CompressionMethod.Default)
+		/// <param name="compressionMethod">The compresison method to use when adding files</param>
+		public void AddDirectory (string folder, string folderInArchive, CompressionMethod compressionMethod = CompressionMethod.Default)
 		{
 			if (string.IsNullOrEmpty (folder))
 				throw new ArgumentException ("must not be null or empty", nameof (folder));
@@ -483,13 +483,13 @@ namespace Xamarin.Tools.Zip
 
 			string root = folderInArchive;
 			foreach (string fileName in Directory.GetFiles (folder)) {
-				AddFile (fileName, ArchiveNameForFile (fileName, root), method: method);
+				AddFile (fileName, ArchiveNameForFile (fileName, root), compressionMethod: compressionMethod);
 			}
 			foreach (string dir in Directory.GetDirectories (folder)) {
 				var internalDir = dir.Replace ("./", string.Empty).Replace (folder, string.Empty);
 				string fullDirPath = folderInArchive + internalDir;
 				CreateDirectory (fullDirPath, PlatformServices.Instance.GetFilesystemPermissions (this, dir));
-				AddDirectory (dir, fullDirPath, method);
+				AddDirectory (dir, fullDirPath, compressionMethod);
 			}
 		}
 
