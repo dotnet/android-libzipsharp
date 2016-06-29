@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 using System;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// Operation flags, used by NameLocate, Fopen, Stat etc. Enumeration names correspond to the

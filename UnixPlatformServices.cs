@@ -31,7 +31,7 @@ using System.Text;
 using Mono.Unix;
 using Mono.Unix.Native;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	class UnixPlatformServices : IPlatformServices
 	{

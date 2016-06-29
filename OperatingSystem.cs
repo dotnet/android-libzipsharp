@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 using System;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// Operating system on which the archive was created. Enu,meration members correspond to

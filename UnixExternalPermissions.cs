@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 using System;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	// The definitions are taken from InfoZip's unzip sources, from the zipinfo.c
 	// file. unzip is distributed under the InfoZip license based on BSD

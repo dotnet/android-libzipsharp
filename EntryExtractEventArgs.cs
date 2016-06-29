@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 using System;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	public class EntryExtractEventArgs : EventArgs
 	{

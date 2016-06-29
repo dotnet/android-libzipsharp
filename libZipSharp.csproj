@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E248B2CA-303B-4645-ADDC-9D4459D550FD}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Xamarin.ZipSharp</RootNamespace>
+    <RootNamespace>Xamarin.Tools.Zip</RootNamespace>
     <AssemblyName>libZipSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />

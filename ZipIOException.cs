@@ -27,7 +27,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// Zip I/O exception.

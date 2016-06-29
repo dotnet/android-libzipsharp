@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 using System;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// Flags to indicate which fields of the zip stat structure are valid. Enumeration members

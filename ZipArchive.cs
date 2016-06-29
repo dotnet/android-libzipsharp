@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Linq;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// Represents an open ZIP archive.

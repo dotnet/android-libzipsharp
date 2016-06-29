@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 using System;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// Archive open flags. Enumeration members correspond to the <c>ZIP_{ENUM_MEMBER}</c> flags

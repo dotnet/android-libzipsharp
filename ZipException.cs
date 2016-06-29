@@ -26,7 +26,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// A generic ZIP library exception

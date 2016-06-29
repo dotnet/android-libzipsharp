@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 using System;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// Error codes. Enumeration members correspond to the <c>ZIP_ER_*</c> macros in the <c>zip.h</c>

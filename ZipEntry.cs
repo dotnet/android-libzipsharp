@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
       
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// Represents a single entry in the ZIP archive.

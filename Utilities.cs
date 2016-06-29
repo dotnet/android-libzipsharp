@@ -26,7 +26,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	partial class Utilities
 	{

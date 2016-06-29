@@ -33,7 +33,7 @@ using System.Text;
 #if UNIX
 using Mono.Unix.Native;
 #endif
-using Xamarin.ZipSharp;
+using Xamarin.Tools.Zip;
 
 namespace ZipTest
 {

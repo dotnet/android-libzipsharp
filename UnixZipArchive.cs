@@ -27,7 +27,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	public class UnixZipArchive : ZipArchive
 	{

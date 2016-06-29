@@ -3,7 +3,7 @@ using System.IO;
 
 using Mono.Unix.Native;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	public partial class ZipArchive
 	{

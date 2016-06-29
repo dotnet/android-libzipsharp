@@ -27,7 +27,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	class ZipEntryEnumerator : IEnumerator <ZipEntry>
 	{

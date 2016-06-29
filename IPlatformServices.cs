@@ -26,7 +26,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	/// <summary>
 	/// Platform-specific services to manage aspects of the ZIP archive specific to a givem platform/operating system

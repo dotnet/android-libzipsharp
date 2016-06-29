@@ -27,7 +27,7 @@ using System;
 
 using Mono.Unix.Native;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	partial class UnixZipEntry
 	{
