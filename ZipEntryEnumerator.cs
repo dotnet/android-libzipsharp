@@ -61,7 +61,7 @@ namespace Xamarin.Tools.Zip
 				start = false;
 
 			// Calling it each time because the archive can change in the meantime
-			long nentries = archive.NumberOfEntries;
+			long nentries = archive.EntryCount;
 			if (nentries < 0 || index >= (ulong)nentries)
 				return false;
 			return true;

@@ -63,7 +63,7 @@ namespace Xamarin.Tools.Zip
 		/// the archive since it was opened.
 		/// </summary>
 		/// <value>The number of entries. <c>-1</c> is returned if the archive isn't open.</value>
-		public long NumberOfEntries {
+		public long EntryCount {
 			get { return Native.zip_get_num_entries (archive, OperationFlags.None); }
 		}
 

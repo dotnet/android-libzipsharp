@@ -53,7 +53,7 @@ namespace ZipTest
 
 			using (var zip = ZipArchive.Open (args [0], FileMode.Open, "unzipped")) {
 				int cursorLeft = 0;
-				Console.WriteLine ($"Number of entries: {zip.NumberOfEntries}");
+				Console.WriteLine ($"Number of entries: {zip.EntryCount}");
 				zip.EntryExtract += (object sender, EntryExtractEventArgs e) => {
 					ZipEntry ze = e.Entry;
 					if (e.ProcessedSoFar == 0) {
