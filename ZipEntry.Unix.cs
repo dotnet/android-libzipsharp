@@ -33,7 +33,12 @@ namespace Xamarin.Tools.Zip
 	{
 		internal static ZipEntry Create (ZipArchive owner, Native.zip_stat_t stat)
 		{
-			return new UnixZipEntry (owner, stat);
+			if (Environment.OSVersion.Platform == PlatformID.Unix) {
+				return new UnixZipEntry (owner, stat);
+			}
+			else {
+				return new WindowsZipEntry (owner, stat);
+			}
 		}
 	}
 }

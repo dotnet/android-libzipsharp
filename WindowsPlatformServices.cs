@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	public class WindowsPlatformServices : IPlatformServices
 	{

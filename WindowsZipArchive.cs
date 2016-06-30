@@ -26,7 +26,7 @@
 using System;
 using System.IO;
 
-namespace Xamarin.ZipSharp
+namespace Xamarin.Tools.Zip
 {
 	public class WindowsZipArchive : ZipArchive
 	{

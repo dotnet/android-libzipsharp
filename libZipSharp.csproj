@@ -41,7 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Mono.Posix" Condition=" '$(OS)' == 'Unix'" />
+    <Reference Include="Mono.Posix" />
     <Reference Include="nunit.engine">
       <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit.engine.dll</HintPath>
     </Reference>
@@ -95,15 +95,13 @@
     <Compile Include="ZipIOException.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(OS)' != 'Unix'">
+  <ItemGroup>
     <Compile Include="WindowsPlatformOptions.cs" />
     <Compile Include="WindowsPlatformServices.cs" />
     <Compile Include="WindowsZipArchive.cs" />
     <Compile Include="WindowsZipEntry.cs" />
-    <Compile Include="ZipArchive.Windows.cs" />
-    <Compile Include="ZipEntry.Windows.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(OS)' == 'Unix'">
+  <ItemGroup>
     <Compile Include="ZipArchive.Unix.cs" />
     <Compile Include="ZipEntry.Unix.cs" />
     <Compile Include="PlatformServices.Unix.cs" />
