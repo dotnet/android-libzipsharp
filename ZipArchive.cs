@@ -45,6 +45,7 @@ namespace Xamarin.Tools.Zip
 		IntPtr          archive = IntPtr.Zero;
 		bool            disposed;
 		HashSet<object> sources = new HashSet<object> ();
+		static Native.zip_source_callback callback = new Native.zip_source_callback (stream_callback);
 
 		internal IntPtr ArchivePointer {
 			get { return archive; }
@@ -85,9 +86,9 @@ namespace Xamarin.Tools.Zip
 				throw new ArgumentNullException (nameof (options));
 			Options = options;
 			Native.zip_error_t errorp;
-			var streamHandle = GCHandle.Alloc (stream, GCHandleType.Pinned);
+			var streamHandle = GCHandle.Alloc (stream, GCHandleType.Normal);
 			IntPtr h = GCHandle.ToIntPtr (streamHandle);
-			IntPtr source = Native.zip_source_function_create (stream_callback, h, out errorp);
+			IntPtr source = Native.zip_source_function_create (callback, h, out errorp);
 			archive = Native.zip_open_from_source (source, flags, out errorp);
 			if (archive == IntPtr.Zero) {
 				// error;
@@ -331,9 +332,9 @@ namespace Xamarin.Tools.Zip
 				throw new ArgumentNullException (nameof (stream));
 			sources.Add (stream);
 			string destPath = EnsureArchivePath (archivePath);
-			var handle = GCHandle.Alloc (stream, GCHandleType.Pinned);
+			var handle = GCHandle.Alloc (stream, GCHandleType.Normal);
 			IntPtr h = GCHandle.ToIntPtr (handle);
-			IntPtr source = Native.zip_source_function (archive, stream_callback, h);
+			IntPtr source = Native.zip_source_function (archive, callback, h);
 			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
 			if (index < 0)
 				throw GetErrorException ();
@@ -593,7 +594,7 @@ namespace Xamarin.Tools.Zip
 					var stat = Native.ZipSourceGetArgs<Native.zip_stat_t> (data, len);
 					stat.size = (UInt64)stream.Length;
 					stat.valid |= (ulong)StatFlags.Size;
-					Marshal.StructureToPtr<Native.zip_stat_t> (stat, data, false);
+					Marshal.StructureToPtr (stat, data, false);
 					return (Int64)sizeof (Native.zip_stat_t);
 
 				case SourceCommand.Tell:

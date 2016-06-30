@@ -31,7 +31,12 @@ namespace Xamarin.Tools.Zip
 	{
 		partial void RegisterUnixServices ()
 		{
-			RegisterServices (new UnixPlatformServices ());
+			if (Environment.OSVersion.Platform == PlatformID.Unix) {
+				RegisterServices (new UnixPlatformServices ());
+			}
+			else {
+				RegisterServices (new WindowsPlatformServices ());
+			}
 		}
 	}
 }

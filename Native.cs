@@ -68,7 +68,7 @@ namespace Xamarin.Tools.Zip
 
 		public static T ZipSourceGetArgs<T> (IntPtr data, UInt64 len)
 		{
-			return Marshal.PtrToStructure<T> (data);
+			return (T)Marshal.PtrToStructure (data, typeof (T));
 		}
 
 		const string ZIP_LIBNAME = "libzip.dll";
