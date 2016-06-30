@@ -41,7 +41,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Mono.Posix" />
+    <Reference Include="Mono.Posix">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.engine">
       <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit.engine.dll</HintPath>
     </Reference>
