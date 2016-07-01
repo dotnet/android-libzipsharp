@@ -52,11 +52,9 @@ namespace Xamarin.Tools.Zip
 
 			DataValid = false;
 			byte [] data = RawData;
-			Console.WriteLine ($" 3rd gen length == {data?.Length}");
 			if (data?.Length < 5)
 				return;
 
-			Console.WriteLine ($" 3rd gen version == {data [0]}");
 			if (data [0] > 1) // version
 				return;
 
@@ -64,14 +62,12 @@ namespace Xamarin.Tools.Zip
 			byte size = data [1];
 			int index = 2;
 			if (GetID (size, index, data, out id)) {
-				Console.WriteLine ($" UID == {id}");
 				UID = id;
 			}
 			index += size;
 
 			size = data [index++];
 			if (GetID (size, index, data, out id)) {
-				Console.WriteLine ($" GID == {id}");
 				GID = id;
 			}
 
