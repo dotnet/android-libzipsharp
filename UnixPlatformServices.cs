@@ -119,7 +119,6 @@ namespace Xamarin.Tools.Zip
 		{
 			if (fields == null || fields.Count == 0)
 				return;
-			Console.WriteLine ("Setting IDs");
 			if (fieldMaker == null)
 				throw new ArgumentNullException (nameof (fieldMaker));
 
@@ -368,16 +367,13 @@ namespace Xamarin.Tools.Zip
 
 		public bool SetFileProperties (ZipEntry zipEntry, string extractedFilePath, bool throwOnNativeExceptions = true)
 		{
-			Console.WriteLine ($"Setting file properties for: {extractedFilePath}");
 			var entry = zipEntry as UnixZipEntry;
 			if (entry == null)
 				throw new ArgumentException ("Invalid entry type, expected UnixZipEntry", nameof (zipEntry));
 			if (String.IsNullOrEmpty (extractedFilePath))
 				throw new ArgumentException ("must not be null or empty", nameof (extractedFilePath));
 
-			Console.WriteLine ($"  File permissions: {entry.FilePermissions}");
 			int err = Syscall.chmod (extractedFilePath, entry.FilePermissions);
-			Console.WriteLine ($"       err == {err}");
 			if (throwOnNativeExceptions && err < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 
@@ -387,8 +383,6 @@ namespace Xamarin.Tools.Zip
 				acctime = Utilities.TimevalFromDateTime (entry.AccessTime);
 			else
 				acctime = modtime;
-			Console.WriteLine ($"  Modification time: {entry.ModificationTime.ToString ("R")}");
-			Console.WriteLine ($"        Access time: {entry.AccessTime.ToString ("R")}");
 			err = Syscall.utimes (extractedFilePath, new [] { acctime, modtime });
 			if (throwOnNativeExceptions && err < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
@@ -402,8 +396,6 @@ namespace Xamarin.Tools.Zip
 			//
 			uint uid = entry.UID.HasValue ? (uint)entry.UID : unchecked((uint)-1);
 			uint gid = entry.GID.HasValue ? (uint)entry.GID : unchecked((uint)-1);
-			Console.WriteLine ($"  UID: {uid}");
-			Console.WriteLine ($"  GID: {gid}");
 			if (Syscall.chown (extractedFilePath, uid, gid) < 0) {
 				// TODO: log it properly
 				Console.WriteLine ($"Warning: failed to set owner of entry '{extractedFilePath}' ({Stdlib.GetLastError ()}): {Syscall.strerror (Syscall.GetLastError ())}");
