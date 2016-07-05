@@ -271,5 +271,18 @@ namespace Xamarin.Tools.Zip
 			}
 			return bitmap;
 		}
+
+		[DllImport ("kernel32.dll", SetLastError = true)]
+		private static extern bool SetDllDirectory (string lpPathName);
+
+		static Native ()
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+				string executingDirectory = System.IO.Path.GetDirectoryName (typeof(Native).Assembly.Location);
+				if (Environment.Is64BitProcess) {
+					SetDllDirectory (System.IO.Path.Combine (executingDirectory, "x64"));
+				}
+			}
+		}
 	}
 }
