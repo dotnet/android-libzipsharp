@@ -156,6 +156,13 @@ namespace Xamarin.Tools.Zip
 					entry.IsDirectory = false;
 					break;
 
+				case UnixExternalPermissions.IFMT:
+					// Some broken zip archives appear to have 0xF in this field, which corresponds to IFMT
+					// We're going to assume it's a file
+					entry.IsDirectory = false;
+					entry.IsSymlink = false;
+					return FilePermissions.DEFFILEMODE;
+
 				default:
 					// TODO: implement support for the rest of file types
 					// TODO: check what happens if zip with such files is unpacked on Windows
