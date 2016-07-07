@@ -398,7 +398,9 @@ namespace Xamarin.Tools.Zip
 			uint gid = entry.GID.HasValue ? (uint)entry.GID : unchecked((uint)-1);
 			if (Syscall.chown (extractedFilePath, uid, gid) < 0) {
 				// TODO: log it properly
-				Console.WriteLine ($"Warning: failed to set owner of entry '{extractedFilePath}' ({Stdlib.GetLastError ()}): {Syscall.strerror (Syscall.GetLastError ())}");
+				var archive = entry.Archive as UnixZipArchive;
+				if (archive.UnixOptions.VerboseLogging)
+					Console.WriteLine ($"Warning: failed to set owner of entry '{extractedFilePath}' ({Stdlib.GetLastError ()}): {Syscall.strerror (Syscall.GetLastError ())}");
 			}
 			return true;
 		}
