@@ -29,6 +29,8 @@ namespace Xamarin.Tools.Zip
 	public class UnixPlatformOptions : IPlatformOptions
 	{
 		public bool StoreSymlinks { get; set; } = true;
+
+		public bool VerboseLogging { get; set; } = false;
 	}
 }
 
