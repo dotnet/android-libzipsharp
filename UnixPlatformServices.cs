@@ -159,7 +159,7 @@ namespace Xamarin.Tools.Zip
 				default:
 					// TODO: implement support for the rest of file types
 					// TODO: check what happens if zip with such files is unpacked on Windows
-					throw new NotSupportedException ("Files other than regular ones, directories and symlinks aren't supported yet");
+					throw new NotSupportedException ($"Unsupported Permission {perms}. Files other than regular ones, directories and symlinks aren't supported yet");
 			}
 
 			perms = (UnixExternalPermissions)(xattr & (uint)UnixExternalPermissions.IMODE);
