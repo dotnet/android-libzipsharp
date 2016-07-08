@@ -105,6 +105,20 @@ namespace ZipTest
 				}
 			}
 
+			if (File.Exists ("test-archive-addfiles.zip"))
+				File.Delete ("test-archive-addfiles.zip");
+			using (var zip = ZipArchive.Open ("test-archive-addfiles.zip", FileMode.CreateNew)) {
+				var files = new List<string> {
+					asmPath
+				};
+
+				zip.AddFileToDirectory (asmPath, "first/directory", useFileDirectory: true);
+				zip.AddFileToDirectory (asmPath, "second/directory", useFileDirectory: false);
+				zip.AddFiles (files, useFileDirectories: true);
+				zip.AddFiles (files, useFileDirectories: false);
+				zip.AddFiles (files, "some/directory", true);
+				zip.AddFiles (files, "another/directory", false);
+			}
 #if UNIX
 			if (File.Exists ("test-archive-symlinks.zip"))
 				File.Delete ("test-archive-symlinks.zip");

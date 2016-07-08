@@ -278,7 +278,7 @@ namespace Xamarin.Tools.Zip
 		/// Extracts all the entries from the archive and places them in the
 		/// directory indicated by the <paramref name="destinationDirectory"/> parameter. 
 		/// If <paramref name="destinationDirectory"/> is <c>null</c> or empty, the default destination directory
-		/// as passed to <see cref="ZipArchive.Open (string,FileMode,string,bool)"/> is used.
+		/// as passed to <see cref="ZipArchive.Open (string,FileMode,string,bool,IPlatformOptions)"/> is used.
 		/// </summary>
 		/// <returns>The all.</returns>
 		/// <param name="destinationDirectory">Destination directory.</param>
@@ -348,15 +348,53 @@ namespace Xamarin.Tools.Zip
 		}
 
 		/// <summary>
-		/// Adds the file.
+		/// Adds the file to archive directory. The file is added to either the root directory of
+		/// the ZIP archive (if <paramref name="archiveDirectory"/> is <c>null</c> or empty) or to
+		/// the directory named by <paramref name="archiveDirectory"/>. If <paramref name="useFileDirectory"/>
+		/// is <c>true</c> the original file directory part is used to create the full path of the file
+		/// in the archive. If <paramref name="useFileDirectory"/> is <c>false</c>, the original file directory
+		/// part is ignored and the file is placed directly in <paramref name="archiveDirectory"/>. The original
+		/// file name is always preserved, if you need to change it use <see cref="AddFile"/>.
+		/// </summary>
+		/// <returns>The file to add to an archive directory.</returns>
+		/// <param name="sourcePath">Source file path.</param>
+		/// <param name="archiveDirectory">Destination directory in the archive.</param>
+		/// <param name="permissions">Entry permissions.</param>
+		/// <param name="compressionMethod">Compression method.</param>
+		/// <param name="overwriteExisting">If set to <c>true</c> overwrite existing entry in the archive.</param>
+		/// <param name="useFileDirectory">If set to <c>true</c> use file directory part.</param>
+		public ZipEntry AddFileToDirectory (string sourcePath, string archiveDirectory = null,
+											EntryPermissions permissions = EntryPermissions.Default,
+											CompressionMethod compressionMethod = CompressionMethod.Default,
+											bool overwriteExisting = true, bool useFileDirectory = true)
+		{
+			if (String.IsNullOrEmpty (sourcePath))
+				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
+			string destDir = NormalizeArchivePath (true, archiveDirectory);
+			string destFile = useFileDirectory ? GetRootlessPath (sourcePath) : Path.GetFileName (sourcePath);
+			return AddFile (sourcePath, 
+			                String.IsNullOrEmpty (destDir) ? null : destDir + "/" + destFile,
+			                permissions, compressionMethod, overwriteExisting);
+		}
+
+		/// <summary>
+		/// Adds the file to the archive. <paramref name="sourcePath"/> is either a relative or absolute
+		/// path to the file to add to the archive. If <paramref name="sourcePath"/> is an absolute path,
+		/// it will be converted to a relative one by removing the root of the path (<code>/</code> on Unix
+		/// and <code>X://</code> on Windows) and stored using the resulting path in the archive. If, however,
+		/// the <paramref name="archivePath"/> parameter is present it represents a full in-archive (that is -
+		/// without the <code>/</code> or <code>X://</code> part) path of the file including the file name.
 		/// </summary>
 		/// <returns>The file.</returns>
 		/// <param name="sourcePath">Source path.</param>
-		/// <param name="archivePath">Archive path.</param>
+		/// <param name="archivePath">Path in the archive, including file name.</param>
 		/// <param name="permissions">Permissions.</param>
-		/// <param name="compressionMethod">Method.</param>
-		/// <param name="overwriteExisting">Overwrite existing.</param>
-		public ZipEntry AddFile (string sourcePath, string archivePath = null, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true)
+		/// <param name="compressionMethod">Compression method.</param>
+		/// <param name="overwriteExisting">Overwrite existing entries in the archive.</param>
+		public ZipEntry AddFile (string sourcePath, string archivePath = null, 
+		                         EntryPermissions permissions = EntryPermissions.Default, 
+		                         CompressionMethod compressionMethod = CompressionMethod.Default, 
+		                         bool overwriteExisting = true)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
@@ -420,18 +458,65 @@ namespace Xamarin.Tools.Zip
 		}
 
 		/// <summary>
-		/// Add a list of files to the archive
+		/// Add a list of files to the archive. Each entry in <paramref name="fileNames"/> is passed
+		/// to <see cref="AddFiles"/> and stored according to the rules described there.
+		/// If <paramref name="directoryPathInZip"/> is non-null and not empty, it is treated as the 
+		/// either the directory in which to store all the files listed in <paramref name="fileNames"/>
+		/// with their directory part stripped, if <paramref name="useFileDirectories"/> is <c>false</c> or
+		/// with their directory part being used as a subdirectory of <paramref name="directoryPathInZip"/>
 		/// </summary>
-		/// <param name="fileNames">An IEnumerable<stirng> of files to add</param>
+		/// 
+		/// <remarks>
+		/// Assuming <paramref name="directoryPathInZip"/> is <c>my/directory/</c>, and one of the files in
+		/// the <paramref name="fileNames"/> parameter is <c>/path/to/my.file</c>, the following rules apply:
+		/// 
+		/// <list type="bullet">
+		/// <item>
+		/// <term>If <paramref name="useFileDirectories"/> == <c>true</c></term>
+		/// <description>File is stored as <c>my/directory/path/to/my.file</c></description>
+		/// </item>
+		/// <item>
+		/// <term>If <paramref name="useFileDirectories"/> == <c>false</c></term>
+		/// <description>File is stored as <c>my/directory/my.file</c></description>
+		/// </item>
+		/// </list>
+		/// </remarks>
+		/// 
+		/// <param name="fileNames">An IEnumerable&lt;string&gt; of files to add</param>
 		/// <param name="directoryPathInZip">The root directory path in archive.</param>
-		public void AddFiles (IEnumerable<string> fileNames, string directoryPathInZip = null)
+		/// <param name="useFileDirectories">Whether directory part of files in <paramref name="fileNames"/> is used</param>
+		public void AddFiles (IEnumerable<string> fileNames, string directoryPathInZip = null, bool useFileDirectories = true)
 		{
 			if (fileNames == null)
 				throw new ArgumentNullException (nameof (fileNames));
 
-			foreach (var file in fileNames) {
-				AddFile (file, archivePath: String.IsNullOrEmpty (directoryPathInZip) ? Path.GetFileName (file) : directoryPathInZip);
+			string archiveDir = NormalizeArchivePath (true, directoryPathInZip);
+			bool gotArchiveDir = !String.IsNullOrEmpty (archiveDir);
+			foreach (string file in fileNames) {
+				if (String.IsNullOrEmpty (file))
+					continue;
+
+				if (!gotArchiveDir) {
+					AddFile (file);
+					continue;
+				}
+
+				string destFile;
+				if (useFileDirectories)
+					destFile = GetRootlessPath (file);
+				else
+					destFile = Path.GetFileName (file);
+
+				AddFile (file, archivePath: Path.Combine (archiveDir, destFile));
 			}
+		}
+
+		string GetRootlessPath (string path)
+		{
+			if (String.IsNullOrEmpty (path) || !Path.IsPathRooted (path))
+				return path;
+			
+			return path.Remove (0, Path.GetPathRoot (path).Length);
 		}
 
 		long LookupEntry (string entryName, bool caseSensitive)
@@ -535,17 +620,24 @@ namespace Xamarin.Tools.Zip
 				return archivePath;
 
 			if (isDir) {
-				if (archivePath [archivePath.Length - 1] != Path.DirectorySeparatorChar)
+				if (IsDirectorySeparator (archivePath [archivePath.Length - 1])) {
 					archivePath = archivePath + Path.DirectorySeparatorChar;
-			}
-			else if (archivePath [archivePath.Length - 1] == Path.DirectorySeparatorChar)
-					archivePath = archivePath.Substring (0, archivePath.Length - 1);
+				}
+			} else if (IsDirectorySeparator (archivePath [archivePath.Length - 1]))
+				archivePath = archivePath.Substring (0, archivePath.Length - 1);
 
 			if (Path.IsPathRooted (archivePath)) {
 				archivePath = archivePath.Remove (0, Path.GetPathRoot (archivePath).Length);
 			}
 
 			return archivePath.Replace ("\\", "/");
+		}
+
+		bool IsDirectorySeparator (char ch)
+		{
+			// Paths passed to the various methods can include ZIP paths which use / as the
+			// separator char, regardless of the operating system.
+			return ch == '/' || ch == Path.DirectorySeparatorChar;
 		}
 
 		internal ZipEntry ReadEntry (ulong index)
