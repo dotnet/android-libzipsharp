@@ -23,6 +23,7 @@
     </DocumentationFile>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>3021</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -32,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>3021</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' == 'Unix'">
     <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
@@ -41,9 +43,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Mono.Posix">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="nunit.engine">
       <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit.engine.dll</HintPath>
     </Reference>
@@ -96,6 +95,20 @@
     <Compile Include="UnixExternalPermissions.cs" />
     <Compile Include="ZipIOException.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\FilePermissions.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\TypeAttributes.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\MapAttribute.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\Stat.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\Timespec.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\Syscall.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\FileNameMarshaler.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\Stdlib.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\Timeval.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix\UnixMarshal.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\Errno.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix.Native\NativeConvert.generated.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix\UnixEncoding.cs" />
+    <Compile Include="Mono.Posix\Mono.Unix\UnixIOException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="WindowsPlatformOptions.cs" />
@@ -121,6 +134,10 @@
     <Content Include="libZipSharp.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mono.Posix\" />
+    <Folder Include="Mono.Posix\Mono.Unix.Native\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,10 +1,10 @@
 ﻿//
-// UnixZipEntry.Unix.cs
+// Timeval.cs
 //
 // Author:
 //       Marek Habersack <grendel@twistedcode.net>
 //
-// Copyright (c) 2016 Xamarin, Inc (http://xamarin.com)
+// Copyright (c) 2016 Marek Habersack
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,42 +25,43 @@
 // THE SOFTWARE.
 using System;
 
-using Mono.Unix.Native;
-
-namespace Xamarin.Tools.Zip
+namespace Mono.Unix.Native
 {
-	partial class UnixZipEntry
+	[Map ("struct timeval")]
+	struct Timeval
+				: IEquatable<Timeval>
 	{
-		internal const FilePermissions DefaultDirMode = FilePermissions.S_IRUSR | FilePermissions.S_IWUSR | FilePermissions.S_IXUSR |
-														 FilePermissions.S_IRGRP | FilePermissions.S_IXGRP |
-														 FilePermissions.S_IROTH | FilePermissions.S_IXOTH;
-		internal const FilePermissions DefaultFileMode = FilePermissions.S_IRUSR | FilePermissions.S_IWUSR | FilePermissions.S_IRGRP | FilePermissions.S_IROTH;
+		[time_t]
+		public long tv_sec;   // seconds
+		[suseconds_t]
+		public long tv_usec;  // microseconds
 
-		FilePermissions? permissions;
-
-		partial void SetFilePermissions (uint value)
+		public override int GetHashCode ()
 		{
-			if (!Enum.IsDefined (typeof (FilePermissions), value))
-				throw new ArgumentOutOfRangeException (nameof (value), $"value {value} does not map exactly to FilePermissions");
-
-			FilePermissions = (FilePermissions)value;
+			return tv_sec.GetHashCode () ^ tv_usec.GetHashCode ();
 		}
 
-		internal FilePermissions FilePermissions {
-			get {
-				if (permissions.HasValue)
-					return permissions.Value;
-
-				return IsDirectory ? DefaultDirMode : DefaultFileMode;
-			}
-
-			set { permissions = value; }
+		public override bool Equals (object obj)
+		{
+			if (obj == null || obj.GetType () != GetType ())
+				return false;
+			Timeval value = (Timeval)obj;
+			return value.tv_sec == tv_sec && value.tv_usec == tv_usec;
 		}
 
-		uint GetPermissions ()
+		public bool Equals (Timeval value)
 		{
-			return (uint)FilePermissions;
+			return value.tv_sec == tv_sec && value.tv_usec == tv_usec;
+		}
+
+		public static bool operator == (Timeval lhs, Timeval rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+
+		public static bool operator != (Timeval lhs, Timeval rhs)
+		{
+			return !lhs.Equals (rhs);
 		}
 	}
 }
-

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 
-using Mono.Unix.Native;
-
 namespace Xamarin.Tools.Zip
 {
 	public partial class ZipArchive

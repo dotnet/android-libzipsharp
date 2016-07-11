@@ -25,8 +25,6 @@
 // THE SOFTWARE.
 using System;
 
-using Mono.Unix.Native;
-
 namespace Xamarin.Tools.Zip
 {
 	partial class ZipEntry
