@@ -59,6 +59,7 @@ namespace Xamarin.Tools.Zip
 			public UInt32 flags;                 /* reserved for future use */ 
 		};
 
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		public delegate Int64 zip_source_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd);
 
 		public static int ZipSourceMakeCommandBitmask (SourceCommand cmd)
