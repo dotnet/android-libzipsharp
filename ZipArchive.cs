@@ -498,9 +498,9 @@ namespace Xamarin.Tools.Zip
 
 				if (!gotArchiveDir) {
 					if (useFileDirectories)
-						AddFile (GetRootlessPath (file));
+						AddFile (file, GetRootlessPath (file));
 					else
-						AddFile (Path.GetFileName (file));
+						AddFile (file, Path.GetFileName (file));
 					continue;
 				}
 
