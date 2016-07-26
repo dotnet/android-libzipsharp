@@ -302,19 +302,7 @@ namespace Xamarin.Tools.Zip
 		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
 		public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true)
 		{
-			sources.Add (data);
-			string destPath = EnsureArchivePath (archivePath);
-			IntPtr source = Native.zip_source_buffer (archive, data, 0);
-			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
-			if (index < 0)
-				throw GetErrorException ();
-			if (Native.zip_set_file_compression (archive, (ulong)index, compressionMethod, 0) < 0)
-				throw GetErrorException ();
-
-			if (permissions == EntryPermissions.Default)
-				permissions = DefaultFilePermissions;
-			PlatformServices.Instance.SetEntryPermissions (this, (ulong)index, permissions, false);
-			return ReadEntry ((ulong)index);
+			return AddStream (new MemoryStream (data), archivePath, permissions, compressionMethod, overwriteExisting);
 		}
 
 		/// <summary>
