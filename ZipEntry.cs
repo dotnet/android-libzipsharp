@@ -149,7 +149,7 @@ namespace Xamarin.Tools.Zip
 					return (EncryptionMethod)stat.encryption_method;
 				return EncryptionMethod.Unknown;
 			});
-			IsDirectory = Size == 0 && CompressedSize == 0 && FullName.EndsWith ("/", StringComparison.Ordinal);
+			IsDirectory = Size == 0 && FullName.EndsWith ("/", StringComparison.Ordinal);
 			
 			byte opsys;
 			uint xattr;
