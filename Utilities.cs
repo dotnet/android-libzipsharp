@@ -49,7 +49,14 @@ namespace Xamarin.Tools.Zip
 
 		public static DateTime DateTimeFromUnixTime (ulong time)
 		{
-			return UnixEpoch.AddSeconds (time);
+			try {
+				return UnixEpoch.AddSeconds (time);
+			} catch (ArgumentOutOfRangeException) {
+				// Some ZIPs have timestamps larger than 9218762655527012 which
+				// will cause the above code to throw. We'll return the epoch
+				// in such instance
+				return UnixEpoch;
+			}
 		}
 
 		public static ulong UnixTimeFromDateTime (DateTime time)
