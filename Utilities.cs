@@ -24,7 +24,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
+
+using Mono.Unix.Native;
 
 namespace Xamarin.Tools.Zip
 {
@@ -65,6 +68,43 @@ namespace Xamarin.Tools.Zip
 				return 0;
 
 			return (ulong)((time - UnixEpoch).TotalSeconds);
+		}
+
+		public unsafe static IntPtr StringToUtf8StringPtr (string str)
+		{
+			if (str == null)
+				throw new ArgumentNullException (nameof (str));
+
+			var encoding = Encoding.UTF8;
+			int count = encoding.GetByteCount (str);
+			IntPtr memory = Marshal.AllocHGlobal (count + 1);
+			fixed (char *pStr = str)
+				encoding.GetBytes (pStr, str.Length, (byte*)memory, count);
+			*(((byte*)memory) + count) = 0;
+			return memory;
+		}
+
+		public unsafe static string Utf8StringPtrToString (IntPtr utf8Str)
+		{
+			if (utf8Str == IntPtr.Zero)
+				return null;
+
+			byte* ptr = (byte*)utf8Str.ToPointer ();
+			byte* p = ptr;
+			while (*p != 0)
+				p++;
+			var len = (int)(p - ptr);
+			if (len == 0)
+				return String.Empty;
+
+			var bytes = new byte[len];
+			Marshal.Copy (utf8Str, bytes, 0, len);
+			return Encoding.UTF8.GetString (bytes);
+		}
+
+		public static void FreeUtf8StringPtr (IntPtr ptr)
+		{
+			Marshal.FreeHGlobal (ptr);
 		}
 	}
 }
