@@ -387,29 +387,24 @@ namespace Xamarin.Tools.Zip
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
 
-			bool isDir = PlatformServices.Instance.IsDirectory (this, sourcePath);
-			string destPath = EnsureArchivePath (archivePath ?? sourcePath, isDir);
-			long index;
-			IntPtr source;
 			if (PlatformServices.Instance.IsRegularFile (this, sourcePath)) {
-				source = Native.zip_source_file (archive, sourcePath, 0, -1);
-				index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
+				return AddStream (new FileStream (sourcePath, FileMode.Open, FileAccess.Read), archivePath, permissions, compressionMethod, overwriteExisting);
 			} else {
-				index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out compressionMethod);
+				bool isDir = PlatformServices.Instance.IsDirectory (this, sourcePath);
+				string destPath = EnsureArchivePath (archivePath ?? sourcePath, isDir);
+				long index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out compressionMethod);
+				if (index < 0)
+					throw GetErrorException ();
+				if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : compressionMethod, 0) < 0)
+					throw GetErrorException ();
+				if (permissions == EntryPermissions.Default) {
+					permissions = PlatformServices.Instance.GetFilesystemPermissions (this, sourcePath);
+					if (permissions == EntryPermissions.Default)
+						permissions = isDir ? DefaultDirectoryPermissions : DefaultFilePermissions;
+				}
+				PlatformServices.Instance.SetEntryPermissions (this, sourcePath, (ulong)index, permissions);
+				return ReadEntry ((ulong)index);
 			}
-			if (index < 0)
-				throw GetErrorException ();
-			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : compressionMethod, 0) < 0)
-				throw GetErrorException ();
-
-			if (permissions == EntryPermissions.Default) {
-				permissions = PlatformServices.Instance.GetFilesystemPermissions (this, sourcePath);
-				if (permissions == EntryPermissions.Default)
-					permissions = isDir ? DefaultDirectoryPermissions : DefaultFilePermissions;
-			}
-			PlatformServices.Instance.SetEntryPermissions (this, sourcePath, (ulong)index, permissions);
-
-			return ReadEntry ((ulong)index);
 		}
 
 		/// <summary>
