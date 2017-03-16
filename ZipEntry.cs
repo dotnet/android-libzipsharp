@@ -167,6 +167,16 @@ namespace Xamarin.Tools.Zip
 			PlatformServices.Instance.ReadAndProcessExtraFields (this);
 		}
 
+		/// <summary>
+		/// Delete this entry from the associated archive. An exception is thrown if the entry's index doesn't exist in the archive.
+		/// </summary>
+		/// <exception cref="ZipException">Thrown if the entry's index is invalid for this archive</exception>
+		/// <seealso cref="ZipArchive.DeleteEntry"/>
+		public void Delete ()
+		{
+			archive.DeleteEntry (Index);
+		}
+
 		public void Extract (Stream stream)
 		{
 			var args = new EntryExtractEventArgs {

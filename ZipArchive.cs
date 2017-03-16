@@ -388,7 +388,7 @@ namespace Xamarin.Tools.Zip
 				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
 
 			if (PlatformServices.Instance.IsRegularFile (this, sourcePath)) {
-				return AddStream (new FileStream (sourcePath, FileMode.Open, FileAccess.Read), archivePath, permissions, compressionMethod, overwriteExisting);
+				return AddStream (new FileStream (sourcePath, FileMode.Open, FileAccess.Read), archivePath ?? sourcePath, permissions, compressionMethod, overwriteExisting);
 			} else {
 				bool isDir = PlatformServices.Instance.IsDirectory (this, sourcePath);
 				string destPath = EnsureArchivePath (archivePath ?? sourcePath, isDir);
@@ -495,6 +495,46 @@ namespace Xamarin.Tools.Zip
 
 				AddFile (file, archivePath: Path.Combine (archiveDir, destFile));
 			}
+		}
+
+		/// <summary>
+		/// Deletes the specified entry. If <paramref name="entry"/> is null the request is silently ignored.
+		/// An exception is thrown if the entry's index doesn't exist in the archive.
+		/// </summary>
+		/// <exception cref="ZipException">Thrown if the entry's index is invalid for this archive</exception>
+		/// <param name="entry">Entry to delete.</param>
+		public void DeleteEntry (ZipEntry entry)
+		{
+			if (entry == null)
+				return;
+			DeleteEntry (entry.Index);
+		}
+
+		/// <summary>
+		/// Deletes the named entry. If <paramref name="entryName"/> is null/empty or when the named entry doesn't
+		/// exist in the archive the request is silently ignored.
+		/// An exception is thrown if the entry's index doesn't exist in the archive.
+		/// </summary>
+		/// <exception cref="ZipException">Thrown if the entry's index is invalid for this archive</exception>
+		/// <param name="entryName">Entry name.</param>
+		/// <param name="caseSensitive">If set to <c>true</c> name lookup is case sensitive.</param>
+		public void DeleteEntry (string entryName, bool caseSensitive = false)
+		{
+			long index;
+			if (!ContainsEntry (entryName, out index, caseSensitive))
+				return;
+			DeleteEntry ((ulong)index);
+		}
+
+		/// <summary>
+		/// Deletes the specified entry. An exception is thrown if the entry's index doesn't exist in the archive.
+		/// </summary>
+		/// <exception cref="ZipException">Thrown if the entry's index is invalid for this archive</exception>
+		/// <param name="entryIndex">Entry index.</param>
+		public void DeleteEntry (ulong entryIndex)
+		{
+			if (Native.zip_delete (archive, entryIndex) < 0)
+				throw GetErrorException ();
 		}
 
 		string GetRootlessPath (string path)

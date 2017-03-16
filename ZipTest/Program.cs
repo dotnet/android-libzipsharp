@@ -102,6 +102,25 @@ namespace ZipTest
 							newzip.AddStream (ms, e.FullName, compressionMethod: CompressionMethod.Store);
 						}
 					}
+
+				}
+
+				using (var zip = ZipArchive.Open ("test-archive-copy.zip", FileMode.Open)) {
+					foreach (var e in zip) {
+						switch (e.Index % 3) {
+							case 0:
+								e.Delete ();
+								break;
+
+							case 1:
+								zip.DeleteEntry (e.FullName);
+								break;
+
+							case 2:
+								zip.DeleteEntry (e.Index);
+								break;
+						}
+					}
 				}
 			}
 
