@@ -379,32 +379,32 @@ namespace Xamarin.Tools.Zip
 		/// <param name="permissions">Permissions.</param>
 		/// <param name="compressionMethod">Compression method.</param>
 		/// <param name="overwriteExisting">Overwrite existing entries in the archive.</param>
-		public ZipEntry AddFile (string sourcePath, string archivePath = null, 
-		                         EntryPermissions permissions = EntryPermissions.Default, 
-		                         CompressionMethod compressionMethod = CompressionMethod.Default, 
-		                         bool overwriteExisting = true)
+		public ZipEntry AddFile (string sourcePath, string archivePath = null,
+								 EntryPermissions permissions = EntryPermissions.Default,
+								 CompressionMethod compressionMethod = CompressionMethod.Default,
+								 bool overwriteExisting = true)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
 
-			if (PlatformServices.Instance.IsRegularFile (this, sourcePath)) {
-				return AddStream (new FileStream (sourcePath, FileMode.Open, FileAccess.Read), archivePath ?? sourcePath, permissions, compressionMethod, overwriteExisting);
-			} else {
-				bool isDir = PlatformServices.Instance.IsDirectory (this, sourcePath);
-				string destPath = EnsureArchivePath (archivePath ?? sourcePath, isDir);
-				long index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out compressionMethod);
-				if (index < 0)
-					throw GetErrorException ();
-				if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : compressionMethod, 0) < 0)
-					throw GetErrorException ();
-				if (permissions == EntryPermissions.Default) {
-					permissions = PlatformServices.Instance.GetFilesystemPermissions (this, sourcePath);
-					if (permissions == EntryPermissions.Default)
-						permissions = isDir ? DefaultDirectoryPermissions : DefaultFilePermissions;
-				}
-				PlatformServices.Instance.SetEntryPermissions (this, sourcePath, (ulong)index, permissions);
-				return ReadEntry ((ulong)index);
+			bool isDir = PlatformServices.Instance.IsDirectory (this, sourcePath);
+			if (permissions == EntryPermissions.Default) {
+				permissions = PlatformServices.Instance.GetFilesystemPermissions (this, sourcePath);
+				if (permissions == EntryPermissions.Default)
+					permissions = isDir ? DefaultDirectoryPermissions : DefaultFilePermissions;
 			}
+
+			if (PlatformServices.Instance.IsRegularFile (this, sourcePath))
+				return AddStream (new FileStream (sourcePath, FileMode.Open, FileAccess.Read), archivePath ?? sourcePath, permissions, compressionMethod, overwriteExisting);
+		
+			string destPath = EnsureArchivePath (archivePath ?? sourcePath, isDir);
+			long index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out compressionMethod);
+			if (index < 0)
+				throw GetErrorException ();
+			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : compressionMethod, 0) < 0)
+				throw GetErrorException ();
+			PlatformServices.Instance.SetEntryPermissions (this, sourcePath, (ulong)index, permissions);
+			return ReadEntry ((ulong)index);
 		}
 
 		/// <summary>

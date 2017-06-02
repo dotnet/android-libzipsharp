@@ -83,13 +83,19 @@ namespace Xamarin.Tools.Zip
 
 		public static bool GetFilePermissions (string path, bool followSymlinks, out UnixExternalPermissions filePermissions)
 		{
-			FilePermissions fp;
-			if (!GetFileType (path, followSymlinks, out fp)) {
+			Stat sbuf;
+			if (!StatFile (path, followSymlinks, out sbuf)) {
 				filePermissions = (UnixExternalPermissions)FilePermissions.DEFFILEMODE;
 				return false;
 			}
 
-			filePermissions = 0;
+			filePermissions = MapToUnixExternalPermissions (sbuf.st_mode & FilePermissions.ALLPERMS);
+			return true;
+		}
+
+		static UnixExternalPermissions MapToUnixExternalPermissions (FilePermissions fp)
+		{
+			UnixExternalPermissions filePermissions = 0;
 			if (fp.HasFlag (FilePermissions.S_ISUID))
 				filePermissions |= UnixExternalPermissions.ISUID;
 
@@ -125,8 +131,11 @@ namespace Xamarin.Tools.Zip
 
 			if (fp.HasFlag (FilePermissions.S_IXOTH))
 				filePermissions |= UnixExternalPermissions.IXOTH;
-			
-			return true;
+
+			if (filePermissions == 0)
+				return (UnixExternalPermissions)FilePermissions.DEFFILEMODE;
+
+			return filePermissions;
 		}
 
 		public static bool GetFileType (string path, bool followSymlinks, out FilePermissions fileType)
@@ -185,9 +194,7 @@ namespace Xamarin.Tools.Zip
 
 		public static UnixExternalPermissions GetFilePermissions (Stat sbuf)
 		{
-			var ret = (UnixExternalPermissions)(0);
-
-			return ret;
+			return MapToUnixExternalPermissions (sbuf.st_mode & FilePermissions.ALLPERMS);
 		}
 	}
 }
