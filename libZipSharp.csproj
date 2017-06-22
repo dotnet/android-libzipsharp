@@ -130,8 +130,14 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <PropertyGroup>
+    <DllConfigOutputFileName>libZipSharp.dll.config</DllConfigOutputFileName>
+    <DllConfigOutputFile>$(IntermediateOutputPath)/$(DllConfigOutputFileName)</DllConfigOutputFile>
+    <DllConfigInputFile>$(DllConfigOutputFileName).in</DllConfigInputFile>
+  </PropertyGroup>
   <ItemGroup>
-    <Content Include="libZipSharp.dll.config">
+    <Content Include="$(DllConfigOutputFile)">
+      <Link>$(DllConfigOutputFileName)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -140,5 +146,46 @@
     <Folder Include="Mono.Posix\Mono.Unix.Native\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
+  <Target Name="_DetectUnixOS">
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+    <PropertyGroup>
+      <_UnixFlavorFilePath>$(IntermediateOutputPath).unixFlavor.txt</_UnixFlavorFilePath>
+    </PropertyGroup>
+    <Exec Command="uname -s > $(_UnixFlavorFilePath)" />
+    <ReadLinesFromFile File="$(_UnixFlavorFilePath)">
+        <Output TaskParameter="Lines" PropertyName="UnixFlavor" />
+    </ReadLinesFromFile>
+    <Message Text="Unix flavor is: $(UnixFlavor)" />
+  </Target>
+
+  <Target Name="_GetLibZipNameLinux" Condition=" '$(UnixFlavor)' == 'Linux' ">
+    <PropertyGroup>
+      <_LibZipSonameFilePath>$(IntermediateOutputPath).libZipSoname.txt</_LibZipSonameFilePath>
+    </PropertyGroup>
+    <Exec Command="ldconfig -p | grep libzip | tr -d '&#x09;' | cut -d ' ' -f 1 > $(_LibZipSonameFilePath)" />
+    <ReadLinesFromFile File="$(_LibZipSonameFilePath)">
+        <Output TaskParameter="Lines" PropertyName="LibZipSoname" />
+    </ReadLinesFromFile>
+    <Message Text="libzip name is: $(LibZipSoname)" />
+  </Target>
+
+  <Target Name="_UpdateDllConfigLinux" Condition=" '$(UnixFlavor)' == 'Linux' ">
+    <Exec Command="sed -e 's;@LINUX_SONAME@;$(LibZipSoname);g' &lt; $(DllConfigInputFile) > $(DllConfigOutputFile)" />
+  </Target>
+
+  <Target Name="_UpdateDllConfigDarwin" Condition=" '$(UnixFlavor)' == 'Darwin' ">
+    <Exec Command="sed -e 's;@LINUX_SONAME@;libzip.so;g' &lt; $(DllConfigInputFile) > $(DllConfigOutputFile)" />
+  </Target>
+
+  <PropertyGroup>
+    <BuildDependsOn>
+      _DetectUnixOS;
+      _GetLibZipNameLinux;
+      _UpdateDllConfigLinux;
+      _UpdateDllConfigDarwin;
+      $(BuildDependsOn)
+    </BuildDependsOn>
+  </PropertyGroup>
 </Project>
 
