@@ -163,7 +163,7 @@
     <PropertyGroup>
       <_LibZipSonameFilePath>$(IntermediateOutputPath).libZipSoname.txt</_LibZipSonameFilePath>
     </PropertyGroup>
-    <Exec Command="ldconfig -p | grep libzip | tr -d '&#x09;' | cut -d ' ' -f 1 > $(_LibZipSonameFilePath)" />
+    <Exec Command="ldconfig -p | grep libzip | tr -d '&#x09;' | cut -d ' ' -f 1 | head -n 1 > $(_LibZipSonameFilePath)" />
     <ReadLinesFromFile File="$(_LibZipSonameFilePath)">
         <Output TaskParameter="Lines" PropertyName="LibZipSoname" />
     </ReadLinesFromFile>
