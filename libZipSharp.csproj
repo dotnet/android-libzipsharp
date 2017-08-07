@@ -147,7 +147,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 
-  <Target Name="_DetectUnixOS">
+  <Target Name="_DetectUnixOS" Condition=" '$(OS)' == 'Unix'">
     <MakeDir Directories="$(IntermediateOutputPath)" />
     <PropertyGroup>
       <_UnixFlavorFilePath>$(IntermediateOutputPath).unixFlavor.txt</_UnixFlavorFilePath>
@@ -178,12 +178,19 @@
     <Exec Command="sed -e 's;@LINUX_SONAME@;libzip.so;g' &lt; $(DllConfigInputFile) > $(DllConfigOutputFile)" />
   </Target>
 
+  <Target Name="_UpdateDllConfigNotUnix" Condition=" '$(OS)' != 'Unix'">
+    <!--other platforms such as Windows, could create an empty file-->
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+    <Touch Files="$(DllConfigOutputFile)" AlwaysCreate="True" />
+  </Target>
+
   <PropertyGroup>
     <BuildDependsOn>
       _DetectUnixOS;
       _GetLibZipNameLinux;
       _UpdateDllConfigLinux;
       _UpdateDllConfigDarwin;
+      _UpdateDllConfigNotUnix;
       $(BuildDependsOn)
     </BuildDependsOn>
   </PropertyGroup>
