@@ -136,7 +136,9 @@ namespace ZipTest
 
 				zip.AddFileToDirectory (asmPath, "first/directory", useFileDirectory: true);
 				zip.AddFileToDirectory (asmPath, "second/directory", useFileDirectory: false);
+#if UNIX
 				zip.AddFileToDirectory ("/usr/bin/zip", "executables", useFileDirectory: false);
+#endif
 				zip.AddFiles (files, useFileDirectories: true);
 				zip.AddFiles (files, useFileDirectories: false);
 				zip.AddFiles (files, "some/directory", true);
