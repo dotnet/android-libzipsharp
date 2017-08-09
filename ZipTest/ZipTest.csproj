@@ -42,6 +42,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\bin\Windows_NT\$(Configuration)\libzip.dll" Condition=" '$(OS)' == 'Windows_NT'">
+      <Link>libzip.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\bin\Windows_NT\$(Configuration)\zlib.dll" Condition=" '$(OS)' == 'Windows_NT'">
+      <Link>zlib.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\libZipSharp.csproj">
       <Project>{E248B2CA-303B-4645-ADDC-9D4459D550FD}</Project>
       <Name>libZipSharp</Name>
