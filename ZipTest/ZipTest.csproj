@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>ZipTest</RootNamespace>
     <AssemblyName>ZipTest</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Mono.Posix" />
+    <Reference Include="Mono.Posix" Condition=" '$(OS)' == 'Unix'" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
