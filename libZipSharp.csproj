@@ -184,6 +184,11 @@
     <Touch Files="$(DllConfigOutputFile)" AlwaysCreate="True" />
   </Target>
 
+  <Target Name="_CopyLibZipForWindows" Condition=" '$(OS)' == 'Windows_NT'">
+    <Copy SourceFiles="$(ProjectDir)packages\libzip.redist.1.1.2.7\build\native\bin\x64\v140\Release\zip.dll" DestinationFiles="$(OutDir)libzip.dll" />
+    <Copy SourceFiles="$(ProjectDir)packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\bin\v140\x64\Release\dynamic\stdcall\zlib.dll" DestinationFiles="$(OutDir)zlib.dll" />
+  </Target>
+
   <PropertyGroup>
     <BuildDependsOn>
       _DetectUnixOS;
@@ -191,6 +196,7 @@
       _UpdateDllConfigLinux;
       _UpdateDllConfigDarwin;
       _UpdateDllConfigNotUnix;
+      _CopyLibZipForWindows;
       $(BuildDependsOn)
     </BuildDependsOn>
   </PropertyGroup>

@@ -56,7 +56,10 @@ namespace ZipTest
 				Console.WriteLine ($"Number of entries: {zip.EntryCount}");
 				zip.EntryExtract += (object sender, EntryExtractEventArgs e) => {
 					ZipEntry ze = e.Entry;
-					if (e.ProcessedSoFar == 0) {
+					if (Console.IsOutputRedirected) {
+						if (e.ProcessedSoFar == 0)
+							Console.Write ($"{(ze.IsDirectory ? "Directory" : "     File")}: {ze.FullName} {ze.Size} {ze.CompressedSize} {ze.CompressionMethod} {ze.EncryptionMethod} {ze.CRC:X} {ze.ModificationTime} {ze.ExternalAttributes:X}               ");
+					} else if (e.ProcessedSoFar == 0) {
 						Console.Write ($"{(ze.IsDirectory ? "Directory" : "     File")}: {ze.FullName} {ze.Size} {ze.CompressedSize} {ze.CompressionMethod} {ze.EncryptionMethod} {ze.CRC:X} {ze.ModificationTime} {ze.ExternalAttributes:X}               ");
 						cursorLeft = Console.CursorLeft;
 					} else if (e.ProcessedSoFar < ze.Size) {
@@ -133,7 +136,9 @@ namespace ZipTest
 
 				zip.AddFileToDirectory (asmPath, "first/directory", useFileDirectory: true);
 				zip.AddFileToDirectory (asmPath, "second/directory", useFileDirectory: false);
+#if UNIX
 				zip.AddFileToDirectory ("/usr/bin/zip", "executables", useFileDirectory: false);
+#endif
 				zip.AddFiles (files, useFileDirectories: true);
 				zip.AddFiles (files, useFileDirectories: false);
 				zip.AddFiles (files, "some/directory", true);
