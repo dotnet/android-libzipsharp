@@ -178,15 +178,17 @@
     <Exec Command="sed -e 's;@LINUX_SONAME@;libzip.so;g' &lt; $(DllConfigInputFile) > $(DllConfigOutputFile)" />
   </Target>
 
-  <Target Name="_UpdateDllConfigNotUnix" Condition=" '$(OS)' != 'Unix'">
+  <Target Name="_UpdateDllConfigNotUnix" Condition=" '$(OS)' != 'Unix' ">
     <!--other platforms such as Windows, could create an empty file-->
     <MakeDir Directories="$(IntermediateOutputPath)" />
     <Touch Files="$(DllConfigOutputFile)" AlwaysCreate="True" />
   </Target>
 
-  <Target Name="_CopyLibZipForWindows" Condition=" '$(OS)' == 'Windows_NT'">
-    <Copy SourceFiles="$(ProjectDir)packages\libzip.redist.1.1.2.7\build\native\bin\x64\v140\Release\zip.dll" DestinationFiles="$(OutDir)libzip.dll" />
-    <Copy SourceFiles="$(ProjectDir)packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\bin\v140\x64\Release\dynamic\stdcall\zlib.dll" DestinationFiles="$(OutDir)zlib.dll" />
+  <Target Name="_CopyLibZipForWindows" Condition=" '$(OS)' == 'Windows_NT' ">
+    <Copy SourceFiles="$(ProjectDir)packages\libzip.redist.1.1.2.7\build\native\bin\Win32\v140\Release\zip.dll" DestinationFiles="$(OutDir)libzip.dll" />
+    <Copy SourceFiles="$(ProjectDir)packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\bin\v140\Win32\Release\dynamic\cdecl\zlib.dll" DestinationFiles="$(OutDir)zlib.dll" />
+    <Copy SourceFiles="$(ProjectDir)packages\libzip.redist.1.1.2.7\build\native\bin\x64\v140\Release\zip.dll" DestinationFiles="$(OutDir)x64\libzip.dll" />
+    <Copy SourceFiles="$(ProjectDir)packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\bin\v140\x64\Release\dynamic\cdecl\zlib.dll" DestinationFiles="$(OutDir)x64\zlib.dll" />
   </Target>
 
   <PropertyGroup>
