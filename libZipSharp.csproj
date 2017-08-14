@@ -147,7 +147,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 
-  <Target Name="_DetectUnixOS" Condition=" '$(OS)' == 'Unix'">
+  <Target Name="_DetectUnixOS" Condition=" '$(OS)' == 'Unix' Or  '$(OS)' == 'Darwin' ">
     <MakeDir Directories="$(IntermediateOutputPath)" />
     <PropertyGroup>
       <_UnixFlavorFilePath>$(IntermediateOutputPath).unixFlavor.txt</_UnixFlavorFilePath>
