@@ -40,3 +40,6 @@ Thumbs.db
 *.dotCover
 archives
 libZipSharp.dll.config
+
+#VS 2017
+.vs/
