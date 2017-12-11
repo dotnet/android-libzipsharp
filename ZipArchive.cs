@@ -44,7 +44,7 @@ namespace Xamarin.Tools.Zip
 
 		IntPtr          archive = IntPtr.Zero;
 		bool            disposed;
-		HashSet<object> sources = new HashSet<object> ();
+		HashSet<IDisposable>    sources = new HashSet<IDisposable> ();
 		static Native.zip_source_callback callback = new Native.zip_source_callback (stream_callback);
 
 		internal IntPtr ArchivePointer {
@@ -807,6 +807,9 @@ namespace Xamarin.Tools.Zip
 				return;
 
 			Native.zip_close (archive);
+			foreach (var s in sources) {
+				s.Dispose ();
+			}
 			sources.Clear ();
 			archive = IntPtr.Zero;
 		}
