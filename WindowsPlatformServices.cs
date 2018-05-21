@@ -185,14 +185,34 @@ namespace Xamarin.Tools.Zip
 			}
 		}
 
-		public bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions permissions, bool isDirectory)
+		public bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions requestedPermissions, bool isDirectory)
 		{
-			return true;
+			return SetEntryPermissions (archive, index, requestedPermissions, isDirectory ? UnixExternalPermissions.IFDIR : UnixExternalPermissions.IFREG);
 		}
 
-		public bool SetEntryPermissions (ZipArchive archive, string sourcePath, ulong index, EntryPermissions permissions)
+		public bool SetEntryPermissions (ZipArchive zipArchive, string sourcePath, ulong index, EntryPermissions requestedPermissions)
 		{
-			return true;
+			var archive = zipArchive as WindowsZipArchive;
+			if (archive == null)
+				throw new ArgumentException ("must be an instance of WindowsZipArchive", nameof (zipArchive));
+			UnixExternalPermissions ftype = UnixExternalPermissions.IFREG;
+
+			if (!String.IsNullOrEmpty (sourcePath)) {
+				UnixExternalPermissions ft;
+				if (Utilities.GetFileType (sourcePath, false, out ft))
+					ftype = ft;
+			}
+
+			return SetEntryPermissions (archive, index, requestedPermissions, ftype);
+		}
+
+		bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions requestedPermissions, UnixExternalPermissions unixPermissions)
+		{
+			var windowsArchive = archive as WindowsZipArchive;
+			if (windowsArchive == null)
+				throw new InvalidOperationException ("Expected instance of WindowsZipArchive");
+
+			return windowsArchive.SetEntryUnixPermissions (index, requestedPermissions, unixPermissions);
 		}
 
 		public bool SetFileProperties (ZipEntry entry, string extractedFilePath, bool throwOnNativeErrors)

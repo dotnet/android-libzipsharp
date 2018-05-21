@@ -46,6 +46,13 @@ namespace Xamarin.Tools.Zip
 		internal WindowsZipArchive (Stream stream, WindowsPlatformOptions options, OpenFlags flags) : base (stream, options, flags)
 		{
 		}
+
+		internal bool SetEntryUnixPermissions (ulong index, EntryPermissions requestedPermissions, UnixExternalPermissions unixPermissions)
+		{
+			var permissions = (uint)requestedPermissions | (uint)unixPermissions;
+			int ret = Native.zip_file_set_external_attributes (ArchivePointer, index, OperationFlags.None, (byte)OperatingSystem.UNIX, permissions << 16);
+			return ret == 0;
+		}
 	}
 }
 
