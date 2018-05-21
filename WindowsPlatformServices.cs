@@ -194,7 +194,7 @@ namespace Xamarin.Tools.Zip
 		{
 			var archive = zipArchive as WindowsZipArchive;
 			if (archive == null)
-				throw new ArgumentException ("must be an instance of UnixZipArchive", nameof (zipArchive));
+				throw new ArgumentException ("must be an instance of WindowsZipArchive", nameof (zipArchive));
 			UnixExternalPermissions ftype = UnixExternalPermissions.IFREG;
 
 			if (!String.IsNullOrEmpty (sourcePath)) {
@@ -210,7 +210,7 @@ namespace Xamarin.Tools.Zip
 		{
 			var windowsArchive = archive as WindowsZipArchive;
 			if (windowsArchive == null)
-				throw new InvalidOperationException ("Expected instance of UnixZipArchive");
+				throw new InvalidOperationException ("Expected instance of WindowsZipArchive");
 
 			return windowsArchive.SetEntryUnixPermissions (index, requestedPermissions, unixPermissions);
 		}
