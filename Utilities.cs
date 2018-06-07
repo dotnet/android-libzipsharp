@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 
@@ -46,6 +47,20 @@ namespace Xamarin.Tools.Zip
 		}
 
 		public static string SanitizeFilePath (string filePath)
+		{
+			return EnsureNotRooted (RemoveRelativePathComponents (filePath));
+		}
+
+		static string EnsureNotRooted (string filePath)
+		{
+			if (!Path.IsPathRooted (filePath))
+				return filePath;
+
+			string root = Path.GetPathRoot (filePath);
+			return EnsureNotRooted (filePath.Substring (root.Length));
+		}
+
+		static string RemoveRelativePathComponents (string filePath)
 		{
 			if (String.IsNullOrEmpty (filePath))
 				return filePath;
