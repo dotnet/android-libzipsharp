@@ -45,6 +45,23 @@ namespace Xamarin.Tools.Zip
 		{
 		}
 
+		public static string SanitizeFilePath (string filePath)
+		{
+			if (String.IsNullOrEmpty (filePath))
+				return filePath;
+
+			if (filePath.IndexOf ('\\') >= 0)
+				filePath = filePath.Replace ('\\', '/');
+			if (filePath.IndexOf ('/') < 0)
+				return filePath;
+
+			int lastRelative = filePath.LastIndexOf ("../");
+			if (lastRelative < 0)
+				return filePath;
+
+			return filePath.Substring (lastRelative + 3);
+		}
+
 		public static string GetStringFromNativeAnsi (IntPtr data)
 		{
 			return Marshal.PtrToStringAnsi (data);

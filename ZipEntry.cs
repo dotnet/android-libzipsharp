@@ -131,7 +131,7 @@ namespace Xamarin.Tools.Zip
 			valid = (StatFlags)stat.valid;
 			
 			// We mustn't free stat.name, it's handled by libzip and freeing it here would cause a crash.
-			FullName = GetStatField (StatFlags.Name, () => Utilities.GetStringFromNativeAnsi (stat.name), String.Empty);
+			FullName = Utilities.SanitizeFilePath (GetStatField (StatFlags.Name, () => Utilities.GetStringFromNativeAnsi (stat.name), String.Empty));
 			Index = GetStatField (StatFlags.Index, () => stat.index);
 			Size = GetStatField (StatFlags.Size, () => stat.size);
 			CompressedSize = GetStatField (StatFlags.CompSize, () => stat.comp_size);
