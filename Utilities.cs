@@ -50,16 +50,22 @@ namespace Xamarin.Tools.Zip
 			if (String.IsNullOrEmpty (filePath))
 				return filePath;
 
+			// Make sure Windows path separators are handled as well. They may not be standard and correct
+			// as far as the ZIP standard is concerned but they still can be used to exploit the
+			// vulnerability
 			if (filePath.IndexOf ('\\') >= 0)
 				filePath = filePath.Replace ('\\', '/');
 			if (filePath.IndexOf ('/') < 0)
 				return filePath;
 
-			int lastRelative = filePath.LastIndexOf ("../");
-			if (lastRelative < 0)
+			int lastRelative = filePath.LastIndexOf ("/../");
+			if (lastRelative < 0) {
+				if (filePath.StartsWith ("../", StringComparison.Ordinal))
+					return filePath.Substring (lastRelative + 3);
 				return filePath;
+			}
 
-			return filePath.Substring (lastRelative + 3);
+			return filePath.Substring (lastRelative + 4);
 		}
 
 		public static string GetStringFromNativeAnsi (IntPtr data)
