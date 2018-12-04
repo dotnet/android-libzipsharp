@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -34,6 +35,15 @@ namespace Xamarin.Tools.Zip
 {
 	partial class Utilities
 	{
+		static readonly string[] RelativePathSegments = {
+			@"/../",
+			@"/..\",
+			@"\../",
+			@"\..\",
+		};
+
+		static readonly char[] PathSeparatorChars = { '/', '\\' };
+
 		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc); // ZIP entries use GMT/UTC
 
 		public static bool IsUnix { get; } = Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix;
@@ -65,17 +75,21 @@ namespace Xamarin.Tools.Zip
 			if (String.IsNullOrEmpty (filePath))
 				return filePath;
 
-			// Make sure Windows path separators are handled as well. They may not be standard and correct
-			// as far as the ZIP standard is concerned but they still can be used to exploit the
-			// vulnerability
-			if (filePath.IndexOf ('\\') >= 0)
-				filePath = filePath.Replace ('\\', '/');
-			if (filePath.IndexOf ('/') < 0)
+			if (filePath.IndexOfAny (PathSeparatorChars) < 0 || filePath.IndexOf ("..", StringComparison.Ordinal) < 0)
 				return filePath;
 
-			int lastRelative = filePath.LastIndexOf ("/../");
+			// Make sure Windows path separators are handled as well. They may not be standard and correct
+			// as far as the ZIP standard is concerned but they still can be used to exploit the zip-slip
+			// vulnerability
+			int lastRelative = -1;
+			foreach (string segment in RelativePathSegments) {
+				lastRelative = filePath.LastIndexOf (segment);
+				if (lastRelative >= 0)
+					break;
+			}
+
 			if (lastRelative < 0) {
-				if (filePath.StartsWith ("../", StringComparison.Ordinal))
+				if (filePath.StartsWith ("../", StringComparison.Ordinal) || filePath.StartsWith ("..\\", StringComparison.Ordinal))
 					return filePath.Substring (lastRelative + 3);
 				return filePath;
 			}

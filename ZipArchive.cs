@@ -617,7 +617,7 @@ namespace Xamarin.Tools.Zip
 			PlatformServices.Instance.SetEntryPermissions (this, (ulong)index, permissions, true);
 		}
 
-		string EnsureArchivePath (string archivePath, bool isDir = false)
+		internal string EnsureArchivePath (string archivePath, bool isDir = false)
 		{
 			string destPath = NormalizeArchivePath (isDir, archivePath);
 			if (String.IsNullOrEmpty (destPath))
@@ -645,6 +645,9 @@ namespace Xamarin.Tools.Zip
 			if (String.IsNullOrEmpty (archivePath))
 				return archivePath;
 
+			if (archivePath.IndexOf ('\\') >= 0)
+				archivePath = archivePath.Replace ("\\", "/");
+
 			if (isDir) {
 				if (IsDirectorySeparator (archivePath [archivePath.Length - 1])) {
 					archivePath = archivePath + Path.DirectorySeparatorChar;
@@ -656,7 +659,7 @@ namespace Xamarin.Tools.Zip
 				archivePath = archivePath.Remove (0, Path.GetPathRoot (archivePath).Length);
 			}
 
-			return archivePath.Replace ("\\", "/");
+			return archivePath;
 		}
 
 		bool IsDirectorySeparator (char ch)
@@ -666,7 +669,12 @@ namespace Xamarin.Tools.Zip
 			return ch == '/' || ch == Path.DirectorySeparatorChar;
 		}
 
-		internal ZipEntry ReadEntry (ulong index)
+		public ZipEntry ReadEntry (string entryName, bool caseSensitive = false)
+		{
+			return ReadEntry ((ulong)LookupEntry (entryName, caseSensitive));
+		}
+
+		public ZipEntry ReadEntry (ulong index)
 		{
 			Native.zip_stat_t stat;
 			int ret = Native.zip_stat_index (archive, index, OperationFlags.None, out stat);

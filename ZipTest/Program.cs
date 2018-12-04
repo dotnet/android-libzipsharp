@@ -69,7 +69,7 @@ namespace ZipTest
 						Console.WriteLine ();
 				};
 				foreach (ZipEntry ze in zip) {
-					ze.Extract ();
+					ze.Extract (useNativeFileName: true);
 				}
 			}
 
@@ -87,6 +87,7 @@ namespace ZipTest
 				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy.exe");
 				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy2.exe", permissions: EntryPermissions.OwnerRead | EntryPermissions.OwnerWrite);
 				zip.AddFile (asmPath, "/in/archive/path/ZipTestCopy3.exe", compressionMethod: CompressionMethod.Store);
+				zip.AddFile (asmPath, "\\invalid/archive\\path/ZipTestCopy4.exe");
 				var text = "Hello World";
 				zip.AddEntry ("/in/archive/data/foo.txt", text, Encoding.UTF8, CompressionMethod.Store);
 
@@ -143,6 +144,7 @@ namespace ZipTest
 				zip.AddFiles (files, useFileDirectories: false);
 				zip.AddFiles (files, "some/directory", true);
 				zip.AddFiles (files, "another/directory", false);
+
 			}
 #if UNIX
 			if (File.Exists ("test-archive-symlinks.zip"))

@@ -43,6 +43,7 @@ namespace Xamarin.Tools.Zip
 		StatFlags                     valid;
 		short                         localExtraFieldsCount;
 		short                         centralExtraFieldsCount;
+		string                        nativeName;
 
 		/// <summary>
 		/// Archive to which this entry belongs
@@ -63,6 +64,13 @@ namespace Xamarin.Tools.Zip
 		/// </summary>
 		/// <value>The entry name.</value>
 		public string FullName { get; private set; }
+
+		/// <summary>
+		/// Gets name of the entry (<see cref="FullName"/>) but reformatted to be a valid filesystem path for
+		/// the current operating system.
+		/// </summary>
+		/// <value>The native operating system entry name</value>
+		public string NativeFullName => GetNativeFileName (FullName);
 
 		/// <summary>
 		/// Gets the uncompressed entry size.
@@ -167,6 +175,25 @@ namespace Xamarin.Tools.Zip
 			PlatformServices.Instance.ReadAndProcessExtraFields (this);
 		}
 
+		string GetNativeFileName (string name)
+		{
+			if (nativeName != null)
+				return nativeName;
+
+			nativeName = FullName?.Replace ( '/', Path.DirectorySeparatorChar)?.Replace ('\\', Path.DirectorySeparatorChar);
+			return nativeName;
+		}
+
+		public void Rename (string newName)
+		{
+			if (String.IsNullOrEmpty (newName))
+				return;
+
+			newName = archive.EnsureArchivePath (newName, IsDirectory);
+			if (Native.zip_rename (archive.ArchivePointer, Index, newName) < 0)
+				throw archive.GetErrorException ();
+		}
+
 		/// <summary>
 		/// Delete this entry from the associated archive. An exception is thrown if the entry's index doesn't exist in the archive.
 		/// </summary>
@@ -209,13 +236,16 @@ namespace Xamarin.Tools.Zip
 		/// <param name="destinationDir">Destination dir.</param>
 		/// <param name="destinationFileName">Destination file name.</param>
 		/// <param name="outputFileMode">Output file mode.</param>
-		public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create)
+		/// <param name="useNativeFileName">Make sure that the file name is converted to the operating system
+		/// native format before extracting</param>
+		public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create, bool useNativeFileName = false)
 		{
 			destinationDir = destinationDir?.Trim ();
 			if (String.IsNullOrEmpty (destinationDir))
 				destinationDir = String.IsNullOrEmpty (archive.DefaultExtractionDir) ? "." : archive.DefaultExtractionDir;
 			destinationFileName = destinationFileName?.Trim ();
-			string path = Path.Combine (destinationDir, String.IsNullOrEmpty (destinationFileName) ? FullName : destinationFileName);
+			string name = useNativeFileName ? NativeFullName : FullName;
+			string path = Path.Combine (destinationDir, String.IsNullOrEmpty (destinationFileName) ? name : destinationFileName);
 			string dir = Path.GetDirectoryName (path);
 			Directory.CreateDirectory (dir);
 
