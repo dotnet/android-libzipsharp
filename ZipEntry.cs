@@ -192,6 +192,8 @@ namespace Xamarin.Tools.Zip
 			newName = archive.EnsureArchivePath (newName, IsDirectory);
 			if (Native.zip_rename (archive.ArchivePointer, Index, newName) < 0)
 				throw archive.GetErrorException ();
+			FullName = newName;
+			nativeName = null;
 		}
 
 		/// <summary>
