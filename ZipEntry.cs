@@ -201,15 +201,16 @@ namespace Xamarin.Tools.Zip
 			}
 			OnExtract (args);
 		}
-		/// <summary>
-		/// Extract this entry in directory specified by <paramref name="destinationDir"/>, optionally changing the entry's name to the
-		/// one given in <paramref name="destinationFileName"/>. The destination file is opened using mode specified in the
-		/// <paramref name="outputFileMode"/> parameter.
-		/// </summary>
-		/// <param name="destinationDir">Destination dir.</param>
-		/// <param name="destinationFileName">Destination file name.</param>
-		/// <param name="outputFileMode">Output file mode.</param>
-		public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create)
+        /// <summary>
+        /// Extract this entry in directory specified by <paramref name="destinationDir"/>, optionally changing the entry's name to the
+        /// one given in <paramref name="destinationFileName"/>. The destination file is opened using mode specified in the
+        /// <paramref name="outputFileMode"/> parameter.
+        /// </summary>
+        /// <param name="destinationDir">Destination dir.</param>
+        /// <param name="destinationFileName">Destination file name.</param>
+        /// <param name="outputFileMode">Output file mode.</param>
+        /// <param name="password">Password of the ZipEntry</param>
+        public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create, string password = null)
 		{
 			destinationDir = destinationDir?.Trim ();
 			if (String.IsNullOrEmpty (destinationDir))
@@ -230,8 +231,8 @@ namespace Xamarin.Tools.Zip
 				OperationFlags flags = OperationFlags.None;
 				IntPtr file = IntPtr.Zero;
 				try {
-					file = Native.zip_fopen_index (archive.ArchivePointer, Index, flags);
-					if (file == IntPtr.Zero)
+                    file = OpenArchive(password, flags);
+                    if (file == IntPtr.Zero)
 						throw archive.GetErrorException ();
 					DoExtract (file, path, outputFileMode, args);
 					PlatformServices.Instance.SetFileProperties (this, path, true);
@@ -381,6 +382,18 @@ namespace Xamarin.Tools.Zip
 				return value ();
 			return deflt;
 		}
-	}
+
+        IntPtr OpenArchive(string password, OperationFlags flags)
+        {
+            IntPtr file;
+
+            if (!String.IsNullOrWhiteSpace(password))
+                file = Native.zip_fopen_index_encrypted(archive.ArchivePointer, Index, flags, password);
+            else
+                file = Native.zip_fopen_index(archive.ArchivePointer, Index, flags);
+
+            return file;
+        }
+    }
 }
 
