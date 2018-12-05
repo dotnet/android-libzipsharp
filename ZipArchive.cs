@@ -282,12 +282,14 @@ namespace Xamarin.Tools.Zip
 		/// </summary>
 		/// <returns>The all.</returns>
 		/// <param name="destinationDirectory">Destination directory.</param>
-		public void ExtractAll (string destinationDirectory = null)
+		/// <param name="password">Password of the ZipEntry</param>
+		public void ExtractAll(string destinationDirectory = null, string password = null)
 		{
-			foreach (ZipEntry ze in this) {
+			foreach (ZipEntry ze in this)
+			{
 				if (ze == null)
 					continue;
-				ze.Extract (destinationDirectory);
+				ze.Extract(destinationDirectory, password);
 			}
 		}
 
