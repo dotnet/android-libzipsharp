@@ -230,6 +230,7 @@ namespace Xamarin.Tools.Zip
 			}
 			OnExtract (args);
 		}
+
 		/// <summary>
 		/// Extract this entry in directory specified by <paramref name="destinationDir"/>, optionally changing the entry's name to the
 		/// one given in <paramref name="destinationFileName"/>. The destination file is opened using mode specified in the
@@ -240,7 +241,8 @@ namespace Xamarin.Tools.Zip
 		/// <param name="outputFileMode">Output file mode.</param>
 		/// <param name="useNativeFileName">Make sure that the file name is converted to the operating system
 		/// native format before extracting</param>
-		public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create, bool useNativeFileName = false)
+		/// <param name="password">Password of the ZipEntry</param>
+		public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create, , bool useNativeFileName = false, string password = null)
 		{
 			destinationDir = destinationDir?.Trim ();
 			if (String.IsNullOrEmpty (destinationDir))
@@ -262,7 +264,7 @@ namespace Xamarin.Tools.Zip
 				OperationFlags flags = OperationFlags.None;
 				IntPtr file = IntPtr.Zero;
 				try {
-					file = Native.zip_fopen_index (archive.ArchivePointer, Index, flags);
+					file = OpenArchive(password, flags);
 					if (file == IntPtr.Zero)
 						throw archive.GetErrorException ();
 					DoExtract (file, path, outputFileMode, args);
@@ -412,6 +414,18 @@ namespace Xamarin.Tools.Zip
 			if (valid.HasFlag (field))
 				return value ();
 			return deflt;
+		}
+
+		IntPtr OpenArchive(string password, OperationFlags flags)
+		{
+			IntPtr file;
+
+			if (!String.IsNullOrWhiteSpace(password))
+				file = Native.zip_fopen_index_encrypted(archive.ArchivePointer, Index, flags, password);
+			else
+				file = Native.zip_fopen_index(archive.ArchivePointer, Index, flags);
+
+			return file;
 		}
 	}
 }
