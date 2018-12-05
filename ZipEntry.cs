@@ -383,17 +383,17 @@ namespace Xamarin.Tools.Zip
 			return deflt;
 		}
 
-        IntPtr OpenArchive(string password, OperationFlags flags)
-        {
-            IntPtr file;
+		IntPtr OpenArchive(string password, OperationFlags flags)
+		{
+			IntPtr file;
 
-            if (!String.IsNullOrWhiteSpace(password))
-                file = Native.zip_fopen_index_encrypted(archive.ArchivePointer, Index, flags, password);
-            else
-                file = Native.zip_fopen_index(archive.ArchivePointer, Index, flags);
+			if (!String.IsNullOrWhiteSpace(password))
+				file = Native.zip_fopen_index_encrypted(archive.ArchivePointer, Index, flags, password);
+			else
+				file = Native.zip_fopen_index(archive.ArchivePointer, Index, flags);
 
-            return file;
-        }
-    }
+			return file;
+		}
+	}
 }
 

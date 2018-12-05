@@ -274,35 +274,35 @@ namespace Xamarin.Tools.Zip
 			return zip;
 		}
 
-        /// <summary>
-        /// Extracts all the entries from the archive and places them in the
-        /// directory indicated by the <paramref name="destinationDirectory"/> parameter. 
-        /// If <paramref name="destinationDirectory"/> is <c>null</c> or empty, the default destination directory
-        /// as passed to <see cref="ZipArchive.Open (string,FileMode,string,bool,IPlatformOptions)"/> is used.
-        /// </summary>
-        /// <returns>The all.</returns>
-        /// <param name="destinationDirectory">Destination directory.</param>
-        /// <param name="password">Password of the ZipEntry</param>
-        public void ExtractAll(string destinationDirectory = null, string password = null)
-        {
-            foreach (ZipEntry ze in this)
-            {
-                if (ze == null)
-                    continue;
-                ze.Extract(destinationDirectory, password);
-            }
-        }
+		/// <summary>
+		/// Extracts all the entries from the archive and places them in the
+		/// directory indicated by the <paramref name="destinationDirectory"/> parameter. 
+		/// If <paramref name="destinationDirectory"/> is <c>null</c> or empty, the default destination directory
+		/// as passed to <see cref="ZipArchive.Open (string,FileMode,string,bool,IPlatformOptions)"/> is used.
+		/// </summary>
+		/// <returns>The all.</returns>
+		/// <param name="destinationDirectory">Destination directory.</param>
+		/// <param name="password">Password of the ZipEntry</param>
+		public void ExtractAll(string destinationDirectory = null, string password = null)
+		{
+			foreach (ZipEntry ze in this)
+			{
+				if (ze == null)
+					continue;
+				ze.Extract(destinationDirectory, password);
+			}
+		}
 
-        /// <summary>
-        /// Adds the byte[] data to the archive.
-        /// </summary>
-        /// <returns>The new ZipEntry for the data</returns>
-        /// <param name="data">A byte[] array containing the data to add</param>
-        /// <param name="archivePath">the full path for the entry in the archive.</param>
-        /// <param name="permissions">The permissions which the stream should have when extracted (Unix Only)</param>
-        /// <param name="compressionMethod">The compression method to use</param>
-        /// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
-        public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true)
+		/// <summary>
+		/// Adds the byte[] data to the archive.
+		/// </summary>
+		/// <returns>The new ZipEntry for the data</returns>
+		/// <param name="data">A byte[] array containing the data to add</param>
+		/// <param name="archivePath">the full path for the entry in the archive.</param>
+		/// <param name="permissions">The permissions which the stream should have when extracted (Unix Only)</param>
+		/// <param name="compressionMethod">The compression method to use</param>
+		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
+		public ZipEntry AddEntry (byte[] data, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true)
 		{
 			return AddStream (new MemoryStream (data), archivePath, permissions, compressionMethod, overwriteExisting);
 		}
