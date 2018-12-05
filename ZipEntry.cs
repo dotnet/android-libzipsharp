@@ -201,16 +201,17 @@ namespace Xamarin.Tools.Zip
 			}
 			OnExtract (args);
 		}
-        /// <summary>
-        /// Extract this entry in directory specified by <paramref name="destinationDir"/>, optionally changing the entry's name to the
-        /// one given in <paramref name="destinationFileName"/>. The destination file is opened using mode specified in the
-        /// <paramref name="outputFileMode"/> parameter.
-        /// </summary>
-        /// <param name="destinationDir">Destination dir.</param>
-        /// <param name="destinationFileName">Destination file name.</param>
-        /// <param name="outputFileMode">Output file mode.</param>
-        /// <param name="password">Password of the ZipEntry</param>
-        public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create, string password = null)
+
+		/// <summary>
+		/// Extract this entry in directory specified by <paramref name="destinationDir"/>, optionally changing the entry's name to the
+		/// one given in <paramref name="destinationFileName"/>. The destination file is opened using mode specified in the
+		/// <paramref name="outputFileMode"/> parameter.
+		/// </summary>
+		/// <param name="destinationDir">Destination dir.</param>
+		/// <param name="destinationFileName">Destination file name.</param>
+		/// <param name="outputFileMode">Output file mode.</param>
+		/// <param name="password">Password of the ZipEntry</param>
+		public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create, string password = null)
 		{
 			destinationDir = destinationDir?.Trim ();
 			if (String.IsNullOrEmpty (destinationDir))
