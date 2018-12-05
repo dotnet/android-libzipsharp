@@ -232,8 +232,8 @@ namespace Xamarin.Tools.Zip
 				OperationFlags flags = OperationFlags.None;
 				IntPtr file = IntPtr.Zero;
 				try {
-                    file = OpenArchive(password, flags);
-                    if (file == IntPtr.Zero)
+					file = OpenArchive(password, flags);
+					if (file == IntPtr.Zero)
 						throw archive.GetErrorException ();
 					DoExtract (file, path, outputFileMode, args);
 					PlatformServices.Instance.SetFileProperties (this, path, true);
