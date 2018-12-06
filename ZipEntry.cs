@@ -242,7 +242,7 @@ namespace Xamarin.Tools.Zip
 		/// <param name="useNativeFileName">Make sure that the file name is converted to the operating system
 		/// native format before extracting</param>
 		/// <param name="password">Password of the ZipEntry</param>
-		public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create, , bool useNativeFileName = false, string password = null)
+		public string Extract (string destinationDir = null, string destinationFileName = null, FileMode outputFileMode = FileMode.Create, bool useNativeFileName = false, string password = null)
 		{
 			destinationDir = destinationDir?.Trim ();
 			if (String.IsNullOrEmpty (destinationDir))
