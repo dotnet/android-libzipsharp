@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('packages\NUnit.3.11.0\build\NUnit.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -44,22 +45,22 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="nunit.engine">
-      <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit.engine.dll</HintPath>
+      <HintPath>packages\NUnit.Engine.3.9.0\lib\nunit.engine.dll</HintPath>
     </Reference>
     <Reference Include="nunit.engine.api">
-      <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit.engine.api.dll</HintPath>
+      <HintPath>packages\NUnit.Engine.3.9.0\lib\nunit.engine.api.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
-      <HintPath>packages\NUnit.Engine.3.2.0\lib\Mono.Cecil.dll</HintPath>
+      <HintPath>packages\NUnit.Engine.3.9.0\lib\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="nunit-agent">
-      <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit-agent.exe</HintPath>
+      <HintPath>packages\NUnit.Engine.3.9.0\lib\nunit-agent.exe</HintPath>
     </Reference>
     <Reference Include="nunit-agent-x86">
-      <HintPath>packages\NUnit.Engine.3.2.0\lib\nunit-agent-x86.exe</HintPath>
+      <HintPath>packages\NUnit.Engine.3.9.0\lib\nunit-agent-x86.exe</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>packages\NUnit.3.2.0\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
