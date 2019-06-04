@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('packages\NUnit.3.11.0\build\NUnit.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,6 +9,8 @@
     <AssemblyName>libZipSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,24 +45,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.engine">
-      <HintPath>packages\NUnit.Engine.3.9.0\lib\nunit.engine.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.engine.api">
-      <HintPath>packages\NUnit.Engine.3.9.0\lib\nunit.engine.api.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>packages\NUnit.Engine.3.9.0\lib\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit-agent">
-      <HintPath>packages\NUnit.Engine.3.9.0\lib\nunit-agent.exe</HintPath>
-    </Reference>
-    <Reference Include="nunit-agent-x86">
-      <HintPath>packages\NUnit.Engine.3.9.0\lib\nunit-agent-x86.exe</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -128,73 +111,63 @@
     <Compile Include="UnixPlatformOptions.cs" />
     <Compile Include="Utilities.Unix.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <PropertyGroup>
     <DllConfigOutputFileName>libZipSharp.dll.config</DllConfigOutputFileName>
     <DllConfigOutputFile>$(IntermediateOutputPath)/$(DllConfigOutputFileName)</DllConfigOutputFile>
     <DllConfigInputFile>$(DllConfigOutputFileName).in</DllConfigInputFile>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="$(DllConfigOutputFile)" Condition=" '$(OS)' != 'Windows_NT' ">
-      <Link>$(DllConfigOutputFileName)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="packages\libzip.redist.1.1.2.7\build\native\bin\Win32\v140\Release\zip.dll" Condition=" '$(OS)' == 'Windows_NT' ">
-      <Link>libzip.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\bin\v140\Win32\Release\dynamic\cdecl\zlib.dll" Condition=" '$(OS)' == 'Windows_NT' ">
-      <Link>zlib.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="packages\libzip.redist.1.1.2.7\build\native\bin\x64\v140\Release\zip.dll" Condition=" '$(OS)' == 'Windows_NT' ">
-      <Link>x64\libzip.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="packages\grpc.dependencies.zlib.redist.1.2.8.10\build\native\bin\v140\x64\Release\dynamic\cdecl\zlib.dll" Condition=" '$(OS)' == 'Windows_NT' ">
-      <Link>x64\zlib.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Folder Include="x64\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Mono.Posix\" />
-    <Folder Include="Mono.Posix\Mono.Unix.Native\" />
+    <PackageReference Include="grpc.dependencies.zlib.redist" GeneratePathProperty="true">
+      <Version>1.2.8.10</Version>
+    </PackageReference>
+    <PackageReference Include="libzip.redist" GeneratePathProperty="true">
+      <Version>1.1.2.7</Version>
+    </PackageReference>
+    <PackageReference Include="NUnit">
+      <Version>3.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="NUnit.Engine">
+      <Version>3.9.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-
   <Target Name="_DetectUnixOS" Condition=" '$(OS)' == 'Unix' Or  '$(OS)' == 'Darwin' ">
     <MakeDir Directories="$(IntermediateOutputPath)" />
     <PropertyGroup>
       <_UnixFlavorFilePath>$(IntermediateOutputPath).unixFlavor.txt</_UnixFlavorFilePath>
     </PropertyGroup>
-    <Exec Command="uname -s > $(_UnixFlavorFilePath)" />
+    <Exec Command="uname -s &gt; $(_UnixFlavorFilePath)" />
     <ReadLinesFromFile File="$(_UnixFlavorFilePath)">
-        <Output TaskParameter="Lines" PropertyName="UnixFlavor" />
+      <Output TaskParameter="Lines" PropertyName="UnixFlavor" />
     </ReadLinesFromFile>
     <Message Text="Unix flavor is: $(UnixFlavor)" />
   </Target>
-
   <Target Name="_GetLibZipNameLinux" Condition=" '$(UnixFlavor)' == 'Linux' ">
     <PropertyGroup>
       <_LibZipSonameFilePath>$(IntermediateOutputPath).libZipSoname.txt</_LibZipSonameFilePath>
     </PropertyGroup>
-    <Exec Command="ldconfig -p | grep libzip | tr -d '&#x09;' | cut -d ' ' -f 1 | head -n 1 > $(_LibZipSonameFilePath)" />
+    <Exec Command="ldconfig -p | grep libzip | tr -d '	' | cut -d ' ' -f 1 | head -n 1 &gt; $(_LibZipSonameFilePath)" />
     <ReadLinesFromFile File="$(_LibZipSonameFilePath)">
-        <Output TaskParameter="Lines" PropertyName="LibZipSoname" />
+      <Output TaskParameter="Lines" PropertyName="LibZipSoname" />
     </ReadLinesFromFile>
     <Message Text="libzip name is: $(LibZipSoname)" />
   </Target>
-
   <Target Name="_UpdateDllConfigLinux" Condition=" '$(UnixFlavor)' == 'Linux' ">
-    <Exec Command="sed -e 's;@LINUX_SONAME@;$(LibZipSoname);g' &lt; $(DllConfigInputFile) > $(DllConfigOutputFile)" />
+    <Exec Command="sed -e 's;@LINUX_SONAME@;$(LibZipSoname);g' &lt; $(DllConfigInputFile) &gt; $(DllConfigOutputFile)" />
   </Target>
-
   <Target Name="_UpdateDllConfigDarwin" Condition=" '$(UnixFlavor)' == 'Darwin' ">
-    <Exec Command="sed -e 's;@LINUX_SONAME@;libzip.so;g' &lt; $(DllConfigInputFile) > $(DllConfigOutputFile)" />
+    <Exec Command="sed -e 's;@LINUX_SONAME@;libzip.so;g' &lt; $(DllConfigInputFile) &gt; $(DllConfigOutputFile)" />
   </Target>
-
+    <Target Name="CopyLibraries" AfterTargets="Build" Condition=" '$(OS)' == 'Windows_NT' ">
+        <MakeDir Directories="$(OutDir)\x64" />
+        <Copy SourceFiles="$(Pkglibzip_redist)\build\native\bin\x64\v140\Release\zip.dll" DestinationFiles="$(OutDir)\x64\libzip.dll" />
+        <Copy SourceFiles="$(Pkglibzip_redist)\build\native\bin\Win32\v140\Release\zip.dll" DestinationFiles="$(OutDir)\libzip.dll" />
+        <Copy SourceFiles="$(Pkggrpc_dependencies_zlib_redist)\build\native\bin\v140\Win32\Release\dynamic\cdecl\zlib.dll" DestinationFiles="$(OutDir)\zlib.dll" />
+        <Copy SourceFiles="$(Pkggrpc_dependencies_zlib_redist)\build\native\bin\v140\x64\Release\dynamic\cdecl\zlib.dll" DestinationFiles="$(OutDir)\x64\zlib.dll" />
+    </Target>
   <PropertyGroup>
     <BuildDependsOn>
       _DetectUnixOS;
@@ -205,4 +178,3 @@
     </BuildDependsOn>
   </PropertyGroup>
 </Project>
-
