@@ -117,6 +117,12 @@
     <DllConfigInputFile>$(DllConfigOutputFileName).in</DllConfigInputFile>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="$(DllConfigOutputFile)" Condition=" '$(OS)' != 'Windows_NT' ">
+      <Link>$(DllConfigOutputFileName)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="x64\" />
   </ItemGroup>
   <ItemGroup>
