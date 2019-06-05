@@ -139,6 +139,24 @@
       <Version>3.9.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(Pkglibzip_redist)\build\native\bin\Win32\v140\Release\zip.dll" Condition=" '$(OS)' == 'Windows_NT' ">
+      <Link>libzip.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(Pkggrpc_dependencies_zlib_redist)\build\native\bin\v140\Win32\Release\dynamic\cdecl\zlib.dll" Condition=" '$(OS)' == 'Windows_NT' ">
+      <Link>zlib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(Pkglibzip_redist)\build\native\bin\x64\v140\Release\zip.dll" Condition=" '$(OS)' == 'Windows_NT' ">
+      <Link>x64\libzip.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(Pkggrpc_dependencies_zlib_redist)\build\native\bin\v140\x64\Release\dynamic\cdecl\zlib.dll" Condition=" '$(OS)' == 'Windows_NT' ">
+      <Link>x64\zlib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="_DetectUnixOS" Condition=" '$(OS)' == 'Unix' Or  '$(OS)' == 'Darwin' ">
     <MakeDir Directories="$(IntermediateOutputPath)" />
@@ -167,13 +185,6 @@
   <Target Name="_UpdateDllConfigDarwin" Condition=" '$(UnixFlavor)' == 'Darwin' ">
     <Exec Command="sed -e 's;@LINUX_SONAME@;libzip.so;g' &lt; $(DllConfigInputFile) &gt; $(DllConfigOutputFile)" />
   </Target>
-    <Target Name="CopyLibraries" AfterTargets="Build" Condition=" '$(OS)' == 'Windows_NT' ">
-        <MakeDir Directories="$(OutDir)\x64" />
-        <Copy SourceFiles="$(Pkglibzip_redist)\build\native\bin\x64\v140\Release\zip.dll" DestinationFiles="$(OutDir)\x64\libzip.dll" />
-        <Copy SourceFiles="$(Pkglibzip_redist)\build\native\bin\Win32\v140\Release\zip.dll" DestinationFiles="$(OutDir)\libzip.dll" />
-        <Copy SourceFiles="$(Pkggrpc_dependencies_zlib_redist)\build\native\bin\v140\Win32\Release\dynamic\cdecl\zlib.dll" DestinationFiles="$(OutDir)\zlib.dll" />
-        <Copy SourceFiles="$(Pkggrpc_dependencies_zlib_redist)\build\native\bin\v140\x64\Release\dynamic\cdecl\zlib.dll" DestinationFiles="$(OutDir)\x64\zlib.dll" />
-    </Target>
   <PropertyGroup>
     <BuildDependsOn>
       _DetectUnixOS;
