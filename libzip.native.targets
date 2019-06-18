@@ -1,0 +1,10 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)**\*.dll" />
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)**\*.dylib" />
+    <None Include="@(_LibZipNativeLibs)">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,43 @@
+jobs:
+- job: macOS
+  pool:
+    vmImage: xcode9-macos10.13
+  steps:
+    - bash: |
+        brew tap xamarin/xamarin-android-windeps
+        brew upgrade https://raw.githubusercontent.com/Homebrew/homebrew-core/a6542037a48a55061a4c319e6bb174b3715f7cbe/Formula/mingw-w64.rb
+        brew install mingw-w64
+        brew install ninja xamarin/xamarin-android-windeps/mingw-zlib
+        git submodule update --init --recursive
+    - bash: |
+        HOSTOS=Darwin ./build_native
+        ./build_windows
+        find build/* | grep libzip
+    - task: NuGetCommand@2
+      displayName: NuGet pack libzip
+      inputs:
+        command: custom
+        arguments: pack libzip.nuspec
+    - task: MSBuild@1
+      displayName: 'Build solution libZipSharp.sln'
+      inputs:
+        solution: libZipSharp.sln
+        configuration: Release
+        msbuildArguments: /restore 
+    - task: MSBuild@1
+      displayName: NuGet pack libZipSharp
+      inputs:
+        solution: libZipSharp.csproj
+        configuration: Release
+        msbuildArguments: /t:Pack
+    - task: CopyFiles@2
+      displayName: Copy nupkg
+      inputs:
+        contents: '*.nupkg'
+        targetFolder: $(Build.ArtifactStagingDirectory)
+    - task: PublishBuildArtifacts@1
+      displayName: upload artifacts
+      inputs:
+        artifactName: libZipSharp Nuget Packages
+        pathtoPublish: $(Build.ArtifactStagingDirectory)
+  
