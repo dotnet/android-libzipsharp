@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>libZipSharp</AssemblyName>
         <AssemblyTitle>libZipSharp</AssemblyTitle>
-        <TargetFrameworks>net45</TargetFrameworks>
+        <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <Deterministic>false</Deterministic>
@@ -15,8 +15,8 @@
         <!-- 
         nuget packaging
         -->
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageId>libZipSharp</PackageId>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <PackageId>Xamarin.LibZipSharp</PackageId>
         <PackageVersion>1.0.0</PackageVersion>
         <Title>libZipSharp</Title>
         <Summary>A managed wrapper (and then some) around libzip (https://libzip.org/)</Summary>
@@ -25,22 +25,26 @@
         <Authors>Marek Habersack, Dean Ellis</Authors>
         <Owners>Microsoft, Xamarin</Owners>
         <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
-        <PackageProjectUrl>https://github.com/grendello/LibZipSharp</PackageProjectUrl>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/grendello/LibZipSharp/master/LICENSE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/xamarin/LibZipSharp</PackageProjectUrl>
+        <PackageLicenseUrl>https://raw.githubusercontent.com/xamarin/LibZipSharp/master/LICENSE</PackageLicenseUrl>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageTags></PackageTags>
         <PackageOutputPath>$(MSBuildThisFileDirectory)</PackageOutputPath>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="libzip.native" Version="0.0.1" PrivateAssets="None" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="libZipSharp.targets" PackagePath="build" Pack="true" />
-        <None Include="libZipSharp.xml" PackagePath="lib\net45" Pack="true" />
+        <None Include="Xamarin.LibZipSharp.targets" PackagePath="build" Pack="true" />
         <None Include="libZipSharp.dll.config" PackagePath="lib\net45" Pack="true">
             <Link>libZipSharp.dll.config</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Include="libZipSharp.dll.config" PackagePath="lib\netstandard2.0" Pack="true">
+            <Link>libZipSharp.dll.config</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Include="build\Darwin\lib\libzip.5.0.dylib" PackagePath="runtimes\osx\native\libzip.5.0.dylib" Pack="true" />
+        <None Include="build\Windows\64\lib\libzip.dll" PackagePath="runtimes\win-x64\native\libzip.dll" Pack="true" />
+        <None Include="build\Windows\32\lib\libzip.dll" PackagePath="runtimes\win-x86\native\libzip.dll" Pack="true" />
         <Compile Remove="ZipTest/**/*" />
+        <Compile Remove="LibZipSharp.UnitTest/**/*" />
     </ItemGroup>
 </Project>
