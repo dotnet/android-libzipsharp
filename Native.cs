@@ -72,7 +72,7 @@ namespace Xamarin.Tools.Zip
 			return (T)Marshal.PtrToStructure (data, typeof (T));
 		}
 
-		const string ZIP_LIBNAME = "libzip.dll";
+		const string ZIP_LIBNAME = "libzip";
 
 		[DllImport (ZIP_LIBNAME, SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr zip_open (IntPtr path, OpenFlags flags, out ErrorCode errorp);

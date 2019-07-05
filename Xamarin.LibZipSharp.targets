@@ -1,0 +1,32 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <LibZipSharpBundleAllNativeLibraries Condition=" '$(LibZipSharpBundleAllNativeLibraries)' == '' ">false</LibZipSharpBundleAllNativeLibraries>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\lib\net45\libZipSharp.dll.config">
+      <Link>libZipSharp.dll.config</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\libzip.dll">
+      <Link>lib64\%(FileName)%(Extension)</Link>
+    </_LibZipNativeLibs>
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x86\native\libzip.dll">
+      <Link>%(FileName)%(Extension)</Link>
+    </_LibZipNativeLibs>
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\osx\native\libzip.dylib">
+      <Link>%(FileName)%(Extension)</Link>
+    </_LibZipNativeLibs>
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\linux-x64\native\libzip.so">
+      <Link>lib64\%(FileName)%(Extension)</Link>
+    </_LibZipNativeLibs>
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\linux-x86\native\libzip.so">
+      <Link>%(FileName)%(Extension)</Link>
+    </_LibZipNativeLibs>
+    <None Include="@(_LibZipNativeLibs)" Condition="'$(LibZipSharpBundleAllNativeLibraries)' == 'True'">
+      <Link>%(Link)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

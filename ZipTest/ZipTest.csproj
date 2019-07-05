@@ -26,8 +26,8 @@
       <Link>x64\libzip.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\build\Darwin\lib\libzip.5.0.dylib" Condition="Exists ('..\build\Darwin\lib\libzip.5.0.dylib')">
-      <Link>libzip.5.0.dylib</Link>
+    <Content Include="..\build\Darwin\lib\libzip.5.0.dylib" Condition="Exists ('..\build\Darwin\lib\libzip.dylib')">
+      <Link>libzip.dylib</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

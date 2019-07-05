@@ -4,68 +4,174 @@ resources:
       type: github
       name: xamarin/yaml-templates
       endpoint: xamarin
-jobs:
-- job: build
-  pool:
-    vmImage: xcode9-macos10.13
-  steps:
-    - bash: |
-        brew tap xamarin/xamarin-android-windeps
-        brew upgrade https://raw.githubusercontent.com/Homebrew/homebrew-core/a6542037a48a55061a4c319e6bb174b3715f7cbe/Formula/mingw-w64.rb
-        brew install mingw-w64
-        brew install ninja xamarin/xamarin-android-windeps/mingw-zlib
-        git submodule update --init --recursive
-    - bash: |
-        HOSTOS=Darwin ./build_native
-        ./build_windows
-        find build/* | grep libzip
-    - task: NuGetCommand@2
-      displayName: NuGet pack libzip
-      inputs:
-        command: custom
-        arguments: pack libzip.nuspec
-    - task: MSBuild@1
-      displayName: 'Build solution libZipSharp.sln'
-      inputs:
-        solution: libZipSharp.sln
-        configuration: Release
-        msbuildArguments: /restore 
-    - task: MSBuild@1
-      displayName: NuGet pack libZipSharp
-      inputs:
-        solution: libZipSharp.csproj
-        configuration: Release
-        msbuildArguments: /t:Pack
-    - task: CopyFiles@2
-      displayName: Copy nupkg
-      inputs:
-        contents: '*.nupkg'
-        targetFolder: $(Build.ArtifactStagingDirectory)
-    - task: PublishBuildArtifacts@1
-      displayName: upload artifacts
-      inputs:
-        artifactName: 'nuget'
-        pathtoPublish: $(Build.ArtifactStagingDirectory)
-
-# only sign the packages when running on Windows, and using the private server which has the certificates
-- ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
-  - job: signing
-    displayName: Signing NuGets
-    dependsOn: build
-    pool:
-      name: VSEng-XamarinCustom
-      demands:
-        - corpnet
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
-    steps:
-      # don't checkout code and sign the packages
-      - checkout: none
-      - template: sign-artifacts.yml@xamarin-templates
-        parameters:
-          targetFolder: '$(Build.ArtifactStagingDirectory)/signed'
-      # publish the signed packages
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Signed NuGets'
-        inputs:
-          artifactName: nuget-signed
-          pathToPublish: '$(Build.ArtifactStagingDirectory)/signed'
+stages:
+  - stage: Build
+    jobs:
+    - job: buildlinux
+      pool:
+        vmImage: ubuntu-16.04
+      steps:
+        - bash: |
+            sudo dpkg --add-architecture i386
+            sudo apt -y update
+            sudo apt -f -u install ninja-build gcc-multilib lib32z1-dev zlib1g-dev libssl-dev libssl1.1:i386 libssl-dev:i386 libc-dev:i386 libc6-dev-i386 -y
+            git submodule update --init --recursive
+          displayName: 'Install Tools'
+        - bash: |
+            ./build_native
+          displayName: 'Build Linux x64'
+        - bash: |
+            PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig ARCH=32 TOOLCHAIN_FILE=../../../linux-32.cmake ./build_native
+            find build/* | grep libzip
+          displayName: 'Build Linux x86'
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.0
+            includeRootFolder: false 
+            archiveType: 7z
+            replaceExistingArchive: true 
+            archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x86.7z
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.0
+            includeRootFolder: false 
+            archiveType: 7z
+            replaceExistingArchive: true 
+            archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x64.7z
+        - task: PublishBuildArtifacts@1
+          displayName: upload artifacts
+          inputs:
+            artifactName: 'native'
+            pathtoPublish: $(Build.ArtifactStagingDirectory)
+    - job: build
+      dependsOn: buildlinux
+      pool:
+        vmImage: xcode9-macos10.13
+      steps:
+        - bash: |
+            brew tap xamarin/xamarin-android-windeps
+            brew upgrade https://raw.githubusercontent.com/Homebrew/homebrew-core/a6542037a48a55061a4c319e6bb174b3715f7cbe/Formula/mingw-w64.rb
+            brew install mingw-w64 p7zip
+            brew install ninja xamarin/xamarin-android-windeps/mingw-zlib
+            git submodule update --init --recursive
+        - bash: |
+            HOSTOS=Darwin ./build_native
+            ./build_windows
+            mkdir -p build/Linux/64
+            mkdir -p build/Linux/32
+            find build/* | grep libzip
+        - task: DownloadBuildArtifacts@0
+          displayName: download artifacts
+          inputs:
+            artifactName: native
+            downloadPath: $(Build.ArtifactStagingDirectory)
+        - task: ExtractFiles@1
+          displayName: Extract 64 bit Linux native
+          inputs:
+            archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-linux-x64.7z
+            destinationFolder: build/Linux/64
+        - task: ExtractFiles@1
+          displayName: Extract 32 bit Linux native
+          inputs:
+            archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-linux-x86.7z
+            destinationFolder: build/Linux/32
+        - bash: |
+            mv build/Linux/32/libzip.so.5.0 build/Linux/32/libzip.so
+            mv build/Linux/64/libzip.so.5.0 build/Linux/64/libzip.so
+          displayName: 'Find libzip'
+        - task: MSBuild@1
+          displayName: 'Build solution libZipSharp.csproj'
+          inputs:
+            solution: libZipSharp.csproj
+            configuration: Release
+            msbuildArguments: /restore 
+        - task: MSBuild@1
+          displayName: NuGet pack libZipSharp
+          inputs:
+            solution: libZipSharp.csproj
+            configuration: Release
+            msbuildArguments: /t:Pack
+        - task: CopyFiles@2
+          displayName: Copy nupkg
+          inputs:
+            contents: '*.nupkg'
+            targetFolder: $(Build.ArtifactStagingDirectory)
+        - task: PublishBuildArtifacts@1
+          displayName: upload artifacts
+          inputs:
+            artifactName: 'nuget'
+            pathtoPublish: $(Build.ArtifactStagingDirectory)
+  - stage: Test
+    dependsOn: Build 
+    jobs:
+    - job: testlinux
+      displayName: 'Test Linux'
+      pool:
+        vmImage: ubuntu-16.04
+      steps:
+        - task: DownloadBuildArtifacts@0
+          displayName: download artifacts
+          inputs:
+            artifactName: NuGet
+            downloadPath: $(Build.SourcesDirectory)
+        - task: MSBuild@1
+          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+          inputs:
+            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            msbuildArguments: /restore /t:RunNunitTests
+    - job: testmacos
+      displayName: 'Test MacOS'
+      pool:
+        vmImage: xcode9-macos10.13
+      steps:
+        - task: DownloadBuildArtifacts@0
+          displayName: download artifacts
+          inputs:
+            artifactName: NuGet
+            downloadPath: $(Build.SourcesDirectory)
+        - task: MSBuild@1
+          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+          inputs:
+            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            msbuildArguments: /restore /t:RunNunitTests
+    - job: testwindows
+      displayName: 'Test Windows'
+      pool:
+        vmImage: windows-2019
+      steps:
+        - task: DownloadBuildArtifacts@0
+          displayName: download artifacts
+          inputs:
+            artifactName: NuGet
+            downloadPath: $(Build.SourcesDirectory)
+        - task: MSBuild@1
+          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+          inputs:
+            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            msbuildArguments: /restore /t:RunNunitTests
+  - stage: Publish
+    dependsOn: Test
+    condition: eq(variables['System.TeamProject'], 'devdiv') # only sign the packages when running on Windows, and using the private server which has the certificates
+    jobs:
+    - job: signing
+      displayName: Signing NuGets
+      pool:
+        name: VSEng-XamarinCustom
+        demands:
+          - corpnet
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
+      steps:
+        # don't checkout code and sign the packages
+        - checkout: none
+        - template: sign-artifacts.yml@xamarin-templates
+          parameters:
+            targetFolder: '$(Build.ArtifactStagingDirectory)/signed'
+        # publish the signed packages
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Signed NuGets'
+          inputs:
+            artifactName: nuget-signed
+            pathToPublish: '$(Build.ArtifactStagingDirectory)/signed'
