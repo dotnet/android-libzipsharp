@@ -46,8 +46,10 @@ jobs:
     - task: CopyFiles@2
       displayName: Copy native
       inputs:
-        contents: '$(Build.ArtifactStagingDirectory)/native/libzip.so'
+        sourceFolder: $(Build.ArtifactStagingDirectory)
+        contents: '**/*.so'
         targetFolder: build/Linux
+        flattenFolders: true
     - task: MSBuild@1
       displayName: 'Build solution libZipSharp.csproj'
       inputs:
