@@ -38,7 +38,7 @@ jobs:
         HOSTOS=Darwin ./build_native
         ./build_windows
         find build/* | grep libzip
-    -task: DownloadBuildArtifacts@0
+    - task: DownloadBuildArtifacts@0
       displayName: download artifacts
       inputs:
         artifactName: native
