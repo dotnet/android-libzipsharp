@@ -54,6 +54,7 @@ jobs:
     - bash: |
         sudo apt -y update
         sudo apt install ninja-build -y
+        git submodule update --init --recursive
       displayName: 'Install Tools'
     - bash: |
         ./build_native
