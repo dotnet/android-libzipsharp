@@ -47,6 +47,18 @@ jobs:
         solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
         configuration: Release
         msbuildArguments: /restore /t:RunNunitTests
+- job: buildlinux
+  pool:
+    vmImage: ubuntu-16.04
+  steps:
+    - bash: |
+        sudo apt -y update
+        sudo apt install ninja-build -y
+      displayName: 'Install Tools'
+    - bash: |
+        HOSTOS=Darwin ./build_native
+        find build/* | grep libzip
+      displayName: 'Build Linux'
 
 # only sign the packages when running on Windows, and using the private server which has the certificates
 - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
