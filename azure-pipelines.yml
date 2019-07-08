@@ -56,7 +56,7 @@ jobs:
         sudo apt install ninja-build -y
       displayName: 'Install Tools'
     - bash: |
-        HOSTOS=Darwin ./build_native
+        ./build_native
         find build/* | grep libzip
       displayName: 'Build Linux'
 
