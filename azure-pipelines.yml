@@ -5,7 +5,26 @@ resources:
       name: xamarin/yaml-templates
       endpoint: xamarin
 jobs:
+- job: buildlinux
+  pool:
+    vmImage: ubuntu-16.04
+  steps:
+    - bash: |
+        sudo apt -y update
+        sudo apt install ninja-build -y
+        git submodule update --init --recursive
+      displayName: 'Install Tools'
+    - bash: |
+        ./build_native
+        find build/* | grep libzip
+      displayName: 'Build Linux'
+    - task: PublishBuildArtifacts@1
+      displayName: upload artifacts
+      inputs:
+        artifactName: 'native'
+        pathtoPublish: build/Linux/lib/libzip.so
 - job: build
+  dependsOn: buildlinux
   pool:
     vmImage: xcode9-macos10.13
   steps:
@@ -47,19 +66,6 @@ jobs:
         solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
         configuration: Release
         msbuildArguments: /restore /t:RunNunitTests
-- job: buildlinux
-  pool:
-    vmImage: ubuntu-16.04
-  steps:
-    - bash: |
-        sudo apt -y update
-        sudo apt install ninja-build -y
-        git submodule update --init --recursive
-      displayName: 'Install Tools'
-    - bash: |
-        ./build_native
-        find build/* | grep libzip
-      displayName: 'Build Linux'
 
 # only sign the packages when running on Windows, and using the private server which has the certificates
 - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
