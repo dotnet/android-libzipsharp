@@ -38,6 +38,16 @@ jobs:
         HOSTOS=Darwin ./build_native
         ./build_windows
         find build/* | grep libzip
+    -task: DownloadBuildArtifacts@0
+      displayName: download artifacts
+      inputs:
+        artifactName: native
+        downloadPath: $(Build.ArtifactStagingDirectory)
+    - task: CopyFiles@2
+      displayName: Copy native
+      inputs:
+        contents: '$(Build.ArtifactStagingDirectory)/libzip.so'
+        targetFolder: build/Linux
     - task: MSBuild@1
       displayName: 'Build solution libZipSharp.csproj'
       inputs:
