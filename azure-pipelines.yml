@@ -78,6 +78,7 @@ stages:
         - bash: |
             mv build/Linux/32/libzip.so.5.0 build/Linux/32/libzip.so
             mv build/Linux/64/libzip.so.5.0 build/Linux/64/libzip.so
+            rm $(Build.ArtifactStagingDirectory)/native/libzip-linux-*.7z
           displayName: 'Find libzip'
         - task: MSBuild@1
           displayName: 'Build solution libZipSharp.csproj'
