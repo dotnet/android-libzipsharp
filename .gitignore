@@ -48,3 +48,4 @@ libZipSharp.xml
 build.log
 build/*
 *.nupkg
+TestResult.xml

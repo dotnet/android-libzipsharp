@@ -2,8 +2,12 @@
 if [ -z "$HOSTOS" ]; then
     HOSTOS=$(uname)
 fi
-install -d -m 755 build/$HOSTOS
-cd build/$HOSTOS
-cmake -GNinja -DCMAKE_MAKE_PROGRAM=ninja -DBUILD_SHARED_LIBS=ON ../../external/libzip
-ninja
-cd ../..
+ARCH=${ARCH:-64}
+install -d -m 755 build/$HOSTOS/$ARCH
+cd build/$HOSTOS/$ARCH
+if [ -e "$TOOLCHAIN_FILE" ]; then
+    ARGS=-DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE
+fi
+cmake -GNinja -DCMAKE_MAKE_PROGRAM=ninja -DBUILD_SHARED_LIBS=ON $ARGS ../../../external/libzip
+ninja -v
+cd ../../..
