@@ -1,8 +1,8 @@
 trigger:
   branches:
     include:
-      master
-      refs/tags/*
+      - master
+      - refs/tags/*
 resources:
   repositories:
     - repository: xamarin-templates
