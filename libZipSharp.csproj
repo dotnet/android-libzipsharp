@@ -22,7 +22,7 @@
         <Summary>A managed wrapper (and then some) around libzip (https://libzip.org/)</Summary>
         <Description>A managed wrapper (and then some) around libzip (https://libzip.org/)</Description>
         <PackageTags>A managed wrapper (and then some) around libzip (https://libzip.org/)</PackageTags>
-        <Authors>Marek Habersack, Dean Ellis</Authors>
+        <Authors>Microsoft</Authors>
         <Owners>Microsoft, Xamarin</Owners>
         <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
         <PackageProjectUrl>https://github.com/xamarin/LibZipSharp</PackageProjectUrl>
