@@ -11,7 +11,7 @@ to create/extract/update zip file.
 
 To create a new archive use the `FileMode.CreateNew`, this will behave
 exactly as it does with normal `File` operations. An exception will be
-throw if the file already exists. 
+thrown if the file already exists. 
 
 ```
 using (var zip = ZipArchive.Open ("test.zip", FileMode.CreateNew)) {
@@ -32,8 +32,9 @@ using (var zip = ZipArchive.Open ("test.zip", FileMode.Open)) {
 There are a number of methods which can be used to add items to 
 the zip file. The simplest is `AddFile`. This takes a file path.
 If filename is an absolute path, it will be converted to a relative
-one by removing the root of the path. You can also pass an 
-`archivePath` parameter where you can specify the name which file
+one by removing the root of the path (i.e. the leading `/` part on 
+Unix systems and the `x:\\` part on Windows). You can also pass an 
+`archivePath` parameter where you can specify the name/path which file
 will have within the archive. 
 
 ```
@@ -69,8 +70,8 @@ using (var zip = ZipArchive.Open ("test.zip", FileMode.CreateNew)) {
 # Shipping the native libraries.
 
 By default the native libraries will NOT be copied into the output directory
-of you app. .Net Core apps will pick these files up automatically. However
-for mono you will need the `libzip.*` files in the same directory as the 
+of your app. `.Net Core` apps will pick these files up automatically. However
+for Mono you will need the `libzip.*` files in the same directory as the 
 final app for this library to work. Setting the `LibZipSharpBundleAllNativeLibraries`
 MSBuild property to `true` will make sure the native libraries for 
 ALL supported platforms are copied to the output directory.
