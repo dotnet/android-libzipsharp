@@ -17,7 +17,7 @@
         -->
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
         <PackageId>Xamarin.LibZipSharp</PackageId>
-        <PackageVersion>1.0.0</PackageVersion>
+        <PackageVersion>1.0.1</PackageVersion>
         <Title>libZipSharp</Title>
         <Summary>A managed wrapper (and then some) around libzip (https://libzip.org/)</Summary>
         <Description>A managed wrapper (and then some) around libzip (https://libzip.org/)</Description>
