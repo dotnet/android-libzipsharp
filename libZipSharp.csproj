@@ -47,6 +47,8 @@
         <None Include="build\Windows\32\lib\libzip.dll" PackagePath="runtimes\win-x86\native\libzip.dll" Pack="true" />
         <None Include="build\Linux\64\libzip.so" PackagePath="runtimes\linux-x64\native\libzip.so" Pack="true" />
         <None Include="build\Linux\32\libzip.so" PackagePath="runtimes\linux-x86\native\libzip.so" Pack="true" />
+        <None Include="LICENSE" PackagePath="Licences" Pack="true" />
+        <None Include="external\libzip\LICENSE" PackagePath="Licences\libzip" Pack="true" />
         <Compile Remove="ZipTest/**/*" />
         <Compile Remove="LibZipSharp.UnitTest/**/*" />
     </ItemGroup>
