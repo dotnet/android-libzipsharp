@@ -32,6 +32,7 @@
         <PackageTags></PackageTags>
         <PackageOutputPath>$(MSBuildThisFileDirectory)</PackageOutputPath>
         <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
     <ItemGroup>
         <None Include="Xamarin.LibZipSharp.targets" PackagePath="build" Pack="true" />
