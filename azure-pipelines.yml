@@ -102,6 +102,11 @@ stages:
           inputs:
             contents: '*.nupkg'
             targetFolder: $(Build.ArtifactStagingDirectory)
+        - task: CopyFiles@2
+          displayName: Copy snupkg
+          inputs:
+            contents: '*.snupkg'
+            targetFolder: $(Build.ArtifactStagingDirectory)
         - task: PublishBuildArtifacts@1
           displayName: upload artifacts
           inputs:
