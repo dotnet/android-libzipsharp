@@ -31,8 +31,7 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageTags></PackageTags>
         <PackageOutputPath>$(MSBuildThisFileDirectory)</PackageOutputPath>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>.pdb;$(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
     </PropertyGroup>
     <ItemGroup>
         <None Include="Xamarin.LibZipSharp.targets" PackagePath="build" Pack="true" />
