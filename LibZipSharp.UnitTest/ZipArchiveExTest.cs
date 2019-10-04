@@ -105,6 +105,7 @@ namespace Tests {
 					string root = Path.GetFullPath ("NewFiles");
 					foreach (var file in Directory.GetFiles ("NewFiles", "*.txt")) {
 						zip.Archive.AddEntry (file.Replace (root, string.Empty), File.OpenRead (file), GetCompressionMethod (file));
+						count++;
 						if (count == ZipArchiveEx.ZipFlushLimit) {
 							zip.Flush ();
 							count = 0;
