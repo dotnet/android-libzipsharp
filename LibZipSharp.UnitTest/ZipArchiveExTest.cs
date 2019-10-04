@@ -103,7 +103,7 @@ namespace Tests {
 
 					int count = 0;
 					string root = Path.GetFullPath ("NewFiles");
-					foreach (var file in Directory.GetFiles ("NewFiles", "*.txt")) {
+					foreach (var file in Directory.GetFiles ("NewFiles", "*.txt", SearchOption.AllDirectories)) {
 						zip.Archive.AddEntry (file.Replace (root, string.Empty), File.OpenRead (file), GetCompressionMethod (file));
 						count++;
 						if (count == ZipArchiveEx.ZipFlushLimit) {
