@@ -20,7 +20,7 @@ namespace Tests {
 			Directory.CreateDirectory (Path.Combine ("Resources", "subfolder"));
 			
 			for (int i = 0; i < 500; i++) {
-				int fileSize = rnd.Next (short.MaxValue*4);
+				int fileSize = rnd.Next (short.MaxValue * 4);
 				byte [] buffer = new byte [fileSize];
 				rnd.NextBytes (buffer);
 				File.WriteAllBytes (Path.Combine ("Resources", $"File{i}.txt"), buffer);
