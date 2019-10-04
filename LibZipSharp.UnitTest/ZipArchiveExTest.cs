@@ -26,7 +26,7 @@ namespace Tests {
 				File.WriteAllBytes (Path.Combine ("Resources", $"File{i}.txt"), buffer);
 			}
 			for (int i = 0; i < 500; i++) {
-				int fileSize = rnd.Next (short.MaxValue);
+				int fileSize = rnd.Next (short.MaxValue * 4);
 				byte [] buffer = new byte [fileSize];
 				rnd.NextBytes (buffer);
 				File.WriteAllBytes (Path.Combine ("Resources", "subfolder", $"FileSub{i}.txt"), buffer);
@@ -46,7 +46,7 @@ namespace Tests {
 				File.WriteAllBytes (Path.Combine ("NewFiles", $"File{i}.txt"), buffer);
 			}
 			for (int i = 0; i < 500; i++) {
-				int fileSize = rnd.Next (short.MaxValue);
+				int fileSize = rnd.Next (short.MaxValue * 4);
 				byte [] buffer = new byte [fileSize];
 				rnd.NextBytes (buffer);
 				File.WriteAllBytes (Path.Combine ("NewFiles", "NewFiles1", $"FileSub{i}.txt"), buffer);
