@@ -1,0 +1,3 @@
+﻿Some file with some text in it as an EmbeddedResource
+
+with a few lines in it too.

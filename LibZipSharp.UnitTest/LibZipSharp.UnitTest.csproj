@@ -15,12 +15,18 @@
     <PackageReference Include="NUnit.ConsoleRunner" Version="3.10.0" />
   </ItemGroup>
   
+  <ItemGroup>
+    <None Remove="NOTICE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NOTICE.txt">
+      <LogicalName>NOTICE.txt</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
   <Target Name="RunNunitTests" DependsOnTargets="Build">
     <PropertyGroup>
       <Host Condition="'$(OS)' != 'Windows_NT'">mono </Host>
     </PropertyGroup>
-    <Exec Command="$(Host)$(NuGetPackageRoot)nunit.consolerunner/3.10.0/tools/nunit3-console.exe LibZipSharp.UnitTest.dll"
-      WorkingDirectory="$(OutputPath)\net45"
-    />
+    <Exec Command="$(Host)$(NuGetPackageRoot)nunit.consolerunner/3.10.0/tools/nunit3-console.exe LibZipSharp.UnitTest.dll" WorkingDirectory="$(OutputPath)\net45" />
   </Target>
 </Project>
