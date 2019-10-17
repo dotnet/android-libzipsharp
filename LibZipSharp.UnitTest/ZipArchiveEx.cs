@@ -35,7 +35,7 @@ namespace Xamarin.Tools.Zip.Ex {
 				zip.Close ();
 				zip.Dispose ();
 				zip = null;
-				File.Copy (archive, $"{Path.ChangeExtension (archive, $"{flush}{Path.GetExtension (archive)}")}", overwrite: true);
+				//File.Copy (archive, $"{Path.ChangeExtension (archive, $"{flush}{Path.GetExtension (archive)}")}", overwrite: true);
 				flush++;
 			}
 			zip = ZipArchive.Open (archive, FileMode.Open, strictConsistencyChecks: true);
