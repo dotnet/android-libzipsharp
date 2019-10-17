@@ -61,6 +61,7 @@ namespace Tests {
 		}
 
 		[Test]
+		[Repeat (1000)]
 		public void CreateaValidZipArchive ()
 		{
 			string package_base = "package_base.zip";
