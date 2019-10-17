@@ -62,6 +62,7 @@ namespace Tests {
 
 		[Test]
 		[Repeat (100)]
+		[NonParallelizable]
 		public void CreateaValidZipArchive ()
 		{
 			string package_base = "package_base.zip";
