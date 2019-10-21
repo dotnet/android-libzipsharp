@@ -37,6 +37,7 @@ namespace Xamarin.Tools.Zip.Ex {
 				zip = null;
 				//File.Copy (archive, $"{Path.ChangeExtension (archive, $"{flush}{Path.GetExtension (archive)}")}", overwrite: true);
 				flush++;
+				GC.Collect ();
 			}
 			zip = ZipArchive.Open (archive, FileMode.Open, strictConsistencyChecks: true);
 			entryCount = zip.EntryCount;
@@ -148,6 +149,7 @@ namespace Xamarin.Tools.Zip.Ex {
 					zip.Close ();
 					zip.Dispose ();
 					zip = null;
+					GC.Collect ();
 				}
 			}
 		}
