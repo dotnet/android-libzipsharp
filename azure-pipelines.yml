@@ -50,8 +50,8 @@ stages:
             pathtoPublish: $(Build.ArtifactStagingDirectory)
     - job: build
       dependsOn: buildlinux
-      pool:
-        vmImage: xcode9-macos10.13
+      pool: Hosted Mac Internal Mojave
+     #   vmImage: xcode9-macos10.13
       steps:
         - bash: |
             brew tap xamarin/xamarin-android-windeps
