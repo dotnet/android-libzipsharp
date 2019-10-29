@@ -86,7 +86,7 @@ namespace Xamarin.Tools.Zip
 				throw new ArgumentNullException (nameof (options));
 			Options = options;
 			Native.zip_error_t errorp;
-			var streamHandle = GCHandle.Alloc (stream, GCHandleType.Pinned);
+			var streamHandle = GCHandle.Alloc (stream, GCHandleType.Normal);
 			IntPtr h = GCHandle.ToIntPtr (streamHandle);
 			IntPtr source = Native.zip_source_function_create (callback, h, out errorp);
 			archive = Native.zip_open_from_source (source, flags, out errorp);
@@ -322,7 +322,7 @@ namespace Xamarin.Tools.Zip
 				throw new ArgumentNullException (nameof (stream));
 			sources.Add (stream);
 			string destPath = EnsureArchivePath (archivePath);
-			var handle = GCHandle.Alloc (stream, GCHandleType.Pinned);
+			var handle = GCHandle.Alloc (stream, GCHandleType.Normal);
 			IntPtr h = GCHandle.ToIntPtr (handle);
 			IntPtr source = Native.zip_source_function (archive, callback, h);
 			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
