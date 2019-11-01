@@ -31,14 +31,14 @@ stages:
           displayName: 'Build Linux x86'
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.0
+            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.0
             includeRootFolder: false 
             archiveType: 7z
             replaceExistingArchive: true 
             archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x86.7z
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.0
+            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.0
             includeRootFolder: false 
             archiveType: 7z
             replaceExistingArchive: true 
