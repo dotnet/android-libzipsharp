@@ -117,8 +117,6 @@ stages:
     jobs:
     - job: testlinux
       displayName: 'Test Linux'
-      variables:
-        MONO_LOG_LEVEL: debug
       pool:
         vmImage: ubuntu-16.04
       steps:
