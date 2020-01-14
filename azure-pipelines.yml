@@ -23,6 +23,9 @@ stages:
             git submodule update --init --recursive
           displayName: 'Install Tools'
         - bash: |
+            patch --verbose -d external/libzip -p1 -l < libzip-static.patch
+          displayName: 'Apply Patch'
+        - bash: |
             ./build_native
           displayName: 'Build Linux x64'
         - bash: |

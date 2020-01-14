@@ -1,12 +1,12 @@
 #!/bin/bash -e
 install -d -m 755 build/Windows/64
 cd build/Windows/64
-cmake -GNinja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_TOOLCHAIN_FILE=../../../mingw-64.cmake -DCMAKE_POLICY_DEFAULT_CMP0074=NEW -DZLIB_ROOT=/usr/local/opt/mingw-zlib/usr/x86_64-w64-mingw32 -DZLIB_LIBRARY=/usr/local/opt/mingw-zlib/usr/x86_64-w64-mingw32/lib/libz.a -DZLIB_INCLUDE_DIR=/usr/local/opt/mingw-zlib/usr/x86_64-w64-mingw32/include ../../../external/libzip
+cmake -GNinja -DCMAKE_MAKE_PROGRAM=ninja -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF -DCMAKE_TOOLCHAIN_FILE=../../../mingw-64.cmake -DCMAKE_POLICY_DEFAULT_CMP0074=NEW -DZLIB_ROOT=/usr/local/opt/mingw-zlib/usr/x86_64-w64-mingw32 -DZLIB_LIBRARY=/usr/local/opt/mingw-zlib/usr/x86_64-w64-mingw32/lib/libz.a -DZLIB_INCLUDE_DIR=/usr/local/opt/mingw-zlib/usr/x86_64-w64-mingw32/include ../../../external/libzip
 ninja
 cd ../../..
 
 install -d -m 755 build/Windows/32
 cd build/Windows/32
-cmake -GNinja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_TOOLCHAIN_FILE=../../../mingw-32.cmake -DCMAKE_POLICY_DEFAULT_CMP0074=NEW -DZLIB_ROOT=/usr/local/opt/mingw-zlib/usr/i686-w64-mingw32 -DZLIB_LIBRARY=/usr/local/opt/mingw-zlib/usr/i686-w64-mingw32/lib/libz.a -DZLIB_INCLUDE_DIR=/usr/local/opt/mingw-zlib/usr/i686-w64-mingw32/include ../../../external/libzip
+cmake -GNinja -DCMAKE_MAKE_PROGRAM=ninja -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF -DCMAKE_TOOLCHAIN_FILE=../../../mingw-32.cmake -DCMAKE_POLICY_DEFAULT_CMP0074=NEW -DZLIB_ROOT=/usr/local/opt/mingw-zlib/usr/i686-w64-mingw32 -DZLIB_LIBRARY=/usr/local/opt/mingw-zlib/usr/i686-w64-mingw32/lib/libz.a -DZLIB_INCLUDE_DIR=/usr/local/opt/mingw-zlib/usr/i686-w64-mingw32/include ../../../external/libzip
 ninja
 cd ../../..
