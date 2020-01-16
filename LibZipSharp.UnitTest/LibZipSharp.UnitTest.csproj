@@ -1,26 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(MSBuildThisFileDirectory)..\LibZipSharp.props" />
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFramework>net471</TargetFramework>
 
     <IsPackable>false</IsPackable>
     <LibZipSharpBundleAllNativeLibraries>true</LibZipSharpBundleAllNativeLibraries>
+    <ReferenceNuget Condition="'$(ReferenceNuget)' == ''">False</ReferenceNuget>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="nunit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
-    <PackageReference Include="Xamarin.LibZipSharp" Version="$(_LibZipSharpNugetVersion)" />
+    <PackageReference Include="Xamarin.LibZipSharp" Version="$(_LibZipSharpNugetVersion)" Condition="'$(ReferenceNuget)' == 'True'" />
     <PackageReference Include="NUnit.ConsoleRunner" Version="3.10.0" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <ProjectReference Include="..\libZipSharp.csproj" Condition="'$(ReferenceNuget)' != 'True'" />
+    <None Include="..\build\Darwin\64\lib\libzip.5.0.dylib" Condition="'$(ReferenceNuget)' != 'True'">
+      <Link>libzip.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\build\Windows\64\lib\libzip.dll" Condition="'$(ReferenceNuget)' != 'True'">
+      <Link>libzip.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="RunNunitTests" DependsOnTargets="Build">
     <PropertyGroup>
       <Host Condition="'$(OS)' != 'Windows_NT'">mono </Host>
     </PropertyGroup>
     <Exec Command="$(Host)$(NuGetPackageRoot)nunit.consolerunner/3.10.0/tools/nunit3-console.exe LibZipSharp.UnitTest.dll"
-      WorkingDirectory="$(OutputPath)\net45"
+      WorkingDirectory="$(OutputPath)"
     />
   </Target>
 </Project>

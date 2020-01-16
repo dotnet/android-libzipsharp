@@ -330,7 +330,6 @@ namespace Xamarin.Tools.Zip
 				throw GetErrorException ();
 			if (Native.zip_set_file_compression (archive, (ulong)index, compressionMethod, 0) < 0)
 				throw GetErrorException ();
-
 			if (permissions == EntryPermissions.Default)
 				permissions = DefaultFilePermissions;
 			PlatformServices.Instance.SetEntryPermissions (this, (ulong)index, permissions, false);
@@ -721,7 +720,8 @@ namespace Xamarin.Tools.Zip
 						return -1;
 					var stat = Native.ZipSourceGetArgs<Native.zip_stat_t> (data, len);
 					stat.size = (UInt64)stream.Length;
-					stat.valid |= (ulong)StatFlags.Size;
+					stat.mtime = new IntPtr ((long)Utilities.UnixTimeFromDateTime (DateTime.UtcNow));
+					stat.valid |= (ulong)(StatFlags.Size | StatFlags.MTime);
 					Marshal.StructureToPtr (stat, data, false);
 					return (Int64)sizeof (Native.zip_stat_t);
 
