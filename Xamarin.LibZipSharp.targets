@@ -3,7 +3,7 @@
     <LibZipSharpBundleAllNativeLibraries Condition=" '$(LibZipSharpBundleAllNativeLibraries)' == '' ">false</LibZipSharpBundleAllNativeLibraries>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\lib\net45\libZipSharp.dll.config">
+    <None Include="$(MSBuildThisFileDirectory)..\lib\netstandard2.0\libZipSharp.dll.config">
       <Link>libZipSharp.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

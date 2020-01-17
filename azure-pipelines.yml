@@ -93,7 +93,7 @@ stages:
           inputs:
             solution: libZipSharp.csproj
             configuration: Release
-            msbuildArguments: /restore 
+            msbuildArguments: /restore /v:diag 
         - task: MSBuild@1
           displayName: NuGet pack libZipSharp
           inputs:
@@ -133,7 +133,7 @@ stages:
           inputs:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            msbuildArguments: /restore /t:RunNunitTests
+            msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
@@ -149,7 +149,7 @@ stages:
           inputs:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            msbuildArguments: /restore /t:RunNunitTests
+            msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
     - job: testwindows
       displayName: 'Test Windows'
       pool:
@@ -165,7 +165,7 @@ stages:
           inputs:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            msbuildArguments: /restore /t:RunNunitTests
+            msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
   - stage: Publish
     dependsOn: Test
     condition: eq(variables['System.TeamProject'], 'devdiv') # only sign the packages when running on Windows, and using the private server which has the certificates

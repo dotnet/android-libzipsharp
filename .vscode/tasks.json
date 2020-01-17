@@ -1,0 +1,67 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build LibZipSharp",
+            "type": "shell",
+            "command": "msbuild LibZipSharp.csproj /restore /t:Build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ]
+        },
+        {
+            "label": "Pack LibZipSharp Nuget",
+            "type": "shell",
+            "command": "msbuild LibZipSharp.csproj /t:Pack",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ]
+        },
+        {
+            "label": "Clean LibZipSharp",
+            "type": "shell",
+            "command": "msbuild LibZipSharp.csproj /restore /t:Clean",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ]
+        },
+        {
+            "label": "Build LibZipSharp Unit Tests",
+            "type": "shell",
+            "command": "msbuild LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj /restore /t:Build /p:ReferenceNuget=False",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ]
+        },
+        {
+            "label": "Run LibZipSharp Unit Tests",
+            "type": "shell",
+            "command": "msbuild LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj /restore /t:RunNunitTests /p:ReferenceNuget=False",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ]
+        }
+    ]
+}

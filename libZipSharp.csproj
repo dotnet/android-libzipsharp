@@ -4,7 +4,7 @@
     <PropertyGroup>
         <AssemblyName>libZipSharp</AssemblyName>
         <AssemblyTitle>libZipSharp</AssemblyTitle>
-        <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <Deterministic>false</Deterministic>
@@ -35,11 +35,11 @@
     </PropertyGroup>
     <ItemGroup>
         <None Include="Xamarin.LibZipSharp.targets" PackagePath="build" Pack="true" />
-        <None Include="libZipSharp.dll.config" PackagePath="lib\net45" Pack="true">
+        <None Include="libZipSharp.dll.config" PackagePath="lib\netstandard2.0" Pack="true">
             <Link>libZipSharp.dll.config</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Include="libZipSharp.dll.config" PackagePath="lib\netstandard2.0" Pack="true">
+        <None Include="libZipSharp.dll.config" PackagePath="lib\net45" Pack="true">
             <Link>libZipSharp.dll.config</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>

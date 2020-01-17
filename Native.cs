@@ -360,6 +360,9 @@ namespace Xamarin.Tools.Zip
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int zip_set_file_compression (IntPtr archive, UInt64 index, CompressionMethod comp, UInt32 comp_flags);
+		
+		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
+		public static extern int zip_file_set_mtime(IntPtr archive, UInt64 index, ulong mtime, UInt32 flags);
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr zip_source_buffer (IntPtr archive, byte[] data, UInt64 len, int freep);

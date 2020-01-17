@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using Xamarin.Tools.Zip;
 
 namespace Tests {
@@ -68,6 +69,50 @@ namespace Tests {
 				FileAssert.AreEqual (Path.Combine (root, "in", "archive", "data", "foo.txt"), "foo.txt", "foo.txt should have been 'Hello World'");
 				FileAssert.AreEqual (Path.Combine (root, "in", "archive", "foo", "foo.exe"), "file1.txt", "foo.exe should have been 1111");
 				FileAssert.AreEqual (Path.Combine (root, "in", "archive", "foo", "foo1.txt"), "foo1.txt", $"foo1.txt should have been {TEXT}");
+			}
+		}
+
+		static DateTime WithoutMilliseconds (DateTime t) =>
+			new DateTime (t.Year, t.Month, t.Day, t.Hour, t.Minute, t.Second, t.Kind);
+
+		[Test]
+		[Repeat (100)]
+		[NonParallelizable]
+		public void CheckDates ()
+		{
+			string root = Path.Combine (Path.GetDirectoryName (typeof (ZipTests).Assembly.Location));
+			string file = Path.Combine (root, "foo.txt");
+			string zip = Path.Combine (root, "foo.zip");
+			if (File.Exists (zip))
+				File.Delete (zip);
+			if (File.Exists (file))
+				File.Delete (file);
+			File.WriteAllText (file, TEXT);
+			DateTime lastWrite = WithoutMilliseconds (File.GetLastWriteTimeUtc (file));
+			Thread.Sleep (TimeSpan.FromSeconds (2));
+			using (var archive = ZipArchive.Open (zip, FileMode.Create)) {
+				var entry = archive.AddFile (file, archivePath: "foo.txt");
+				Assert.GreaterOrEqual (WithoutMilliseconds (entry.ModificationTime), lastWrite, $"Check 1 {WithoutMilliseconds (entry.ModificationTime)} < {lastWrite}");
+			}
+			using (var archive = ZipArchive.Open (zip, FileMode.Open)) {
+				ZipEntry entry = archive.ReadEntry ("foo.txt");
+				Assert.GreaterOrEqual (WithoutMilliseconds (entry.ModificationTime), lastWrite, $"Check 2 {WithoutMilliseconds (entry.ModificationTime)} < {lastWrite}");
+			}
+		}
+
+		[Test]
+		public void DateTimeConversion ()
+		{
+			DateTime now = DateTime.UtcNow;
+			for (int m = 0; m < 59; m++)
+			for (int s = 0; s < 59; s++)
+			for (int ms = 0; ms < 999; ms++) {
+				DateTime dt = new DateTime (now.Year, now.Month, now.Day, now.Hour, m, s, ms, DateTimeKind.Utc);
+				var dateTimeOffset = new DateTimeOffset(dt);
+				var unixTime =  (ulong)dateTimeOffset.ToUnixTimeSeconds();
+				DateTime c = DateTimeOffset.FromUnixTimeSeconds ((long)unixTime).UtcDateTime;
+				Assert.AreEqual (WithoutMilliseconds (dt), WithoutMilliseconds (c));
+				
 			}
 		}
 	}
