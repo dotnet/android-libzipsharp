@@ -18,11 +18,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\libZipSharp.csproj" Condition="'$(ReferenceNuget)' != 'True'" />
-    <None Include="..\build\Darwin\64\lib\libzip.5.0.dylib" Condition="'$(ReferenceNuget)' != 'True'">
+    <None Include="..\build\Darwin\64\lib\libzip.5.0.dylib" Condition="'$(ReferenceNuget)' != 'True' And Exists ('..\build\Darwin\64\lib\libzip.5.0.dylib')">
       <Link>libzip.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\build\Windows\64\lib\libzip.dll" Condition="'$(ReferenceNuget)' != 'True'">
+    <None Include="..\build\Windows\64\lib\libzip.dll" Condition="'$(ReferenceNuget)' != 'True' And Exists ('..\build\Windows\64\lib\libzip.dll')">
       <Link>libzip.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

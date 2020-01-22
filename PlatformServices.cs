@@ -136,12 +136,12 @@ namespace Xamarin.Tools.Zip
 			CallServices ((IPlatformServices services) => services.ReadAndProcessExtraFields (entry));
 		}
 
-		public void WriteExtraFields (ZipEntry entry, IList<ExtraField> extraFields = null)
+		public bool WriteExtraFields (ZipArchive archive, ZipEntry entry, IList<ExtraField> extraFields = null)
 		{
 			if (entry == null)
 				throw new ArgumentNullException (nameof (entry));
 			
-			CallServices ((IPlatformServices services) => services.WriteExtraFields (entry, extraFields));
+			return CallServices ((IPlatformServices services) => services.WriteExtraFields (archive, entry, extraFields));
 		}
 
 		public void SetFileProperties (ZipEntry entry, string extractedFilePath, bool throwOnNativeExceptions = true)

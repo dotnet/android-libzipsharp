@@ -316,7 +316,7 @@ namespace Xamarin.Tools.Zip
 		/// <param name="permissions">The permissions which the stream should have when extracted (Unix Only)</param>
 		/// <param name="compressionMethod">The compression method to use</param>
 		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
-		public ZipEntry AddStream (Stream stream, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true)
+		public ZipEntry AddStream (Stream stream, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true, DateTime? modificationTime = null)
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
@@ -333,7 +333,13 @@ namespace Xamarin.Tools.Zip
 			if (permissions == EntryPermissions.Default)
 				permissions = DefaultFilePermissions;
 			PlatformServices.Instance.SetEntryPermissions (this, (ulong)index, permissions, false);
-			return ReadEntry ((ulong)index);
+			ZipEntry entry = ReadEntry ((ulong)index);
+			IList<ExtraField> fields = new List<ExtraField> ();
+			ExtraField_ExtendedTimestamp timestamp = new ExtraField_ExtendedTimestamp (entry, 0, modificationTime: modificationTime ?? DateTime.UtcNow);
+			fields.Add (timestamp);
+			if (!PlatformServices.Instance.WriteExtraFields (this, entry, fields))
+				throw GetErrorException ();
+			return entry;
 		}
 
 		/// <summary>
@@ -396,7 +402,8 @@ namespace Xamarin.Tools.Zip
 			}
 
 			if (PlatformServices.Instance.IsRegularFile (this, sourcePath))
-				return AddStream (new FileStream (sourcePath, FileMode.Open, FileAccess.Read), archivePath ?? sourcePath, permissions, compressionMethod, overwriteExisting);
+				return AddStream (new FileStream (sourcePath, FileMode.Open, FileAccess.Read), archivePath ?? sourcePath, permissions, compressionMethod, overwriteExisting,
+					modificationTime: File.GetLastWriteTimeUtc (sourcePath));
 		
 			string destPath = EnsureArchivePath (archivePath ?? sourcePath, isDir);
 			long index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out compressionMethod);
@@ -405,7 +412,16 @@ namespace Xamarin.Tools.Zip
 			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : compressionMethod, 0) < 0)
 				throw GetErrorException ();
 			PlatformServices.Instance.SetEntryPermissions (this, sourcePath, (ulong)index, permissions);
-			return ReadEntry ((ulong)index);
+			ZipEntry entry = ReadEntry ((ulong)index);
+			IList<ExtraField> fields = new List<ExtraField> ();
+			ExtraField_ExtendedTimestamp timestamp = new ExtraField_ExtendedTimestamp (entry, 0,
+				createTime: File.GetCreationTimeUtc (sourcePath),
+				accessTime: File.GetLastAccessTimeUtc (sourcePath),
+				modificationTime: File.GetLastWriteTimeUtc (sourcePath));
+			fields.Add (timestamp);
+			if (!PlatformServices.Instance.WriteExtraFields (this, entry, fields))
+				throw GetErrorException ();
+			return entry;
 		}
 
 		/// <summary>

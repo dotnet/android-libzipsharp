@@ -30,7 +30,6 @@ namespace Xamarin.Tools.Zip
 	public class ExtraField
 	{
 		byte [] rawData;
-
 		public ushort ID { get; set; }
 		public ushort Length { get; set; }
 		public bool Local { get; set; }
@@ -39,7 +38,9 @@ namespace Xamarin.Tools.Zip
 		public bool DataValid { get; protected set; } = true;
 
 		public byte [] RawData { 
-			get { return rawData; }
+			get {
+				return rawData;
+			}
 			set {
 				rawData = value;
 				Parse ();
@@ -68,6 +69,11 @@ namespace Xamarin.Tools.Zip
 			DataValid = true;
 		}
 
+		internal virtual void Encode ()
+		{
+			DataValid = true;
+		}
+
 		protected ulong BytesToUnsignedLong (byte [] data, int startIndex)
 		{
 			if (data == null)
@@ -84,6 +90,16 @@ namespace Xamarin.Tools.Zip
 			               (data [startIndex + 2] << 16) |
 			               (data [startIndex + 1] << 8) |
 			               data [startIndex]);
+		}
+
+		protected byte[] UnsignedIntToBytes (uint data)
+		{
+			byte[] result = new byte[4];
+			result [0] = (byte)(data);
+			result [1] = (byte)(data >> 8);
+			result [2] = (byte)(data >> 16);
+			result [3] = (byte)(data >> 24);
+			return result;
 		}
 
 		protected uint BytesToUnsignedInt (byte [] data, int startIndex)
