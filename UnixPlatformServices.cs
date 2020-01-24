@@ -298,13 +298,19 @@ namespace Xamarin.Tools.Zip
 			}
 		}
 
-		public bool WriteExtraFields (ZipEntry entry, IList<ExtraField> extraFields)
+		public bool WriteExtraFields (ZipArchive archive, ZipEntry entry, IList<ExtraField> extraFields)
 		{
 			if (entry == null)
 				return false;
 
-
-			throw new NotImplementedException ();
+			foreach (var field in extraFields) {
+				field.Encode ();
+				int result = Native.zip_file_extra_field_set (archive.ArchivePointer, entry.Index, field.ID, field.FieldIndex, field.RawData, field.Local ? OperationFlags.Local : OperationFlags.Central);
+				if (result < 0) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 		public bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions requestedPermissions, bool isDirectory)

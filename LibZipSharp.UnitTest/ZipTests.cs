@@ -91,12 +91,13 @@ namespace Tests {
 			DateTime lastWrite = WithoutMilliseconds (File.GetLastWriteTimeUtc (file));
 			Thread.Sleep (TimeSpan.FromSeconds (2));
 			using (var archive = ZipArchive.Open (zip, FileMode.Create)) {
-				var entry = archive.AddFile (file, archivePath: "foo.txt");
-				Assert.GreaterOrEqual (WithoutMilliseconds (entry.ModificationTime), lastWrite, $"Check 1 {WithoutMilliseconds (entry.ModificationTime)} < {lastWrite}");
+				ZipEntry entry = archive.AddFile (file, archivePath: "foo.txt");
+				Assert.AreEqual (lastWrite, WithoutMilliseconds (entry.ModificationTime), $"Check 1 {WithoutMilliseconds (entry.ModificationTime)} != {lastWrite}");
 			}
 			using (var archive = ZipArchive.Open (zip, FileMode.Open)) {
 				ZipEntry entry = archive.ReadEntry ("foo.txt");
-				Assert.GreaterOrEqual (WithoutMilliseconds (entry.ModificationTime), lastWrite, $"Check 2 {WithoutMilliseconds (entry.ModificationTime)} < {lastWrite}");
+				Assert.IsTrue (entry.ExtraFieldPresent (KnownExtraFields.ExtendedTimestamp, ZipHeaderLocation.Local), "An Extra Field should have been added to the zip entry foo.txt");
+				Assert.AreEqual (lastWrite, WithoutMilliseconds (entry.ModificationTime), $"Check 2 {WithoutMilliseconds (entry.ModificationTime)} != {lastWrite}");
 			}
 		}
 
@@ -113,6 +114,28 @@ namespace Tests {
 				DateTime c = DateTimeOffset.FromUnixTimeSeconds ((long)unixTime).UtcDateTime;
 				Assert.AreEqual (WithoutMilliseconds (dt), WithoutMilliseconds (c));
 				
+			}
+		}
+
+		[Test]
+		public void AddStreamDateCheck ()
+		{
+			string root = Path.Combine (Path.GetDirectoryName (typeof (ZipTests).Assembly.Location), TestContext.CurrentContext.Test.Name);
+			Directory.CreateDirectory (root);
+			string zip = Path.Combine (root, "foo.zip");
+			if (File.Exists (zip))
+				File.Delete (zip);
+			DateTime date = new DateTime (1992, 9, 1, 13,59, 34);
+			using (var archive = ZipArchive.Open (zip, FileMode.Create)) {
+				var ms = new MemoryStream (Encoding.ASCII.GetBytes (TEXT));
+				ms.Position = 0;
+				ZipEntry entry = archive.AddStream (ms, archivePath: "foomem.txt", modificationTime: date);
+				Assert.AreEqual (date, WithoutMilliseconds (entry.ModificationTime), $"Check 1 {WithoutMilliseconds (entry.ModificationTime)} != {date}");
+			}
+			using (var archive = ZipArchive.Open (zip, FileMode.Open)) {
+				ZipEntry entry = archive.ReadEntry ("foomem.txt");
+				Assert.IsTrue (entry.ExtraFieldPresent (KnownExtraFields.ExtendedTimestamp, ZipHeaderLocation.Local), "An Extra Field should have been added to the zip entry foomem.txt");
+				Assert.AreEqual (date, WithoutMilliseconds (entry.ModificationTime), $"Check 1 {WithoutMilliseconds (entry.ModificationTime)} != {date}");
 			}
 		}
 	}

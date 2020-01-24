@@ -46,7 +46,7 @@ namespace Xamarin.Tools.Zip
 		bool SetEntryPermissions (ZipArchive archive, string sourcePath, ulong index, EntryPermissions permissions);
 		bool SetEntryPermissions (ZipArchive archive, ulong index, EntryPermissions permissions, bool isDirectory);
 		bool ReadAndProcessExtraFields (ZipEntry entry);
-		bool WriteExtraFields (ZipEntry entry, IList<ExtraField> extraFields);
+		bool WriteExtraFields (ZipArchive archive, ZipEntry entry, IList<ExtraField> extraFields);
 		bool SetFileProperties (ZipEntry entry, string extractedFilePath, bool throwOnNativeErrors);
 		bool ExtractSpecialFile (ZipEntry entry, string destinationDir);
 	}

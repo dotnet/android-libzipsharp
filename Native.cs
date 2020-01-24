@@ -237,11 +237,11 @@ namespace Xamarin.Tools.Zip
 		public static extern IntPtr zip_file_extra_field_get_by_id (IntPtr archive, UInt64 index, UInt16 extra_field_id, UInt16 extra_field_index, out UInt16 lenp, OperationFlags flags);
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int zip_file_extra_field_set (IntPtr archive, UInt64 index, UInt16 extra_field_id, UInt16 extra_field_index, byte[] extra_field_data, UInt16 len, OperationFlags flags);
+		static extern int zip_file_extra_field_set (IntPtr archive, UInt64 index, UInt16 extra_field_id, UInt16 extra_field_index, byte[] extra_field_data, UInt16 len, OperationFlags flags);
 
 		public static int zip_file_extra_field_set (IntPtr archive, UInt64 index, UInt16 extra_field_id, UInt16 extra_field_index, byte[] extra_field_data, OperationFlags flags)
 		{
-			return zip_file_extra_field_set (archive, index, extra_field_id, extra_field_index, extra_field_data, (UInt16)(extra_field_data == null ? 0 : extra_field_data.Length), flags);
+			return zip_file_extra_field_set (archive, index, extra_field_id, extra_field_index, extra_field_data, (UInt16)(extra_field_data.Length), flags);
 		}
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
