@@ -24,12 +24,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
+using System.Buffers;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
-
-using Mono.Unix.Native;
 
 namespace Xamarin.Tools.Zip
 {
@@ -149,9 +147,13 @@ namespace Xamarin.Tools.Zip
 			if (len == 0)
 				return String.Empty;
 
-			var bytes = new byte[len];
-			Marshal.Copy (utf8Str, bytes, 0, len);
-			return Encoding.UTF8.GetString (bytes);
+			var bytes = ArrayPool<byte>.Shared.Rent (len);
+			try {
+				Marshal.Copy (utf8Str, bytes, 0, len);
+				return Encoding.UTF8.GetString (bytes, 0, len);
+			} finally {
+				ArrayPool<byte>.Shared.Return (bytes);
+			}
 		}
 
 		public static void FreeUtf8StringPtr (IntPtr ptr)
