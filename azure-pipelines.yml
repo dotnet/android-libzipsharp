@@ -9,6 +9,8 @@ resources:
       type: github
       name: xamarin/yaml-templates
       endpoint: xamarin
+variables:
+  - group: Xamarin-Secrets
 stages:
   - stage: Build
     jobs:
