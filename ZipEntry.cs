@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -386,14 +387,16 @@ namespace Xamarin.Tools.Zip
 
 		void DoExtract (IntPtr zipFile, Stream destinationStream, EntryExtractEventArgs args)
 		{
-			var buf = new byte [ReadBufSize];
-
-			long nread;
-
-			while ((nread = Native.zip_fread (zipFile, buf, (ulong)buf.Length)) > 0) {
-				destinationStream.Write (buf, 0, (int)nread);
-				args.ProcessedSoFar += (ulong)nread;
-				OnExtract (args);
+			var buf = ArrayPool<byte>.Shared.Rent (ReadBufSize);
+			try {
+				long nread;
+				while ((nread = Native.zip_fread (zipFile, buf, (ulong)buf.Length)) > 0) {
+					destinationStream.Write (buf, 0, (int)nread);
+					args.ProcessedSoFar += (ulong)nread;
+					OnExtract (args);
+				}
+			} finally {
+				ArrayPool<byte>.Shared.Return (buf);
 			}
 		}
 

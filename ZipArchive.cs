@@ -25,12 +25,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Linq;
 
 namespace Xamarin.Tools.Zip
 {
@@ -724,6 +724,7 @@ namespace Xamarin.Tools.Zip
 		internal static unsafe Int64 stream_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd)
 		{
 			byte [] buffer = null;
+			int length = (int)len;
 			var handle = GCHandle.FromIntPtr (state);
 			if (!handle.IsAllocated)
 				return -1;
@@ -746,10 +747,14 @@ namespace Xamarin.Tools.Zip
 					return (Int64)stream.Position;
 
 				case SourceCommand.Write:
-					buffer = new byte [len];
-					Marshal.Copy (data, buffer, 0, (int)len);
-					stream.Write (buffer, 0, buffer.Length);
-					return buffer.Length;
+					buffer = ArrayPool<byte>.Shared.Rent (length);
+					try {
+						Marshal.Copy (data, buffer, 0, length);
+						stream.Write (buffer, 0, length);
+						return buffer.Length;
+					} finally {
+						ArrayPool<byte>.Shared.Return (buffer);
+					}
 
 				case SourceCommand.SeekWrite:
 				case SourceCommand.Seek:
@@ -763,14 +768,17 @@ namespace Xamarin.Tools.Zip
 					break;
 
 				case SourceCommand.Read:
-					var length = (int)len;
 					if (length > stream.Length - stream.Position) {
 						length = (int)(stream.Length - stream.Position);
 					}
-					buffer = new byte [length];
-					int bytesRead = stream.Read (buffer, 0, length);
-					Marshal.Copy (buffer, 0, data, bytesRead);
-					return bytesRead;
+					buffer = ArrayPool<byte>.Shared.Rent (length);
+					try {
+						int bytesRead = stream.Read (buffer, 0, length);
+						Marshal.Copy (buffer, 0, data, bytesRead);
+						return bytesRead;
+					} finally {
+						ArrayPool<byte>.Shared.Return (buffer);
+					}
 
 				case SourceCommand.BeginWrite:
 				case SourceCommand.Open:
