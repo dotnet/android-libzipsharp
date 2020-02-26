@@ -138,5 +138,24 @@ namespace Tests {
 				Assert.AreEqual (date, WithoutMilliseconds (entry.ModificationTime), $"Check 1 {WithoutMilliseconds (entry.ModificationTime)} != {date}");
 			}
 		}
+
+		[Test]
+		public void SmallTextFile ()
+		{
+			var zipStream = new MemoryStream ();
+			var encoding = Encoding.UTF8;
+			using (var zip = ZipArchive.Create (zipStream)) {
+				zip.AddEntry ("foo", "bar", encoding);
+			}
+			using (var zip = ZipArchive.Open (zipStream)) {
+				var entry = zip.ReadEntry ("foo");
+				Assert.IsNotNull (entry, "Entry 'foo' should exist!");
+				using (var stream = new MemoryStream ()) {
+					entry.Extract (stream);
+					stream.Position = 0;
+					Assert.AreEqual ("bar", encoding.GetString (stream.ToArray ()));
+				}
+			}
+		}
 	}
 }
