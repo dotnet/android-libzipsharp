@@ -1,5 +1,5 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <_LibZipSharpNugetVersion>1.0.9</_LibZipSharpNugetVersion>
+        <_LibZipSharpNugetVersion>1.0.10</_LibZipSharpNugetVersion>
     </PropertyGroup>
 </Project>
