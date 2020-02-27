@@ -751,7 +751,7 @@ namespace Xamarin.Tools.Zip
 					try {
 						Marshal.Copy (data, buffer, 0, length);
 						stream.Write (buffer, 0, length);
-						return buffer.Length;
+						return length;
 					} finally {
 						ArrayPool<byte>.Shared.Return (buffer);
 					}
