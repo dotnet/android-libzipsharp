@@ -14,6 +14,51 @@ variables:
 stages:
   - stage: Build
     jobs:
+    - job: buildWindows
+      pool:
+        vmImage: vs2017-win2016
+      steps:
+        - script: |
+            echo "Hello"
+            git submodule update --init --recursive
+            cd external/vcpkg
+            bootstrap-vcpkg.bat
+          displayName: "Build vcpkg"
+        - script: |
+            external\vcpkg\vcpkg.exe integrate install
+            external\vcpkg\vcpkg.exe install zlib:x64-windows-static bzip2:x64-windows-static
+            mkdir .\build\Windows\64
+            cd .\build\Windows\64
+            cmake -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 15 2017 Win64" -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x64-windows-static
+            cmake --build . --config Release
+          displayName: "x64 Build"
+        - script: |
+            external\vcpkg\vcpkg.exe integrate install
+            external\vcpkg\vcpkg.exe install zlib:x86-windows-static bzip2:x86-windows-static
+            mkdir .\build\Windows\32
+            cd .\build\Windows\32
+            cmake -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 15 2017" -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x86-windows-static
+            cmake --build . --config Release
+          displayName: "x86 Build"
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: build\Windows\64\lib\Release\zip.dll
+            includeRootFolder: false 
+            archiveType: 7z
+            replaceExistingArchive: true 
+            archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x86.7z
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: build\Windows\64\lib\Release\zip.dll
+            includeRootFolder: false 
+            archiveType: 7z
+            replaceExistingArchive: true 
+            archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x64.7z
+        - task: PublishBuildArtifacts@1
+          displayName: upload artifacts
+          inputs:
+            artifactName: 'native'
+            pathtoPublish: $(Build.ArtifactStagingDirectory)
     - job: buildlinux
       pool:
         vmImage: ubuntu-16.04
@@ -36,14 +81,14 @@ stages:
           displayName: 'Build Linux x86'
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.0
+            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.1
             includeRootFolder: false 
             archiveType: 7z
             replaceExistingArchive: true 
             archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x86.7z
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.0
+            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.1
             includeRootFolder: false 
             archiveType: 7z
             replaceExistingArchive: true 
@@ -54,21 +99,23 @@ stages:
             artifactName: 'native'
             pathtoPublish: $(Build.ArtifactStagingDirectory)
     - job: build
-      dependsOn: buildlinux
+      dependsOn:
+        - buildlinux
+        - buildWindows
       pool:
-        vmImage: xcode9-macos10.13
+        vmImage: macOS-10.14
       steps:
         - bash: |
-            brew tap xamarin/xamarin-android-windeps
-            brew upgrade https://raw.githubusercontent.com/Homebrew/homebrew-core/a6542037a48a55061a4c319e6bb174b3715f7cbe/Formula/mingw-w64.rb
-            brew install mingw-w64 p7zip
-            brew install ninja xamarin/xamarin-android-windeps/mingw-zlib
+            brew install p7zip ninja
             git submodule update --init --recursive
         - bash: |
             HOSTOS=Darwin ./build_native
-            ./build_windows
+          displayName: 'Build Darwin'
+        - bash: |
             mkdir -p build/Linux/64
             mkdir -p build/Linux/32
+            mkdir -p build/Windows/64
+            mkdir -p build/Windows/32
             find build/* | grep libzip
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
@@ -85,10 +132,23 @@ stages:
           inputs:
             archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-linux-x86.7z
             destinationFolder: build/Linux/32
+        - task: ExtractFiles@1
+          displayName: Extract 64 bit Windows native
+          inputs:
+            archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-x64.7z
+            destinationFolder: build/Windows/64
+        - task: ExtractFiles@1
+          displayName: Extract 32 bit Windows native
+          inputs:
+            archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-x86.7z
+            destinationFolder: build/Windows/32
         - bash: |
-            mv build/Linux/32/libzip.so.5.0 build/Linux/32/libzip.so
-            mv build/Linux/64/libzip.so.5.0 build/Linux/64/libzip.so
+            mv build/Linux/32/libzip.so.5.1 build/Linux/32/libzip.so
+            mv build/Linux/64/libzip.so.5.1 build/Linux/64/libzip.so
+            mv build/Windows/32/zip.dll build/Windows/32/libzip.dll
+            mv build/Windows/64/zip.dll build/Windows/64/libzip.dll
             rm $(Build.ArtifactStagingDirectory)/native/libzip-linux-*.7z
+            rm $(Build.ArtifactStagingDirectory)/native/libzip-windows-*.7z
           displayName: 'Find libzip'
         - task: MSBuild@1
           displayName: 'Build solution libZipSharp.csproj'
@@ -136,22 +196,37 @@ stages:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
             msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
+        - task: DotNetCoreCLI@2
+          displayName: "Run Tests under .net Core"
+          inputs:
+            command: test
+            projects: 'LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+            arguments: '--configuration Release --framework netcoreapp3.1 --no-build'
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
-        vmImage: xcode9-macos10.13
+        vmImage: macOS-10.14 
       steps:
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
           inputs:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
+        - task: UseDotNet@2
+          inputs:
+            version: '3.1.x'
         - task: MSBuild@1
           displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
             msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
+        # - task: DotNetCoreCLI@2
+        #   displayName: "Run Tests under .net Core"
+        #   inputs:
+        #     command: test
+        #     projects: 'LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+        #     arguments: '--configuration Release --framework netcoreapp3.1 --no-build'
     - job: testwindows
       displayName: 'Test Windows'
       pool:
@@ -163,11 +238,17 @@ stages:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
         - task: MSBuild@1
-          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj and Run tests'
           inputs:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
             msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
+        - task: DotNetCoreCLI@2
+          displayName: "Run Tests under .net Core"
+          inputs:
+            command: test
+            projects: 'LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+            arguments: '--configuration Release --framework netcoreapp3.1 --no-build'
   - stage: Publish
     dependsOn: Test
     condition: eq(variables['System.TeamProject'], 'devdiv') # only sign the packages when running on Windows, and using the private server which has the certificates
