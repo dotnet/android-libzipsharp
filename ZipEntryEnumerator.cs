@@ -62,7 +62,15 @@ namespace Xamarin.Tools.Zip
 
 			// Calling it each time because the archive can change in the meantime
 			long nentries = archive.EntryCount;
-			if (nentries < 0 || index >= (ulong)nentries)
+			if (nentries < 0)
+				return false;
+
+			// Skip past any deleted entires
+			while (index < (ulong)nentries && ReadEntry(index) == null) {
+				++index;
+			}
+
+			if (index >= (ulong)nentries)
 				return false;
 			return true;
 		}
@@ -87,7 +95,7 @@ namespace Xamarin.Tools.Zip
 			if (current != null && current.Index == index)
 				return current;
 			
-			current = archive.ReadEntry (index);
+			current = archive.ReadEntry (index, returnNullIfDeleted:true);
 			return current;
 		}
 	}

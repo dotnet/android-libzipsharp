@@ -691,12 +691,36 @@ namespace Xamarin.Tools.Zip
 			return ReadEntry ((ulong)LookupEntry (entryName, caseSensitive));
 		}
 
-		public ZipEntry ReadEntry (ulong index)
+		/// <summary>
+		/// Read a zip entry, given an index.
+		/// 
+		/// By default, if the entry is deleted then an exception is thrown (the error will be ErrorCode.Deleted or
+		/// ErrorCode.Inval, depending on whether the deleted entry previously existed in the zip or was newly
+		/// added - that's just how libzip handles that). If returnNullIfDeleted is true, then null is returned
+		/// for deleted entries and an exception is just thrown for other errors.
+		/// </summary>
+		/// <param name="index">index to read</param>
+		/// <param name="returnNullIfDeleted">whether to return null or throw an exception for deleted entries</param>
+		/// <returns></returns>
+		public ZipEntry ReadEntry (ulong index, bool returnNullIfDeleted = false)
 		{
 			Native.zip_stat_t stat;
 			int ret = Native.zip_stat_index (archive, index, OperationFlags.None, out stat);
-			if (ret < 0)
-				throw GetErrorException ();
+			if (ret < 0) {
+				if (returnNullIfDeleted) {
+					IntPtr error = Native.zip_get_error(archive);
+
+					if (error != IntPtr.Zero) {
+						int zip_error = Native.zip_error_code_zip(error);
+						// Deleted is returned when the deleted entry existed when the zip was opened
+						// Inval is returned when the deleted entry was newly added to the zip, then deleted
+						if (zip_error == (int) ErrorCode.Deleted || zip_error == (int)ErrorCode.Inval)
+							return null;
+					}
+				}
+
+				throw GetErrorException();
+			}
 
 			var ze = ZipEntry.Create (this, stat);
 			ze.Init ();

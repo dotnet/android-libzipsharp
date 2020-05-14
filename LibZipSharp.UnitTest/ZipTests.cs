@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -156,6 +157,65 @@ namespace Tests {
 					Assert.AreEqual ("bar", encoding.GetString (stream.ToArray ()));
 				}
 			}
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public void EnumerateSkipDeletedEntries(bool deleteFromExistingFile)
+		{
+			var ms = new MemoryStream (Encoding.UTF8.GetBytes(TEXT));
+			File.WriteAllText ("file1.txt", "1111");
+			string filePath = Path.GetFullPath("file1.txt");
+			if (File.Exists ("test-archive-write.zip"))
+				File.Delete ("test-archive-write.zip");
+
+			ZipArchive zip = null;
+			try {
+				zip = ZipArchive.Open ("test-archive-write.zip", FileMode.CreateNew);
+
+				ZipEntry e;
+				e = zip.AddFile (filePath, "/path/ZipTestCopy1.exe");
+				e = zip.AddFile (filePath, "/path/ZipTestCopy2.exe");
+				var text = "Hello World";
+				e = zip.AddEntry ("/data/foo1.txt", text, Encoding.UTF8, CompressionMethod.Store);
+				e = zip.AddEntry ("/data/foo2.txt", File.OpenRead(filePath), CompressionMethod.Store);
+
+				if (deleteFromExistingFile) {
+					zip.Close ();
+					zip = ZipArchive.Open ("test-archive-write.zip", FileMode.Open);
+				}
+
+				ValidateEnumeratedEntries (zip, "path/ZipTestCopy1.exe", "path/ZipTestCopy2.exe", "data/foo1.txt", "data/foo2.txt");
+
+				// Delete first
+				zip.DeleteEntry ("path/ZipTestCopy1.exe");
+				ValidateEnumeratedEntries (zip, "path/ZipTestCopy2.exe", "data/foo1.txt", "data/foo2.txt");
+
+				// Delete last
+				zip.DeleteEntry ("data/foo2.txt");
+				ValidateEnumeratedEntries (zip, "path/ZipTestCopy2.exe", "data/foo1.txt");
+
+				// Delete middle
+				zip.DeleteEntry ("path/ZipTestCopy2.exe");
+				ValidateEnumeratedEntries (zip, "data/foo1.txt");
+
+				// Delete all
+				zip.DeleteEntry ("data/foo1.txt");
+				ValidateEnumeratedEntries (zip);
+			}
+			finally {
+				zip?.Dispose();
+			}
+		}
+
+		void ValidateEnumeratedEntries (ZipArchive zip, params string[] expectedEntries)
+		{
+			var actualEntries = new List<string>();
+			foreach (var entry in zip) {
+				actualEntries.Add(entry.FullName);
+			}
+
+			Assert.AreEqual(expectedEntries, actualEntries.ToArray());
 		}
 	}
 }
