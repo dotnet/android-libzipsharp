@@ -95,7 +95,7 @@ namespace Xamarin.Tools.Zip
 			if (current != null && current.Index == index)
 				return current;
 			
-			current = archive.ReadEntry (index, returnNullIfDeleted:true);
+			current = archive.ReadEntry (index, throwIfDeleted:false);
 			return current;
 		}
 	}

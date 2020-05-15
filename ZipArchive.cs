@@ -368,8 +368,8 @@ namespace Xamarin.Tools.Zip
 			string destDir = NormalizeArchivePath (true, archiveDirectory);
 			string destFile = useFileDirectory ? GetRootlessPath (sourcePath) : Path.GetFileName (sourcePath);
 			return AddFile (sourcePath, 
-			                String.IsNullOrEmpty (destDir) ? null : destDir + "/" + destFile,
-			                permissions, compressionMethod, overwriteExisting);
+							String.IsNullOrEmpty (destDir) ? null : destDir + "/" + destFile,
+							permissions, compressionMethod, overwriteExisting);
 		}
 
 		/// <summary>
@@ -691,23 +691,28 @@ namespace Xamarin.Tools.Zip
 			return ReadEntry ((ulong)LookupEntry (entryName, caseSensitive));
 		}
 
+		public ZipEntry ReadEntry(ulong index)
+		{
+			return ReadEntry (index, throwIfDeleted: true);
+		}
+
 		/// <summary>
 		/// Read a zip entry, given an index.
 		/// 
-		/// By default, if the entry is deleted then an exception is thrown (the error will be ErrorCode.Deleted or
-		/// ErrorCode.Inval, depending on whether the deleted entry previously existed in the zip or was newly
-		/// added - that's just how libzip handles that). If returnNullIfDeleted is true, then null is returned
-		/// for deleted entries and an exception is just thrown for other errors.
+		/// When throwIfDeleted is true, if the entry is deleted then an exception is thrown (the error will be
+		/// ErrorCode.Deleted or ErrorCode.Inval, depending on whether the deleted entry previously existed in
+		/// the zip or was newly added - that's just how libzip handles that). If throwIfDeleted is false then
+		/// null is returned for deleted entries and an exception is just thrown for other errors.
 		/// </summary>
 		/// <param name="index">index to read</param>
-		/// <param name="returnNullIfDeleted">whether to return null or throw an exception for deleted entries</param>
+		/// <param name="throwIfDeleted">whether to return null or throw an exception for deleted entries</param>
 		/// <returns></returns>
-		public ZipEntry ReadEntry (ulong index, bool returnNullIfDeleted = false)
+		public ZipEntry ReadEntry (ulong index, bool throwIfDeleted)
 		{
 			Native.zip_stat_t stat;
 			int ret = Native.zip_stat_index (archive, index, OperationFlags.None, out stat);
 			if (ret < 0) {
-				if (returnNullIfDeleted) {
+				if (! throwIfDeleted) {
 					IntPtr error = Native.zip_get_error(archive);
 
 					if (error != IntPtr.Zero) {
