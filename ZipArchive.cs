@@ -368,8 +368,8 @@ namespace Xamarin.Tools.Zip
 			string destDir = NormalizeArchivePath (true, archiveDirectory);
 			string destFile = useFileDirectory ? GetRootlessPath (sourcePath) : Path.GetFileName (sourcePath);
 			return AddFile (sourcePath, 
-							String.IsNullOrEmpty (destDir) ? null : destDir + "/" + destFile,
-							permissions, compressionMethod, overwriteExisting);
+					String.IsNullOrEmpty (destDir) ? null : destDir + "/" + destFile,
+					permissions, compressionMethod, overwriteExisting);
 		}
 
 		/// <summary>
@@ -691,7 +691,7 @@ namespace Xamarin.Tools.Zip
 			return ReadEntry ((ulong)LookupEntry (entryName, caseSensitive));
 		}
 
-		public ZipEntry ReadEntry(ulong index)
+		public ZipEntry ReadEntry (ulong index)
 		{
 			return ReadEntry (index, throwIfDeleted: true);
 		}
@@ -713,10 +713,10 @@ namespace Xamarin.Tools.Zip
 			int ret = Native.zip_stat_index (archive, index, OperationFlags.None, out stat);
 			if (ret < 0) {
 				if (! throwIfDeleted) {
-					IntPtr error = Native.zip_get_error(archive);
+					IntPtr error = Native.zip_get_error (archive);
 
 					if (error != IntPtr.Zero) {
-						int zip_error = Native.zip_error_code_zip(error);
+						int zip_error = Native.zip_error_code_zip (error);
 						// Deleted is returned when the deleted entry existed when the zip was opened
 						// Inval is returned when the deleted entry was newly added to the zip, then deleted
 						if (zip_error == (int) ErrorCode.Deleted || zip_error == (int)ErrorCode.Inval)
@@ -724,7 +724,7 @@ namespace Xamarin.Tools.Zip
 					}
 				}
 
-				throw GetErrorException();
+				throw GetErrorException ();
 			}
 
 			var ze = ZipEntry.Create (this, stat);
