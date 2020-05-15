@@ -869,12 +869,16 @@ namespace Xamarin.Tools.Zip
 			if (archive == IntPtr.Zero)
 				return;
 
-			Native.zip_close (archive);
-			foreach (var s in sources) {
-				s.Dispose ();
+			try {
+				if (Native.zip_close (archive) < 0)
+					throw GetErrorException ();
+			} finally {
+				foreach (var s in sources) {
+					s.Dispose ();
+				}
+				sources.Clear ();
+				archive = IntPtr.Zero;
 			}
-			sources.Clear ();
-			archive = IntPtr.Zero;
 		}
 
 		/// <summary>
