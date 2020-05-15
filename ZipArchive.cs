@@ -843,8 +843,7 @@ namespace Xamarin.Tools.Zip
 			try {
 				if (Native.zip_close (archive) < 0)
 					throw GetErrorException ();
-			}
-			finally {
+			} finally {
 				foreach (var s in sources) {
 					s.Dispose ();
 				}
