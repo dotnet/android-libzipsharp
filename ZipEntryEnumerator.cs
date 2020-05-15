@@ -66,7 +66,7 @@ namespace Xamarin.Tools.Zip
 				return false;
 
 			// Skip past any deleted entires
-			while (index < (ulong)nentries && ReadEntry(index) == null) {
+			while (index < (ulong)nentries && ReadEntry (index) == null) {
 				++index;
 			}
 
