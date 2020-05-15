@@ -159,13 +159,13 @@ namespace Tests {
 			}
 		}
 
-		[TestCase(false)]
-		[TestCase(true)]
-		public void EnumerateSkipDeletedEntries(bool deleteFromExistingFile)
+		[TestCase (false)]
+		[TestCase (true)]
+		public void EnumerateSkipDeletedEntries (bool deleteFromExistingFile)
 		{
 			var ms = new MemoryStream (Encoding.UTF8.GetBytes(TEXT));
 			File.WriteAllText ("file1.txt", "1111");
-			string filePath = Path.GetFullPath("file1.txt");
+			string filePath = Path.GetFullPath ("file1.txt");
 			if (File.Exists ("test-archive-write.zip"))
 				File.Delete ("test-archive-write.zip");
 
@@ -204,7 +204,7 @@ namespace Tests {
 				ValidateEnumeratedEntries (zip);
 			}
 			finally {
-				zip?.Dispose();
+				zip?.Dispose ();
 			}
 		}
 
@@ -212,10 +212,10 @@ namespace Tests {
 		{
 			var actualEntries = new List<string>();
 			foreach (var entry in zip) {
-				actualEntries.Add(entry.FullName);
+				actualEntries.Add (entry.FullName);
 			}
 
-			Assert.AreEqual(expectedEntries, actualEntries.ToArray());
+			Assert.AreEqual (expectedEntries, actualEntries.ToArray ());
 		}
 	}
 }
