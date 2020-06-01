@@ -19,10 +19,10 @@
       <Link>%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
     <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\linux-x64\native\libzip.so">
-      <Link>lib64\%(FileName)%(Extension)</Link>
+      <Link>%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
     <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\linux-x86\native\libzip.so">
-      <Link>%(FileName)%(Extension)</Link>
+      <Link>lib32\%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
     <None Include="@(_LibZipNativeLibs)" Condition="'$(LibZipSharpBundleAllNativeLibraries)' == 'True'">
       <Link>%(Link)</Link>
