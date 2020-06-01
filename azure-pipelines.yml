@@ -26,19 +26,19 @@ stages:
           displayName: "Build vcpkg"
         - script: |
             external\vcpkg\vcpkg.exe integrate install
-            external\vcpkg\vcpkg.exe install zlib:x64-windows-static bzip2:x64-windows-static
+            external\vcpkg\vcpkg.exe install zlib:x64-windows-static
             mkdir .\build\Windows\64
             cd .\build\Windows\64
-            cmake -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 15 2017 Win64" -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x64-windows-static
-            cmake --build . --config Release
+            cmake --config Release -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF -DCMAKE_C_FLAGS="/O2" -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 15 2017 Win64" -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x64-windows-static
+            cmake --build . --config Release -v
           displayName: "x64 Build"
         - script: |
             external\vcpkg\vcpkg.exe integrate install
-            external\vcpkg\vcpkg.exe install zlib:x86-windows-static bzip2:x86-windows-static
+            external\vcpkg\vcpkg.exe install zlib:x86-windows-static
             mkdir .\build\Windows\32
             cd .\build\Windows\32
-            cmake -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 15 2017" -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x86-windows-static
-            cmake --build . --config Release
+            cmake --config Release -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF -DCMAKE_C_FLAGS="/O2" -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 15 2017" -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x86-windows-static
+            cmake --build . --config Release -v
           displayName: "x86 Build"
         - task: ArchiveFiles@2
           inputs:
