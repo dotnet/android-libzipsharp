@@ -16,7 +16,7 @@ stages:
     jobs:
     - job: buildWindows
       pool:
-        vmImage: vs2017-win2016
+        vmImage: windows-latest
       steps:
         - script: |
             echo "Hello"
@@ -29,7 +29,7 @@ stages:
             external\vcpkg\vcpkg.exe install zlib:x64-windows-static
             mkdir .\build\Windows\64
             cd .\build\Windows\64
-            cmake --config Release -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF -DCMAKE_C_FLAGS="/O2" -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 15 2017 Win64" -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x64-windows-static
+            cmake --config Release -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF -DCMAKE_C_FLAGS="/O2" -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 16 2019" -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x64-windows-static
             cmake --build . --config Release -v
           displayName: "x64 Build"
         - script: |
@@ -37,22 +37,22 @@ stages:
             external\vcpkg\vcpkg.exe install zlib:x86-windows-static
             mkdir .\build\Windows\32
             cd .\build\Windows\32
-            cmake --config Release -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF -DCMAKE_C_FLAGS="/O2" -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 15 2017" -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x86-windows-static
+            cmake --config Release -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF -DCMAKE_C_FLAGS="/O2" -DCMAKE_TOOLCHAIN_FILE=..\..\..\external\vcpkg\scripts\buildsystems\vcpkg.cmake ..\..\..\external\libzip -G "Visual Studio 16 2019" -A Win32 -DBUILD_SHARED_LIBS=on -DVCPKG_TARGET_TRIPLET=x86-windows-static
             cmake --build . --config Release -v
           displayName: "x86 Build"
         - task: ArchiveFiles@2
           inputs:
             rootFolderOrFile: build\Windows\32\lib\Release\zip.dll
-            includeRootFolder: false 
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x86.7z
         - task: ArchiveFiles@2
           inputs:
             rootFolderOrFile: build\Windows\64\lib\Release\zip.dll
-            includeRootFolder: false 
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x64.7z
         - task: PublishBuildArtifacts@1
           displayName: upload artifacts
@@ -82,16 +82,16 @@ stages:
         - task: ArchiveFiles@2
           inputs:
             rootFolderOrFile: build/Linux/32/lib/libzip.so.5.1
-            includeRootFolder: false 
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x86.7z
         - task: ArchiveFiles@2
           inputs:
             rootFolderOrFile: build/Linux/64/lib/libzip.so.5.1
-            includeRootFolder: false 
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x64.7z
         - task: PublishBuildArtifacts@1
           displayName: upload artifacts
@@ -155,7 +155,7 @@ stages:
           inputs:
             solution: libZipSharp.csproj
             configuration: Release
-            msbuildArguments: /restore /v:diag 
+            msbuildArguments: /restore /v:diag
         - task: MSBuild@1
           displayName: NuGet pack libZipSharp
           inputs:
@@ -178,7 +178,7 @@ stages:
             artifactName: 'nuget'
             pathtoPublish: $(Build.ArtifactStagingDirectory)
   - stage: Test
-    dependsOn: Build 
+    dependsOn: Build
     jobs:
     - job: testlinux
       displayName: 'Test Linux'
@@ -205,7 +205,7 @@ stages:
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
-        vmImage: macOS-10.14 
+        vmImage: macOS-10.14
       steps:
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
