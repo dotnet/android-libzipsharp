@@ -46,16 +46,16 @@ stages:
         - task: ArchiveFiles@2
           inputs:
             rootFolderOrFile: build\Windows\32\lib\Release\zip.dll
-            includeRootFolder: false 
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x86.7z
         - task: ArchiveFiles@2
           inputs:
             rootFolderOrFile: build\Windows\64\lib\Release\zip.dll
-            includeRootFolder: false 
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x64.7z
         - task: PublishBuildArtifacts@1
           displayName: upload artifacts
@@ -84,17 +84,17 @@ stages:
           displayName: 'Build Linux x86'
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.1
-            includeRootFolder: false 
+            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.0
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x86.7z
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.1
-            includeRootFolder: false 
+            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.0
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x64.7z
         - task: PublishBuildArtifacts@1
           displayName: upload artifacts
@@ -146,8 +146,8 @@ stages:
             archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-x86.7z
             destinationFolder: build/Windows/32
         - bash: |
-            mv build/Linux/32/libzip.so.5.1 build/Linux/32/libzip.so
-            mv build/Linux/64/libzip.so.5.1 build/Linux/64/libzip.so
+            mv build/Linux/32/libzip.so.5.0 build/Linux/32/libzip.so
+            mv build/Linux/64/libzip.so.5.0 build/Linux/64/libzip.so
             mv build/Windows/32/zip.dll build/Windows/32/libzip.dll
             mv build/Windows/64/zip.dll build/Windows/64/libzip.dll
             rm $(Build.ArtifactStagingDirectory)/native/libzip-linux-*.7z
@@ -158,7 +158,7 @@ stages:
           inputs:
             solution: libZipSharp.csproj
             configuration: Release
-            msbuildArguments: /restore /v:diag 
+            msbuildArguments: /restore /v:diag
         - task: MSBuild@1
           displayName: NuGet pack libZipSharp
           inputs:
@@ -181,7 +181,7 @@ stages:
             artifactName: 'nuget'
             pathtoPublish: $(Build.ArtifactStagingDirectory)
   - stage: Test
-    dependsOn: Build 
+    dependsOn: Build
     jobs:
     - job: testlinux
       displayName: 'Test Linux'
@@ -208,7 +208,7 @@ stages:
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
-        vmImage: macOS-10.14 
+        vmImage: macOS-10.14
       steps:
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts

@@ -20,7 +20,7 @@ namespace Tests {
 		}
 
 		const string TEXT =  "oijoihaofiehfeafewufn e;fau 9ubre9wurew9;ru9;0oewubewa9ru bawpeu;9fberbf oiewrf";
-			
+
 
 		[Test]
 		public void CanCreateZipFile ()
@@ -114,7 +114,7 @@ namespace Tests {
 				var unixTime =  (ulong)dateTimeOffset.ToUnixTimeSeconds();
 				DateTime c = DateTimeOffset.FromUnixTimeSeconds ((long)unixTime).UtcDateTime;
 				Assert.AreEqual (WithoutMilliseconds (dt), WithoutMilliseconds (c));
-				
+
 			}
 		}
 
@@ -204,7 +204,11 @@ namespace Tests {
 				ValidateEnumeratedEntries (zip);
 			}
 			finally {
-				zip?.Dispose ();
+				try {
+					zip?.Dispose ();
+				} catch {
+
+				}
 			}
 		}
 
