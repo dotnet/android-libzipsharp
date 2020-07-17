@@ -43,9 +43,9 @@
             <Link>libZipSharp.dll.config</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Include="build\Darwin\64\lib\libzip.5.1.dylib" PackagePath="runtimes\osx\native\libzip.dylib" Pack="true" />
-        <None Include="build\Windows\64\libzip.dll" PackagePath="runtimes\win-x64\native\libzip.dll" Pack="true" />
-        <None Include="build\Windows\32\libzip.dll" PackagePath="runtimes\win-x86\native\libzip.dll" Pack="true" />
+        <None Include="build\Darwin\64\lib\libzip.5.3.dylib" PackagePath="runtimes\osx\native\libzip.dylib" Pack="true" />
+        <None Include="build\Windows\64\lib\libzip.dll" PackagePath="runtimes\win-x64\native\libzip.dll" Pack="true" />
+        <None Include="build\Windows\32\lib\libzip.dll" PackagePath="runtimes\win-x86\native\libzip.dll" Pack="true" />
         <None Include="build\Linux\64\libzip.so" PackagePath="runtimes\linux-x64\native\libzip.so" Pack="true" />
         <None Include="build\Linux\32\libzip.so" PackagePath="runtimes\linux-x86\native\libzip.so" Pack="true" />
         <None Include="LICENSE" PackagePath="Licences" Pack="true" />
