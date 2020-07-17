@@ -14,55 +14,7 @@ variables:
 stages:
   - stage: Build
     jobs:
-    - job: buildWindows
-      pool:
-        vmImage: windows-latest
-      variables:
-        LIBZIP_FEATURES: -DENABLE_COMMONCRYPTO=OFF -DENABLE_GNUTLS=OFF -DENABLE_MBEDTLS=OFF -DENABLE_OPENSSL=OFF -DENABLE_WINDOWS_CRYPTO=OFF -DBUILD_TOOLS=OFF -DBUILD_REGRESS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOC=OFF -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF
-        COMMON_CMAKE_PARAMS: -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019" -DBUILD_SHARED_LIBS=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_POLICY_DEFAULT_CMP0074=NEW -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
-      steps:
-        - script: |
-            echo "Hello"
-            git submodule update --init --recursive
-            cd external/vcpkg
-            bootstrap-vcpkg.bat
-          displayName: "Build vcpkg"
-        - script: |
-            external\vcpkg\vcpkg.exe integrate install
-            external\vcpkg\vcpkg.exe install zlib:x64-windows-static
-            mkdir .\build\Windows\64
-            cd .\build\Windows\64
-            cmake $(LIBZIP_FEATURES) $(COMMON_CMAKE_PARAMS) -DZLIB_ROOT=..\..\..\external\vcpkg\installed\x64-windows-static -A x64 ..\..\..\external\libzip
-            cmake --build . --config Release -v
-          displayName: "x64 Build"
-        - script: |
-            external\vcpkg\vcpkg.exe integrate install
-            external\vcpkg\vcpkg.exe install zlib:x86-windows-static
-            mkdir .\build\Windows\32
-            cd .\build\Windows\32
-            cmake $(LIBZIP_FEATURES) $(COMMON_CMAKE_PARAMS) -DZLIB_ROOT=..\..\..\external\vcpkg\installed\x86-windows-static -A Win32 ..\..\..\external\libzip
-            cmake --build . --config Release -v
-          displayName: "x86 Build"
-        - task: ArchiveFiles@2
-          inputs:
-            rootFolderOrFile: build\Windows\32\lib\Release\zip.dll
-            includeRootFolder: false 
-            archiveType: 7z
-            replaceExistingArchive: true 
-            archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x86.7z
-        - task: ArchiveFiles@2
-          inputs:
-            rootFolderOrFile: build\Windows\64\lib\Release\zip.dll
-            includeRootFolder: false 
-            archiveType: 7z
-            replaceExistingArchive: true 
-            archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x64.7z
-        - task: PublishBuildArtifacts@1
-          displayName: upload artifacts
-          inputs:
-            artifactName: 'native'
-            pathtoPublish: $(Build.ArtifactStagingDirectory)
-    - job: buildlinux
+    - job: buildLinux
       pool:
         vmImage: ubuntu-16.04
       steps:
@@ -72,9 +24,9 @@ stages:
             sudo apt -f -u install ninja-build gcc-multilib lib32z1-dev zlib1g-dev libssl-dev libssl1.1:i386 libssl-dev:i386 libc-dev:i386 libc6-dev-i386 -y
             git submodule update --init --recursive
           displayName: 'Install Tools'
-        - bash: |
-            patch --verbose -d external/libzip -p1 -l < libzip-static.patch
-          displayName: 'Apply Patch'
+#        - bash: |
+#            patch --verbose -d external/libzip -p1 -l < libzip-static.patch
+#          displayName: 'Apply Patch'
         - bash: |
             ./build_native
           displayName: 'Build Linux x64'
@@ -84,14 +36,14 @@ stages:
           displayName: 'Build Linux x86'
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.1
+            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.3
             includeRootFolder: false 
             archiveType: 7z
             replaceExistingArchive: true 
             archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x86.7z
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.1
+            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.3
             includeRootFolder: false 
             archiveType: 7z
             replaceExistingArchive: true 
@@ -101,25 +53,25 @@ stages:
           inputs:
             artifactName: 'native'
             pathtoPublish: $(Build.ArtifactStagingDirectory)
-    - job: build
-      dependsOn:
-        - buildlinux
-        - buildWindows
+    - job: buildMacOS
+      dependsOn: buildLinux
       pool:
         vmImage: macOS-10.14
       steps:
         - bash: |
-            brew install p7zip ninja
+            brew tap xamarin/xamarin-android-windeps
+            brew upgrade https://raw.githubusercontent.com/Homebrew/homebrew-core/a6542037a48a55061a4c319e6bb174b3715f7cbe/Formula/mingw-w64.rb
+            brew install mingw-w64 p7zip
+            brew install ninja xamarin/xamarin-android-windeps/mingw-zlib
             git submodule update --init --recursive
+          displayName: 'Install toolchain'
         - bash: |
             HOSTOS=Darwin ./build_native
-          displayName: 'Build Darwin'
-        - bash: |
+            ./build_windows
             mkdir -p build/Linux/64
             mkdir -p build/Linux/32
-            mkdir -p build/Windows/64
-            mkdir -p build/Windows/32
             find build/* | grep libzip
+          displayName: 'Build native and Windows'
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
           inputs:
@@ -135,23 +87,10 @@ stages:
           inputs:
             archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-linux-x86.7z
             destinationFolder: build/Linux/32
-        - task: ExtractFiles@1
-          displayName: Extract 64 bit Windows native
-          inputs:
-            archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-x64.7z
-            destinationFolder: build/Windows/64
-        - task: ExtractFiles@1
-          displayName: Extract 32 bit Windows native
-          inputs:
-            archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-x86.7z
-            destinationFolder: build/Windows/32
         - bash: |
-            mv build/Linux/32/libzip.so.5.1 build/Linux/32/libzip.so
-            mv build/Linux/64/libzip.so.5.1 build/Linux/64/libzip.so
-            mv build/Windows/32/zip.dll build/Windows/32/libzip.dll
-            mv build/Windows/64/zip.dll build/Windows/64/libzip.dll
+            mv build/Linux/32/libzip.so.5.3 build/Linux/32/libzip.so
+            mv build/Linux/64/libzip.so.5.3 build/Linux/64/libzip.so
             rm $(Build.ArtifactStagingDirectory)/native/libzip-linux-*.7z
-            rm $(Build.ArtifactStagingDirectory)/native/libzip-windows-*.7z
           displayName: 'Find libzip'
         - task: MSBuild@1
           displayName: 'Build solution libZipSharp.csproj'
@@ -181,7 +120,7 @@ stages:
             artifactName: 'nuget'
             pathtoPublish: $(Build.ArtifactStagingDirectory)
   - stage: Test
-    dependsOn: Build 
+    dependsOn: Build
     jobs:
     - job: testlinux
       displayName: 'Test Linux'
@@ -199,37 +138,22 @@ stages:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
             msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
-        - task: DotNetCoreCLI@2
-          displayName: "Run Tests under .net Core"
-          inputs:
-            command: test
-            projects: 'LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-            arguments: '--configuration Release --framework netcoreapp3.1 --no-build'
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
-        vmImage: macOS-10.14 
+        vmImage: macOS-10.14
       steps:
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
           inputs:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
-        - task: UseDotNet@2
-          inputs:
-            version: '3.1.x'
         - task: MSBuild@1
           displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
             msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
-        # - task: DotNetCoreCLI@2
-        #   displayName: "Run Tests under .net Core"
-        #   inputs:
-        #     command: test
-        #     projects: 'LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-        #     arguments: '--configuration Release --framework netcoreapp3.1 --no-build'
     - job: testwindows
       displayName: 'Test Windows'
       pool:
@@ -241,7 +165,7 @@ stages:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
         - task: MSBuild@1
-          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj and Run tests'
+          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
