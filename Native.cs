@@ -27,6 +27,8 @@
 using System;
 using System.Runtime.InteropServices;
 
+[assembly: DefaultDllImportSearchPathsAttribute(DllImportSearchPath.SafeDirectories)]
+
 namespace Xamarin.Tools.Zip
 {
 	internal class Native
@@ -47,16 +49,16 @@ namespace Xamarin.Tools.Zip
 
 		public struct zip_stat_t
 		{
-			public UInt64 valid;                 /* which fields have valid values */ 
-			public IntPtr name;                  /* name of the file (char *) */ 
-			public UInt64 index;                 /* index within archive */ 
-			public UInt64 size;                  /* size of file (uncompressed) */ 
-			public UInt64 comp_size;             /* size of file (compressed) */ 
-			public IntPtr mtime;                 /* modification time (time_t) */ 
-			public UInt32 crc;                   /* crc of file data */ 
-			public Int16  comp_method;           /* compression method used */ 
-			public UInt16 encryption_method;     /* encryption method used */ 
-			public UInt32 flags;                 /* reserved for future use */ 
+			public UInt64 valid;                 /* which fields have valid values */
+			public IntPtr name;                  /* name of the file (char *) */
+			public UInt64 index;                 /* index within archive */
+			public UInt64 size;                  /* size of file (uncompressed) */
+			public UInt64 comp_size;             /* size of file (compressed) */
+			public IntPtr mtime;                 /* modification time (time_t) */
+			public UInt32 crc;                   /* crc of file data */
+			public Int16  comp_method;           /* compression method used */
+			public UInt16 encryption_method;     /* encryption method used */
+			public UInt32 flags;                 /* reserved for future use */
 		};
 
 		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
@@ -360,7 +362,7 @@ namespace Xamarin.Tools.Zip
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int zip_set_file_compression (IntPtr archive, UInt64 index, CompressionMethod comp, UInt32 comp_flags);
-		
+
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int zip_file_set_mtime(IntPtr archive, UInt64 index, ulong mtime, UInt32 flags);
 
