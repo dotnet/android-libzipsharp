@@ -24,9 +24,9 @@ stages:
             sudo apt -f -u install ninja-build gcc-multilib lib32z1-dev zlib1g-dev libssl-dev libssl1.1:i386 libssl-dev:i386 libc-dev:i386 libc6-dev-i386 -y
             git submodule update --init --recursive
           displayName: 'Install Tools'
-#        - bash: |
-#            patch --verbose -d external/libzip -p1 -l < libzip-static.patch
-#          displayName: 'Apply Patch'
+        - bash: |
+            patch --verbose -d external/libzip -p1 -l < libzip-changes.patch
+          displayName: 'Apply Patch'
         - bash: |
             ./build_native
           displayName: 'Build Linux x64'
@@ -37,16 +37,16 @@ stages:
         - task: ArchiveFiles@2
           inputs:
             rootFolderOrFile: build/Linux/32/lib/libzip.so.5.3
-            includeRootFolder: false 
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x86.7z
         - task: ArchiveFiles@2
           inputs:
             rootFolderOrFile: build/Linux/64/lib/libzip.so.5.3
-            includeRootFolder: false 
+            includeRootFolder: false
             archiveType: 7z
-            replaceExistingArchive: true 
+            replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x64.7z
         - task: PublishBuildArtifacts@1
           displayName: upload artifacts
@@ -65,6 +65,9 @@ stages:
             brew install ninja xamarin/xamarin-android-windeps/mingw-zlib
             git submodule update --init --recursive
           displayName: 'Install toolchain'
+        - bash: |
+            patch --verbose -d external/libzip -p1 -l < libzip-changes.patch
+          displayName: 'Apply Patch'
         - bash: |
             HOSTOS=Darwin ./build_native
             ./build_windows
@@ -97,7 +100,7 @@ stages:
           inputs:
             solution: libZipSharp.csproj
             configuration: Release
-            msbuildArguments: /restore /v:diag 
+            msbuildArguments: /restore /v:diag
         - task: MSBuild@1
           displayName: NuGet pack libZipSharp
           inputs:
