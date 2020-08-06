@@ -27,7 +27,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-[assembly: DefaultDllImportSearchPathsAttribute(DllImportSearchPath.SafeDirectories)]
+[assembly: DefaultDllImportSearchPathsAttribute(DllImportSearchPath.SafeDirectories | DllImportSearchPath.AssemblyDirectory)]
 
 namespace Xamarin.Tools.Zip
 {
