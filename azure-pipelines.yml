@@ -25,6 +25,7 @@ stages:
             git submodule update --init --recursive
           displayName: 'Install Tools'
         - bash: |
+            patch --verbose -d external/libzip -p1 -l < libzip-static.patch
             patch --verbose -d external/libzip -p1 -l < libzip-changes.patch
           displayName: 'Apply Patch'
         - bash: |
