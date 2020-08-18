@@ -1,13 +1,13 @@
 diff --git a/lib/zip_stat_index.c b/lib/zip_stat_index.c
-index 0f8bead8..62dc0455 100644
+index 77993257..a1cba96a 100644
 --- a/lib/zip_stat_index.c
 +++ b/lib/zip_stat_index.c
 @@ -55,7 +55,7 @@ zip_stat_index(zip_t *za, zip_uint64_t index, zip_flags_t flags, zip_stat_t *st)
-             return -1;
-         }
-
--        if (entry->changes->changed & ZIP_DIRENT_LAST_MOD) {
-+        if (entry->changes != NULL && entry->changes->changed & ZIP_DIRENT_LAST_MOD) {
-             st->mtime = de->last_mod;
-             st->valid |= ZIP_STAT_MTIME;
-         }
+ 	    return -1;
+ 	}
+ 
+-	if (entry->changes->changed & ZIP_DIRENT_LAST_MOD) {
++	if (entry->changes != NULL && entry->changes->changed & ZIP_DIRENT_LAST_MOD) {
+ 	    st->mtime = de->last_mod;
+ 	    st->valid |= ZIP_STAT_MTIME;
+ 	}
