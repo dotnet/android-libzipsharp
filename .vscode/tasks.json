@@ -16,6 +16,18 @@
             ]
         },
         {
+          "label": "Regenerate LibZipSharp Localisations",
+          "type": "shell",
+          "command": "msbuild LibZipSharp.csproj /restore /t:UpdateXlf",
+          "group": {
+              "kind": "build",
+              "isDefault": true
+          },
+          "problemMatcher": [
+              "$msCompile"
+          ]
+        },
+        {
             "label": "Pack LibZipSharp Nuget",
             "type": "shell",
             "command": "msbuild LibZipSharp.csproj /t:Pack",

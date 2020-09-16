@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using Mono.Unix.Native;
+using Xamarin.Tools.Zip.Properties;
 
 namespace Xamarin.Tools.Zip
 {
@@ -59,7 +60,7 @@ namespace Xamarin.Tools.Zip
 
 			if (rv < 0) {
 				// TODO: log properly. Maybe throw exception?
-				Console.WriteLine ($"Warning: failed to stat file '{path}': {GetLastErrorMessage ()}");
+				Console.WriteLine (string.Format (Resources.FailedToStatFile_file_error, path, GetLastErrorMessage ()));
 				return false;
 			}
 
@@ -69,7 +70,7 @@ namespace Xamarin.Tools.Zip
 		public static bool GetFilePermissions (string path, bool followSymlinks, out FilePermissions filePermissions)
 		{
 			if (String.IsNullOrEmpty (path))
-				throw new ArgumentException ("must not be null or empty", nameof (path));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (path)), nameof (path));
 
 			Stat sbuf;
 			if (!StatFile (path, followSymlinks, out sbuf)) {
@@ -141,7 +142,7 @@ namespace Xamarin.Tools.Zip
 		public static bool GetFileType (string path, bool followSymlinks, out FilePermissions fileType)
 		{
 			if (String.IsNullOrEmpty (path))
-				throw new ArgumentException ("must not be null or empty", nameof (path));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (path)), nameof (path));
 
 			Stat sbuf;
 			if (!StatFile (path, followSymlinks, out sbuf)) {
@@ -156,7 +157,7 @@ namespace Xamarin.Tools.Zip
 		public static bool GetFileType (string path, bool followSymlinks, out UnixExternalPermissions fileType)
 		{
 			if (String.IsNullOrEmpty (path))
-				throw new ArgumentException ("must not be null or empty", nameof (path));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (path)), nameof (path));
 
 			Stat sbuf;
 			if (!StatFile (path, followSymlinks, out sbuf)) {

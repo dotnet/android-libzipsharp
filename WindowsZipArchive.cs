@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.IO;
+using Xamarin.Tools.Zip.Properties;
 
 namespace Xamarin.Tools.Zip
 {
@@ -34,7 +35,7 @@ namespace Xamarin.Tools.Zip
 			get {
 				var opts = Options as WindowsPlatformOptions;
 				if (opts == null)
-					throw new InvalidOperationException ("Unexpected options type");
+					throw new InvalidOperationException (string.Format (Resources.UnexpectedOptionsType_string_type_type, nameof (Options), typeof (WindowsPlatformOptions).Name, Options?.GetType ()?.Name ?? "Unknown"));
 				return opts;
 			}
 		}

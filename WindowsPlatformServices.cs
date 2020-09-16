@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Xamarin.Tools.Zip.Properties;
 
 namespace Xamarin.Tools.Zip
 {
@@ -61,7 +62,7 @@ namespace Xamarin.Tools.Zip
 		{
 			var entry = zipEntry as WindowsZipEntry;
 			if (entry == null)
-				throw new ArgumentException ("Invalid entry type, expected WindowsZipEntry", nameof (zipEntry));
+				throw new ArgumentException (string.Format (Resources.InvalidEntryType_string_type, nameof (zipEntry), typeof (WindowsZipEntry).Name, zipEntry.GetType ().Name), nameof (zipEntry));
 
 			// File attributes
 			switch (entry.OperatingSystem) {
@@ -194,7 +195,7 @@ namespace Xamarin.Tools.Zip
 		{
 			var archive = zipArchive as WindowsZipArchive;
 			if (archive == null)
-				throw new ArgumentException ("must be an instance of WindowsZipArchive", nameof (zipArchive));
+				throw new ArgumentException (string.Format (Resources.MustBeAnInstanceOf_string_type, nameof (zipArchive), typeof (WindowsZipArchive).Name), nameof (zipArchive));
 			UnixExternalPermissions ftype = UnixExternalPermissions.IFREG;
 
 			if (!String.IsNullOrEmpty (sourcePath)) {
@@ -210,7 +211,7 @@ namespace Xamarin.Tools.Zip
 		{
 			var windowsArchive = archive as WindowsZipArchive;
 			if (windowsArchive == null)
-				throw new InvalidOperationException ("Expected instance of WindowsZipArchive");
+				throw new InvalidOperationException (string.Format (Resources.ExpectedAnInstanceOf_string_type, typeof (WindowsZipArchive).Name, nameof (archive), archive.GetType ().Name));
 
 			return windowsArchive.SetEntryUnixPermissions (index, requestedPermissions, unixPermissions);
 		}

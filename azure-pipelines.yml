@@ -171,7 +171,7 @@ stages:
           inputs:
             solution: libZipSharp.csproj
             configuration: Release
-            msbuildArguments: /restore /v:diag
+            msbuildArguments: /restore /v:diag /p:RunningOnCI=true
         - task: MSBuild@1
           displayName: NuGet pack libZipSharp
           inputs:

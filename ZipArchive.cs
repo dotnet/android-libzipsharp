@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using Xamarin.Tools.Zip.Properties;
 
 namespace Xamarin.Tools.Zip
 {
@@ -96,42 +97,42 @@ namespace Xamarin.Tools.Zip
 				var error = (ErrorCode)errorp.zip_err;
 				switch (error) {
 					case ErrorCode.Exists:
-						message = $"The file already exists";
+						message = Resources.FileAlreadyExists;
 						break;
 
 					case ErrorCode.Incons:
-						message = $"The stream failed consistency checks";
+						message = Resources.StreamFailedConsistencyChecks;
 						break;
 
 					case ErrorCode.Memory:
-						message = "libzip returned out of memory error";
+						message = Resources.OutOfMemory;
 						break;
 
 					case ErrorCode.NoEnt:
-						message = $"Stream does not exist and file creation wasn't requested";
+						message = Resources.StreamDoesNotExist;
 						break;
 
 					case ErrorCode.NoZip:
-						message = $"Stream is not a ZIP archive";
+						message = Resources.StreamIsNotAZip;
 						break;
 
 					case ErrorCode.Open:
-						message = $"Stream could not be opened";
+						message = Resources.StreamCouldNotBeOpened;
 						break;
 
 					case ErrorCode.Read:
-						message = $"Error occured while reading the Stream";
+						message = Resources.ErrorReadingStream;
 						break;
 
 					case ErrorCode.Seek:
-						message = $"Stream does not support seeking";
+						message = Resources.StreamDoesNotSupportSeeking;
 						break;
 
 					case ErrorCode.OK:
 						break;
 
 					default:
-						message = $"Unexpected libzip error: {error}";
+						message = string.Format (Resources.UnexpectedLibZipError_error , error);
 						break;
 				}
 
@@ -145,7 +146,7 @@ namespace Xamarin.Tools.Zip
 		/// Releases unmanaged resources and performs other cleanup operations before the
 		/// <see cref="T:Xamarin.ZipSharp.ZipArchive"/> is reclaimed by garbage collection.
 		/// </summary>
-		~ZipArchive() 
+		~ZipArchive()
 		{
 			Dispose (false);
 		}
@@ -158,7 +159,7 @@ namespace Xamarin.Tools.Zip
 			archive = Native.zip_open (path, flags, out error);
 			if (archive == IntPtr.Zero)
 				LastErrorCode = error;
-			
+
 			return LastErrorCode;
 		}
 
@@ -197,7 +198,7 @@ namespace Xamarin.Tools.Zip
 		public static ZipArchive Open (string path, FileMode mode, string defaultExtractionDir = null, bool strictConsistencyChecks = false, IPlatformOptions options = null)
 		{
 			if (String.IsNullOrEmpty (path))
-				throw new ArgumentException ("Must not be null or empty", nameof (path));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (path)), nameof (path));
 			var zip = CreateArchiveInstance (defaultExtractionDir, options);
 
 			OpenFlags flags = OpenFlags.None;
@@ -205,19 +206,19 @@ namespace Xamarin.Tools.Zip
 				case FileMode.Append:
 				case FileMode.Open:
 					break;
-					
+
 				case FileMode.Create:
 					flags = OpenFlags.Create;
 					break;
-					
+
 				case FileMode.CreateNew:
 					flags = OpenFlags.Create | OpenFlags.Excl;
 					break;
-					
+
 				case FileMode.OpenOrCreate:
 					flags = OpenFlags.Create;
 					break;
-					
+
 				case FileMode.Truncate:
 					flags = OpenFlags.Truncate;
 					break;
@@ -225,47 +226,47 @@ namespace Xamarin.Tools.Zip
 
 			if (strictConsistencyChecks)
 				flags |= OpenFlags.CheckCons;
-			
+
 			ErrorCode error = zip.Open (path, flags);
 			string message = null;
 			switch (error) {
 				case ErrorCode.Exists:
-					message = $"The file {path} already exists";
+					message = string.Format (Resources.FilePathAlreadyExists_file, path);
 					break;
 
 				case ErrorCode.Incons:
-					message = $"The file {path} failed consistency checks";
+					message = string.Format (Resources.FileFailedConsistencyChecks_file, path);
 					break;
 
 				case ErrorCode.Memory:
-					message = "libzip returned out of memory error";
+					message = Resources.OutOfMemory;
 					break;
 
 				case ErrorCode.NoEnt:
-					message = $"File {path} does not exist and file creation wasn't requested";
+					message = string.Format (Resources.FileDoesNotExist_file, path);
 					break;
 
 				case ErrorCode.NoZip:
-					message = $"File {path} is not a ZIP archive";
+					message = string.Format (Resources.FileIsNotAZip_file, path);
 					break;
 
 				case ErrorCode.Open:
-					message = $"File {path} could not be opened";
+					message = string.Format (Resources.FileCouldNotBeOpened_file, path);
 					break;
 
 				case ErrorCode.Read:
-					message = $"Error occured while reading {path}";
+					message = string.Format (Resources.ErrorReadingFile_file, path);
 					break;
 
 				case ErrorCode.Seek:
-					message = $"File {path} does not support seeking";
+					message = string.Format (Resources.FileDoesNotSupportSeeking_file, path);
 					break;
 
 				case ErrorCode.OK:
 					break;
 
 				default:
-					message = $"Unexpected libzip error: {error}";
+					message = string.Format (Resources.UnexpectedLibZipError_error, error);
 					break;
 			}
 
@@ -276,7 +277,7 @@ namespace Xamarin.Tools.Zip
 
 		/// <summary>
 		/// Extracts all the entries from the archive and places them in the
-		/// directory indicated by the <paramref name="destinationDirectory"/> parameter. 
+		/// directory indicated by the <paramref name="destinationDirectory"/> parameter.
 		/// If <paramref name="destinationDirectory"/> is <c>null</c> or empty, the default destination directory
 		/// as passed to <see cref="ZipArchive.Open (string,FileMode,string,bool,IPlatformOptions)"/> is used.
 		/// </summary>
@@ -364,10 +365,10 @@ namespace Xamarin.Tools.Zip
 											bool overwriteExisting = true, bool useFileDirectory = true)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
-				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (sourcePath)), nameof (sourcePath));
 			string destDir = NormalizeArchivePath (true, archiveDirectory);
 			string destFile = useFileDirectory ? GetRootlessPath (sourcePath) : Path.GetFileName (sourcePath);
-			return AddFile (sourcePath, 
+			return AddFile (sourcePath,
 					String.IsNullOrEmpty (destDir) ? null : destDir + "/" + destFile,
 					permissions, compressionMethod, overwriteExisting);
 		}
@@ -392,7 +393,7 @@ namespace Xamarin.Tools.Zip
 								 bool overwriteExisting = true)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
-				throw new ArgumentException ("Must not be null or empty", nameof (sourcePath));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (sourcePath)), nameof (sourcePath));
 
 			bool isDir = PlatformServices.Instance.IsDirectory (this, sourcePath);
 			if (permissions == EntryPermissions.Default) {
@@ -404,7 +405,7 @@ namespace Xamarin.Tools.Zip
 			if (PlatformServices.Instance.IsRegularFile (this, sourcePath))
 				return AddStream (new FileStream (sourcePath, FileMode.Open, FileAccess.Read), archivePath ?? sourcePath, permissions, compressionMethod, overwriteExisting,
 					modificationTime: File.GetLastWriteTimeUtc (sourcePath));
-		
+
 			string destPath = EnsureArchivePath (archivePath ?? sourcePath, isDir);
 			long index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out compressionMethod);
 			if (index < 0)
@@ -438,7 +439,7 @@ namespace Xamarin.Tools.Zip
 		}
 
 		/// <summary>
-		/// Adds the text provided as a new entry within the archive. This is useful 
+		/// Adds the text provided as a new entry within the archive. This is useful
 		/// for when you want to just add plain text to the archive. For example a
 		/// README/LICENCE file which needs to be pre-processed rather than just adding
 		/// the raw file.
@@ -450,7 +451,7 @@ namespace Xamarin.Tools.Zip
 		public ZipEntry AddEntry (string entryName, string text, Encoding encoding, CompressionMethod compressionMethod = CompressionMethod.Default)
 		{
 			if (string.IsNullOrEmpty (text))
-				throw new ArgumentException ("must not be null or empty", nameof (text));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (text)), nameof (text));
 
 			if (encoding == null)
 				encoding = Encoding.Default;
@@ -460,16 +461,16 @@ namespace Xamarin.Tools.Zip
 		/// <summary>
 		/// Add a list of files to the archive. Each entry in <paramref name="fileNames"/> is passed
 		/// to <see cref="AddFiles"/> and stored according to the rules described there.
-		/// If <paramref name="directoryPathInZip"/> is non-null and not empty, it is treated as the 
+		/// If <paramref name="directoryPathInZip"/> is non-null and not empty, it is treated as the
 		/// either the directory in which to store all the files listed in <paramref name="fileNames"/>
 		/// with their directory part stripped, if <paramref name="useFileDirectories"/> is <c>false</c> or
 		/// with their directory part being used as a subdirectory of <paramref name="directoryPathInZip"/>
 		/// </summary>
-		/// 
+		///
 		/// <remarks>
 		/// Assuming <paramref name="directoryPathInZip"/> is <c>my/directory/</c>, and one of the files in
 		/// the <paramref name="fileNames"/> parameter is <c>/path/to/my.file</c>, the following rules apply:
-		/// 
+		///
 		/// <list type="bullet">
 		/// <item>
 		/// <term>If <paramref name="useFileDirectories"/> == <c>true</c></term>
@@ -481,7 +482,7 @@ namespace Xamarin.Tools.Zip
 		/// </item>
 		/// </list>
 		/// </remarks>
-		/// 
+		///
 		/// <param name="fileNames">An IEnumerable&lt;string&gt; of files to add</param>
 		/// <param name="directoryPathInZip">The root directory path in archive.</param>
 		/// <param name="useFileDirectories">Whether directory part of files in <paramref name="fileNames"/> is used</param>
@@ -558,7 +559,7 @@ namespace Xamarin.Tools.Zip
 		{
 			if (String.IsNullOrEmpty (path) || !Path.IsPathRooted (path))
 				return path;
-			
+
 			return path.Remove (0, Path.GetPathRoot (path).Length);
 		}
 
@@ -605,10 +606,10 @@ namespace Xamarin.Tools.Zip
 		public void AddDirectory (string folder, string folderInArchive, CompressionMethod compressionMethod = CompressionMethod.Default)
 		{
 			if (string.IsNullOrEmpty (folder))
-				throw new ArgumentException ("must not be null or empty", nameof (folder));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (folder)), nameof (folder));
 
 			if (string.IsNullOrEmpty (folderInArchive))
-				throw new ArgumentException ("must not be null or empty", nameof (folderInArchive));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (folderInArchive)), nameof (folderInArchive));
 
 			string root = folderInArchive;
 			foreach (string fileName in Directory.GetFiles (folder)) {
@@ -638,7 +639,7 @@ namespace Xamarin.Tools.Zip
 		{
 			string destPath = NormalizeArchivePath (isDir, archivePath);
 			if (String.IsNullOrEmpty (destPath))
-				throw new InvalidOperationException ("Archive destination path must not be empty");
+				throw new InvalidOperationException (Resources.DestinationMustNotBeEmpty);
 			return destPath;
 		}
 
@@ -698,7 +699,7 @@ namespace Xamarin.Tools.Zip
 
 		/// <summary>
 		/// Read a zip entry, given an index.
-		/// 
+		///
 		/// When throwIfDeleted is true, if the entry is deleted then an exception is thrown (the error will be
 		/// ErrorCode.Deleted or ErrorCode.Inval, depending on whether the deleted entry previously existed in
 		/// the zip or was newly added - that's just how libzip handles that). If throwIfDeleted is false then
@@ -747,7 +748,7 @@ namespace Xamarin.Tools.Zip
 				system_error = -1;
 			}
 
-			return new ZipException (Utilities.GetStringFromNativeAnsi (Native.zip_strerror (archive)) ?? "Unknown error", zip_error, system_error);
+			return new ZipException (Utilities.GetStringFromNativeAnsi (Native.zip_strerror (archive)) ?? Resources.UnknownError, zip_error, system_error);
 		}
 
 		internal static unsafe Int64 stream_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd)
