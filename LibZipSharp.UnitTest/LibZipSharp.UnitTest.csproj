@@ -7,6 +7,7 @@
     <IsPackable>false</IsPackable>
     <LibZipSharpBundleAllNativeLibraries>true</LibZipSharpBundleAllNativeLibraries>
     <ReferenceNuget Condition="'$(ReferenceNuget)' == ''">False</ReferenceNuget>
+    <DefineConstants Condition="'$(OS)' == 'Windows_NT'">$(DefineConstants);WINDOWS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

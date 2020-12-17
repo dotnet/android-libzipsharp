@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using Xamarin.Tools.Zip;
+using Unix = Mono.Unix;
 
 namespace Tests {
 
@@ -20,7 +21,7 @@ namespace Tests {
 		}
 
 		const string TEXT =  "oijoihaofiehfeafewufn e;fau 9ubre9wurew9;ru9;0oewubewa9ru bawpeu;9fberbf oiewrf";
-			
+
 
 		[Test]
 		public void CanCreateZipFile ()
@@ -73,6 +74,38 @@ namespace Tests {
 			}
 		}
 
+#if !WINDOWS
+		[Test]
+		public void CheckExtractedFilePermissions ()
+		{
+			if (Environment.OSVersion.Platform != PlatformID.Unix)
+				Assert.Ignore ("Skipping. Test invalid on windows.");
+			string root = Path.Combine (Path.GetDirectoryName (typeof (ZipTests).Assembly.Location), "CheckExtractedFilePermissions");
+			Directory.CreateDirectory (root);
+			string extractedDir = Path.Combine (root, "Extracted");
+			string file = Path.Combine (root, "script");
+			string zip = Path.Combine (root, "foo.zip");
+			if (File.Exists (zip))
+				File.Delete (zip);
+			if (File.Exists (file))
+				File.Delete (file);
+			File.WriteAllText (file, "#!/bin/bash" + Environment.NewLine + "echo foo");
+			using (var archive = ZipArchive.Open (zip, FileMode.Create)) {
+				ZipEntry entry = archive.AddFile (file, archivePath: "script", permissions: EntryPermissions.OwnerAll | EntryPermissions.GroupAll | EntryPermissions.WorldAll);
+			}
+			using (var archive = ZipArchive.Open (zip, FileMode.Open)) {
+				archive.ExtractAll (extractedDir);
+				string script = Path.Combine (extractedDir, "script");
+				FileAssert.Exists (script);
+				var ufi = new Unix.UnixFileInfo(script);
+				Assert.IsTrue (ufi.FileAccessPermissions.HasFlag (Unix.FileAccessPermissions.UserExecute));
+				Assert.IsTrue (ufi.FileAccessPermissions.HasFlag (Unix.FileAccessPermissions.GroupExecute));
+				Assert.IsTrue (ufi.FileAccessPermissions.HasFlag (Unix.FileAccessPermissions.OtherExecute));
+			}
+
+		}
+#endif
+
 		static DateTime WithoutMilliseconds (DateTime t) =>
 			new DateTime (t.Year, t.Month, t.Day, t.Hour, t.Minute, t.Second, t.Kind);
 
@@ -114,7 +147,7 @@ namespace Tests {
 				var unixTime =  (ulong)dateTimeOffset.ToUnixTimeSeconds();
 				DateTime c = DateTimeOffset.FromUnixTimeSeconds ((long)unixTime).UtcDateTime;
 				Assert.AreEqual (WithoutMilliseconds (dt), WithoutMilliseconds (c));
-				
+
 			}
 		}
 
