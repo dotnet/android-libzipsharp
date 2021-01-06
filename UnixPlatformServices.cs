@@ -30,6 +30,7 @@ using System.Text;
 
 using Mono.Unix;
 using Mono.Unix.Native;
+using Xamarin.Tools.Zip.Properties;
 
 namespace Xamarin.Tools.Zip
 {
@@ -63,7 +64,7 @@ namespace Xamarin.Tools.Zip
 		{
 			var entry = zipEntry as UnixZipEntry;
 			if (entry == null)
-				throw new ArgumentException ("Invalid entry type, expected UnixZipEntry", nameof (zipEntry));
+				throw new ArgumentException (string.Format (Resources.InvalidEntryType_string_type, nameof (zipEntry), typeof (ZipEntry).Name, zipEntry.GetType ().Name), nameof (zipEntry));
 
 			// File attributes
 			switch (entry.OperatingSystem) {
@@ -89,7 +90,7 @@ namespace Xamarin.Tools.Zip
 			// UID and GID
 			IList<ExtraField> fields = entry.GetExtraField (KnownExtraFields.InfoZipUnix3rdGeneration);
 			SetIDSFromInfoZipUnix3rdGeneration (fields, entry);
-		
+
 			fields = entry.GetExtraField (KnownExtraFields.InfoZipUnixType2);
 			SetIDSFromInfoZipUnixType2 (fields, entry);
 
@@ -166,7 +167,7 @@ namespace Xamarin.Tools.Zip
 				default:
 					// TODO: implement support for the rest of file types
 					// TODO: check what happens if zip with such files is unpacked on Windows
-					throw new NotSupportedException ($"Unsupported Permission {perms}. Files other than regular ones, directories and symlinks aren't supported yet");
+					throw new NotSupportedException (string.Format (Resources.UnsupportedPermission_UnixExternalPermissions, perms));
 			}
 
 			perms = (UnixExternalPermissions)(xattr & (uint)UnixExternalPermissions.IMODE);
@@ -322,7 +323,7 @@ namespace Xamarin.Tools.Zip
 		{
 			var archive = zipArchive as UnixZipArchive;
 			if (archive == null)
-				throw new ArgumentException ("must be an instance of UnixZipArchive", nameof (zipArchive));
+				throw new ArgumentException (string.Format (Resources.MustBeAnInstanceOf_string_type, nameof (zipArchive), typeof (UnixZipArchive).Name), nameof (zipArchive));
 			UnixExternalPermissions ftype = UnixExternalPermissions.IFREG;
 
 			if (!String.IsNullOrEmpty (sourcePath)) {
@@ -338,7 +339,7 @@ namespace Xamarin.Tools.Zip
 		{
 			var unixArchive = archive as UnixZipArchive;
 			if (unixArchive == null)
-				throw new InvalidOperationException ("Expected instance of UnixZipArchive");
+				throw new InvalidOperationException (string.Format (Resources.ExpectedAnInstanceOf_string_type, typeof (UnixZipArchive).Name, nameof (archive), archive.GetType ().Name));
 
 			return unixArchive.SetEntryUnixPermissions (index, requestedPermissions, unixPermissions);
 		}
@@ -347,12 +348,12 @@ namespace Xamarin.Tools.Zip
 		{
 			var archive = zipArchive as UnixZipArchive;
 			if (archive == null)
-				throw new ArgumentException ("must be an instance of UnixZipArchive", nameof (zipArchive));
+				throw new ArgumentException (string.Format (Resources.MustBeAnInstanceOf_string_type, nameof (zipArchive), typeof (UnixZipArchive).Name), nameof (zipArchive));
 
 			bool followSymlinks = !archive.UnixOptions.StoreSymlinks;
 			FilePermissions fileType;
 			if (!Utilities.GetFileType (sourcePath, followSymlinks, out fileType))
-				throw new InvalidOperationException ($"Failed to determine type of the '{sourcePath}' file");
+				throw new InvalidOperationException (string.Format (Resources.UnableToDetermineFileType_file, sourcePath));
 
 			ZipEntry entry;
 			switch (fileType) {
@@ -360,7 +361,7 @@ namespace Xamarin.Tools.Zip
 					compressionMethod = CompressionMethod.Store;
 					var sb = new StringBuilder ();
 					if (Syscall.readlink (sourcePath, sb) < 0)
-						throw new InvalidOperationException ($"Failed to read the '{sourcePath}' symbolic link: {Utilities.GetLastErrorMessage ()}");
+						throw new InvalidOperationException (string.Format (Resources.FailedToReadSymLink_link_error, sourcePath, Utilities.GetLastErrorMessage ()));
 					EntryPermissions permissions;
 					UnixExternalPermissions unixPermissions;
 					if (!Utilities.GetFilePermissions (sourcePath, followSymlinks, out unixPermissions))
@@ -371,7 +372,7 @@ namespace Xamarin.Tools.Zip
 					break;
 
 				default:
-					throw new NotSupportedException ($"Storing files of type {fileType} is not supported");
+					throw new NotSupportedException (string.Format (Resources.FileTypeNotSupported_filetype, fileType));
 			}
 			index = (long)entry.Index;
 
@@ -382,9 +383,9 @@ namespace Xamarin.Tools.Zip
 		{
 			var entry = zipEntry as UnixZipEntry;
 			if (entry == null)
-				throw new ArgumentException ("Invalid entry type, expected UnixZipEntry", nameof (zipEntry));
+				throw new ArgumentException (string.Format (Resources.InvalidEntryType_string_type, nameof (zipEntry), typeof (UnixZipEntry).Name, zipEntry.GetType ().Name), nameof (zipEntry));
 			if (String.IsNullOrEmpty (extractedFilePath))
-				throw new ArgumentException ("must not be null or empty", nameof (extractedFilePath));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (extractedFilePath)), nameof (extractedFilePath));
 
 			int err = Syscall.chmod (extractedFilePath, entry.FilePermissions);
 			if (throwOnNativeExceptions && err < 0)
@@ -413,7 +414,7 @@ namespace Xamarin.Tools.Zip
 				// TODO: log it properly
 				var archive = entry.Archive as UnixZipArchive;
 				if (archive.UnixOptions.VerboseLogging)
-					Console.WriteLine ($"Warning: failed to set owner of entry '{extractedFilePath}' ({Stdlib.GetLastError ()}): {Syscall.strerror (Syscall.GetLastError ())}");
+					Console.WriteLine (string.Format (Resources.FailedToSetOwner_entry_error_oserror, extractedFilePath, Stdlib.GetLastError (), Syscall.strerror (Syscall.GetLastError ())));
 			}
 			return true;
 		}

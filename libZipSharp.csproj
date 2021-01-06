@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+    <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+    <Import Project="..\tools\BuildTasks.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
     <Import Project="$(MSBuildThisFileDirectory)LibZipSharp.props" />
     <PropertyGroup>
         <AssemblyName>libZipSharp</AssemblyName>
@@ -7,10 +9,16 @@
         <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <RootNamespace>Xamarin.Tools.Zip</RootNamespace>
         <Deterministic>false</Deterministic>
         <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
         <NoWarn>3021</NoWarn>
         <DocumentationFile>libZipSharp.xml</DocumentationFile>
+        <GenerateResxSource>true</GenerateResxSource>
+    </PropertyGroup>
+    <PropertyGroup>
+      <XlfLanguages>cs;de;es;fr;it;ja;ko;pl;pt-BR;ru;tr;zh-Hans;zh-Hant</XlfLanguages>
+      <UpdateXlfOnBuild Condition="'$(RunningOnCI)' != 'true'">true</UpdateXlfOnBuild>
     </PropertyGroup>
     <PropertyGroup>
         <!--
@@ -54,7 +62,10 @@
         <Compile Remove="LibZipSharp.UnitTest/**/*" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" PrivateAssets="none" />
+      <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" PrivateAssets="none" IncludeAssets="runtime" />
       <PackageReference Include="System.Buffers" Version="4.5.0" />
+      <PackageReference Include="XliffTasks" Version="1.0.0-beta.20206.1" PrivateAssets="all" />
     </ItemGroup>
+    <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+    <Import Project="..\tools\GenerateResxSource.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Xamarin.Tools.Zip.Properties;
 
 namespace Xamarin.Tools.Zip
 {
@@ -33,7 +34,7 @@ namespace Xamarin.Tools.Zip
 				else {
 					var opts = options as UnixPlatformOptions;
 					if (opts == null)
-						throw new ArgumentException ("must be an instance of UnixPlatformOptions", nameof (options));
+						throw new ArgumentException (string.Format (Resources.MustBeAnInstanceOf_string_type, nameof (options), typeof (UnixPlatformOptions).Name), nameof (options));
 					return opts;
 				}
 			}
@@ -43,7 +44,7 @@ namespace Xamarin.Tools.Zip
 				else {
 					var opts = options as WindowsPlatformOptions;
 					if (opts == null)
-						throw new ArgumentException ("must be an instance of WindowsPlatformOptions", nameof (options));
+						throw new ArgumentException (string.Format (Resources.MustBeAnInstanceOf_string_type, nameof (options), typeof (WindowsPlatformOptions).Name), nameof (options));
 					return opts;
 				}
 			}

@@ -26,6 +26,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Xamarin.Tools.Zip.Properties;
 
 namespace Xamarin.Tools.Zip
 {
@@ -48,7 +49,7 @@ namespace Xamarin.Tools.Zip
 		{
 			if (services == null)
 				return;
-			
+
 			if (serviceRegistry.Contains (services))
 				return;
 			serviceRegistry.Add (services);
@@ -58,7 +59,7 @@ namespace Xamarin.Tools.Zip
 		{
 			if (services == null)
 				return;
-			
+
 			if (serviceRegistry.Count == 0 || !serviceRegistry.Contains (services))
 				return;
 			serviceRegistry.Remove (services);
@@ -91,7 +92,7 @@ namespace Xamarin.Tools.Zip
 		public EntryPermissions GetFilesystemPermissions (ZipArchive archive, string path)
 		{
 			if (String.IsNullOrEmpty (path))
-				throw new ArgumentException ("must not be null or empty", nameof (path));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (path)), nameof (path));
 
 			EntryPermissions permissions = EntryPermissions.Default;
 			if (!CallServices ((IPlatformServices services) => services.GetFilesystemPermissions (archive, path, out permissions)))
@@ -108,8 +109,8 @@ namespace Xamarin.Tools.Zip
 		public void SetEntryPermissions (ZipArchive archive, string sourcePath, ulong index, EntryPermissions permissions)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
-				throw new ArgumentException ("must not be null or empty", nameof (sourcePath));
-			
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (sourcePath)), nameof (sourcePath));
+
 			CallServices ((IPlatformServices services) => services.SetEntryPermissions (archive, sourcePath, index, permissions));
 		}
 
@@ -118,7 +119,7 @@ namespace Xamarin.Tools.Zip
 			if (archive == null)
 				throw new ArgumentNullException (nameof (archive));
 			if (String.IsNullOrEmpty (sourcePath))
-				throw new ArgumentException ("must not be null or empty", nameof (sourcePath));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (sourcePath)), nameof (sourcePath));
 
 			long index = -1;
 			CompressionMethod cm = CompressionMethod.Default;
@@ -132,7 +133,7 @@ namespace Xamarin.Tools.Zip
 		{
 			if (entry == null)
 				throw new ArgumentNullException (nameof (entry));
-			
+
 			CallServices ((IPlatformServices services) => services.ReadAndProcessExtraFields (entry));
 		}
 
@@ -140,7 +141,7 @@ namespace Xamarin.Tools.Zip
 		{
 			if (entry == null)
 				throw new ArgumentNullException (nameof (entry));
-			
+
 			return CallServices ((IPlatformServices services) => services.WriteExtraFields (archive, entry, extraFields));
 		}
 
@@ -149,7 +150,7 @@ namespace Xamarin.Tools.Zip
 			if (entry == null)
 				throw new ArgumentNullException (nameof (entry));
 			if (String.IsNullOrEmpty (extractedFilePath))
-				throw new ArgumentException ("must not be null or empty", nameof (extractedFilePath));
+				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (extractedFilePath)), nameof (extractedFilePath));
 
 			CallServices ((IPlatformServices services) => services.SetFileProperties (entry, extractedFilePath, throwOnNativeExceptions));
 		}
@@ -158,7 +159,7 @@ namespace Xamarin.Tools.Zip
 		{
 			if (code == null)
 				return false;
-			
+
 			foreach (IPlatformServices services in serviceRegistry) {
 				if (services == null)
 					continue;

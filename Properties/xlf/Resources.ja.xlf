@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../Resources.resx">
+    <body>
+      <trans-unit id="DestinationMustNotBeEmpty">
+        <source>Archive destination path must not be empty.</source>
+        <target state="new">Archive destination path must not be empty.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorReadingFile_file">
+        <source>Error occured while reading the file '{0}'.</source>
+        <target state="new">Error occured while reading the file '{0}'.</target>
+        <note>{0} - A filename.</note>
+      </trans-unit>
+      <trans-unit id="ErrorReadingStream">
+        <source>An error occured while reading the stream.</source>
+        <target state="new">An error occured while reading the stream.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExpectedAnInstanceOf_string_type">
+        <source>{0}' is an instance of '{1}' instead of the expected type '{2}'.</source>
+        <target state="new">{0}' is an instance of '{1}' instead of the expected type '{2}'.</target>
+        <note>{0} - The expected type of the parameter.
+{1} - The name of the parameter.
+{2} - The actual type of the parameter.</note>
+      </trans-unit>
+      <trans-unit id="FailedToReadSymLink_link_error">
+        <source>Could not read the symbolic link '{0}': {1}.</source>
+        <target state="new">Could not read the symbolic link '{0}': {1}.</target>
+        <note>{0} - The symbolic link that was being read.
+{1} - The actual error message reported by the operating system.</note>
+      </trans-unit>
+      <trans-unit id="FailedToSetOwner_entry_error_oserror">
+        <source>Warning: failed to set owner of entry '{0}' ({1}:{2}).</source>
+        <target state="new">Warning: failed to set owner of entry '{0}' ({1}:{2}).</target>
+        <note>{0} - A filename.
+{1} - The error message.
+{2} - The operating system error.</note>
+      </trans-unit>
+      <trans-unit id="FailedToStatFile_file_error">
+        <source>Warning: failed to stat file '{0}': {1}.</source>
+        <target state="new">Warning: failed to stat file '{0}': {1}.</target>
+        <note>{0} - A filename.
+{1} - The error message.</note>
+      </trans-unit>
+      <trans-unit id="FileAlreadyExists">
+        <source>The file already exists.</source>
+        <target state="new">The file already exists.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileCouldNotBeOpened_file">
+        <source>The file '{0}' could not be opened.</source>
+        <target state="new">The file '{0}' could not be opened.</target>
+        <note>{0} - A filename.</note>
+      </trans-unit>
+      <trans-unit id="FileDoesNotExist_file">
+        <source>The file '{0}' does not exist and file creation wasn't requested.</source>
+        <target state="new">The file '{0}' does not exist and file creation wasn't requested.</target>
+        <note>{0} - A filename.</note>
+      </trans-unit>
+      <trans-unit id="FileDoesNotSupportSeeking_file">
+        <source>The file '{0}' does not support seeking.</source>
+        <target state="new">The file '{0}' does not support seeking.</target>
+        <note>{0} - A filename.</note>
+      </trans-unit>
+      <trans-unit id="FileFailedConsistencyChecks_file">
+        <source>The file {0} failed consistency checks.</source>
+        <target state="new">The file {0} failed consistency checks.</target>
+        <note>{0} - A filename.</note>
+      </trans-unit>
+      <trans-unit id="FileIsNotAZip_file">
+        <source>The file '{0}' is not a ZIP archive.</source>
+        <target state="new">The file '{0}' is not a ZIP archive.</target>
+        <note>{0} - A filename.</note>
+      </trans-unit>
+      <trans-unit id="FilePathAlreadyExists_file">
+        <source>File '{0}' already exists.</source>
+        <target state="new">File '{0}' already exists.</target>
+        <note>{0} - A filename.</note>
+      </trans-unit>
+      <trans-unit id="FileTypeNotSupported_filetype">
+        <source>Storing files of type '{0}' is not supported.</source>
+        <target state="new">Storing files of type '{0}' is not supported.</target>
+        <note>{0} - The type of the file.</note>
+      </trans-unit>
+      <trans-unit id="InvalidEntryType_string_type">
+        <source>'{0}' is an instance of '{1}', which is not a valid entry type. The expected type is '{2}'.</source>
+        <target state="new">'{0}' is an instance of '{1}', which is not a valid entry type. The expected type is '{2}'.</target>
+        <note>{0} - The name of the parameter.
+{1} - The expected type of the parameter.
+{2} - The actual type of the parameter.</note>
+      </trans-unit>
+      <trans-unit id="MustBeAnInstanceOf_string_type">
+        <source>'{0}' must be an instance of '{1}'.</source>
+        <target state="new">'{0}' must be an instance of '{1}'.</target>
+        <note>{0} - The name of the parameter.
+{1} - The type the parameter should be.</note>
+      </trans-unit>
+      <trans-unit id="MustNotBeNullOrEmpty_string">
+        <source>'{0}' must not be null or empty.</source>
+        <target state="new">'{0}' must not be null or empty.</target>
+        <note>{0} - The name of the parameter</note>
+      </trans-unit>
+      <trans-unit id="OutOfMemory">
+        <source>libzip failed due to an out of memory error.</source>
+        <target state="new">libzip failed due to an out of memory error.</target>
+        <note>The following terms should not be translated: libzip</note>
+      </trans-unit>
+      <trans-unit id="StreamCouldNotBeOpened">
+        <source>Stream could not be opened.</source>
+        <target state="new">Stream could not be opened.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamDoesNotExist">
+        <source>Stream does not exist and file creation wasn't requested.</source>
+        <target state="new">Stream does not exist and file creation wasn't requested.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamDoesNotSupportSeeking">
+        <source>The stream does not support seeking.</source>
+        <target state="new">The stream does not support seeking.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamFailedConsistencyChecks">
+        <source>The stream failed consistency checks.</source>
+        <target state="new">The stream failed consistency checks.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamIsNotAZip">
+        <source>Stream is not a ZIP archive.</source>
+        <target state="new">Stream is not a ZIP archive.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToDetermineFileType_file">
+        <source>Failed to determine type of the file '{0}'.</source>
+        <target state="new">Failed to determine type of the file '{0}'.</target>
+        <note>{0} - A filename</note>
+      </trans-unit>
+      <trans-unit id="UnexpectedLibZipError_error">
+        <source>Unexpected libzip error: {0}.</source>
+        <target state="new">Unexpected libzip error: {0}.</target>
+        <note>The following is the name of a library and should not be translated: libzip
+{0} - An error message from libzip.</note>
+      </trans-unit>
+      <trans-unit id="UnexpectedOptionsType_string_type_type">
+        <source>'{0}' is an instance of '{1}', which is not a valid options type. The expected type is '{2}'.</source>
+        <target state="new">'{0}' is an instance of '{1}', which is not a valid options type. The expected type is '{2}'.</target>
+        <note>{0} - The parameter name.
+{1} - The expected type of the parameter.
+{2} - The actual type of the parameter.</note>
+      </trans-unit>
+      <trans-unit id="UnknownError">
+        <source>Unknown error.</source>
+        <target state="new">Unknown error.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedPermission_UnixExternalPermissions">
+        <source>'{0}' is not a supported file type. Only regular files, directories, and symbolic links are currently supported.</source>
+        <target state="new">'{0}' is not a supported file type. Only regular files, directories, and symbolic links are currently supported.</target>
+        <note>{0} - The name of the permission.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
