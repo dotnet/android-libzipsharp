@@ -257,4 +257,4 @@ stages:
     jobs:
     - template: sign-artifacts/jobs/v1.yml@internal-templates
       parameters:
-        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
+        condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
