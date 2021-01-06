@@ -257,4 +257,5 @@ stages:
     jobs:
     - template: sign-artifacts/jobs/v1.yml@internal-templates
       parameters:
+        signTags: true
         condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
