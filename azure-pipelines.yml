@@ -165,6 +165,11 @@ stages:
             contents: '*.nupkg'
             targetFolder: $(Build.ArtifactStagingDirectory)
         - task: CopyFiles@2
+          displayName: Copy SignList
+          inputs:
+            contents: 'SignList.xml'
+            targetFolder: $(Build.ArtifactStagingDirectory)
+        - task: CopyFiles@2
           displayName: Copy snupkg
           inputs:
             contents: '*.snupkg'
