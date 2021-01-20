@@ -94,7 +94,7 @@ stages:
         - buildlinux
         - buildWindows
       pool:
-        vmImage: macOS-10.14
+        vmImage: macOS-latest
       steps:
         - bash: |
             brew tap xamarin/xamarin-android-windeps
@@ -199,17 +199,22 @@ stages:
           inputs:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
+            msbuildArguments: /restore /p:ReferenceNuget=True /v:diag
+        - task: MSBuild@1
+          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+          inputs:
+            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
             msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
         - task: DotNetCoreCLI@2
           displayName: "Run Tests under .net Core"
           inputs:
             command: test
-            projects: 'LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-            arguments: '--configuration Release --framework netcoreapp3.1 --no-build'
+            arguments: 'LibZipSharp.UnitTest/bin/Release/netcoreapp3.1/LibZipSharp.UnitTest.dll'
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
-        vmImage: macOS-10.14
+        vmImage: macOS-latest
       steps:
         - template: yaml-templates/use-dot-net.yaml
           parameters:
@@ -224,20 +229,7 @@ stages:
           inputs:
             solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
-    - job: testwindows
-      displayName: 'Test Windows'
-      pool:
-        vmImage: windows-2019
-      steps:
-        - template: yaml-templates/use-dot-net.yaml
-          parameters:
-            version: $(DotNetCoreVersion)
-        - task: DownloadBuildArtifacts@0
-          displayName: download artifacts
-          inputs:
-            artifactName: NuGet
-            downloadPath: $(Build.SourcesDirectory)
+            msbuildArguments: /restore /p:ReferenceNuget=True /v:diag
         - task: MSBuild@1
           displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
@@ -248,8 +240,38 @@ stages:
           displayName: "Run Tests under .net Core"
           inputs:
             command: test
-            projects: 'LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-            arguments: '--configuration Release --framework netcoreapp3.1 --no-build'
+            arguments: 'LibZipSharp.UnitTest/bin/Release/netcoreapp3.1/LibZipSharp.UnitTest.dll'
+    - job: testwindows
+      displayName: 'Test Windows'
+      pool:
+        vmImage: windows-latest
+      steps:
+        - template: yaml-templates/use-dot-net.yaml
+          parameters:
+            version: $(DotNetCoreVersion)
+        - task: DownloadBuildArtifacts@0
+          displayName: download artifacts
+          inputs:
+            artifactName: NuGet
+            downloadPath: $(Build.SourcesDirectory)
+        - task: MSBuild@1
+          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+          inputs:
+            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            msbuildArguments: /restore /p:ReferenceNuget=True /v:diag
+        - task: MSBuild@1
+          displayName: 'Run Tests LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+          inputs:
+            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
+        - task: DotNetCoreCLI@2
+          displayName: "Run Tests under .net Core"
+          inputs:
+            command: test
+            arguments: 'LibZipSharp.UnitTest\bin\Release\netcoreapp3.1\LibZipSharp.UnitTest.dll
+'
   - stage: Publish
     dependsOn: Test
     condition: eq(variables['System.TeamProject'], 'devdiv') # only sign the packages when running on Windows, and using the private server which has the certificates
