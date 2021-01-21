@@ -47,17 +47,28 @@ namespace Xamarin.Tools.Zip
 			public int whence;
 		};
 
+		[StructLayout(LayoutKind.Explicit)]
 		public struct zip_stat_t
 		{
+			[FieldOffset (0)]
 			public UInt64 valid;                 /* which fields have valid values */
+			[FieldOffset (8)]
 			public IntPtr name;                  /* name of the file (char *) */
+			[FieldOffset (16)]
 			public UInt64 index;                 /* index within archive */
+			[FieldOffset (24)]
 			public UInt64 size;                  /* size of file (uncompressed) */
+			[FieldOffset (32)]
 			public UInt64 comp_size;             /* size of file (compressed) */
+			[FieldOffset (40)]
 			public IntPtr mtime;                 /* modification time (time_t) */
+			[FieldOffset (48)]
 			public UInt32 crc;                   /* crc of file data */
+			[FieldOffset (52)]
 			public Int16  comp_method;           /* compression method used */
+			[FieldOffset (56)]
 			public UInt16 encryption_method;     /* encryption method used */
+			[FieldOffset (60)]
 			public UInt32 flags;                 /* reserved for future use */
 		};
 

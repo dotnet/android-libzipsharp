@@ -192,6 +192,44 @@ namespace Tests {
 			}
 		}
 
+		[Test]
+		public void UpdateEntryCompressionMethod ()
+		{
+			var zipStream = new MemoryStream ();
+			var encoding = Encoding.UTF8;
+			using (var zip = ZipArchive.Create (zipStream)) {
+				zip.AddEntry ("foo", "bar", encoding, CompressionMethod.Deflate);
+			}
+			using (var zip = ZipArchive.Open (zipStream)) {
+				var entry = zip.ReadEntry ("foo");
+				Assert.IsNotNull (entry, "Entry 'foo' should exist!");
+				AssertEntryIsValid (entry, "foo", compression: CompressionMethod.Deflate);
+				using (var stream = new MemoryStream ()) {
+					entry.Extract (stream);
+					stream.Position = 0;
+					Assert.AreEqual ("bar", encoding.GetString (stream.ToArray ()));
+				}
+				zip.AddEntry ("foo", "foo", encoding, CompressionMethod.Store);
+				entry = zip.ReadEntry ("foo");
+				AssertEntryIsValid (entry, "foo", compression: CompressionMethod.Store);
+			}
+		}
+
+		[Test]
+		public void CheckForUnknownCompressionMethods ()
+		{
+			string filePath = Path.GetFullPath ("packaged_resources");
+			if (!File.Exists (filePath)) {
+					filePath = Path.GetFullPath (Path.Combine ("LibZipSharp.UnitTest", "packaged_resources"));
+			}
+			using (var zip = ZipArchive.Open (filePath, FileMode.Open)) {
+				foreach (var e in zip) {
+					Console.WriteLine ($"{e.FullName} is {e.CompressionMethod}");
+					Assert.AreNotEqual (CompressionMethod.Unknown, e.CompressionMethod, "Compression Method should not be Unknown.");
+				}
+			}
+		}
+
 		[TestCase (false)]
 		[TestCase (true)]
 		public void EnumerateSkipDeletedEntries (bool deleteFromExistingFile)
