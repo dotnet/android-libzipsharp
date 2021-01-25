@@ -29,6 +29,9 @@
       <Link>libzip.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packaged_resources">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="RunNunitTests" DependsOnTargets="Build">

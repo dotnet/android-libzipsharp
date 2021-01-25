@@ -122,6 +122,26 @@ namespace Xamarin.Tools.Zip
 		LZ77           = 19,
 
 		/// <summary>
+		/// LZMA2 Compressed data
+		/// </summary>
+		LZMA2          = 33,
+
+		/// <summary>
+		/// Zstandard compressed data
+		/// </summary>
+		ZSTD           = 93,
+
+		/// <summary>
+		/// XZ compressed data
+		/// </summary>
+		XZ             = 95,
+
+		/// <summary>
+		/// Compressed Jpeg data
+		/// </summary>
+		JPEG           = 96,
+
+		/// <summary>
 		/// WavPack compressed data
 		/// </summary>
 		WavPack        = 97,
