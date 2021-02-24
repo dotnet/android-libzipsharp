@@ -32,14 +32,14 @@ stages:
           displayName: "Build"
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build\Windows\32\lib\Release\zip.dll
+            rootFolderOrFile: build\Windows\32\lib\RelWithDebInfo\
             includeRootFolder: false
             archiveType: 7z
             replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x86.7z
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build\Windows\64\lib\Release\zip.dll
+            rootFolderOrFile: build\Windows\64\lib\RelWithDebInfo\
             includeRootFolder: false
             archiveType: 7z
             replaceExistingArchive: true
@@ -144,6 +144,8 @@ stages:
             mv build/Linux/64/libzip.so.5.3 build/Linux/64/libzip.so
             mv build/Windows/32/zip.dll build/Windows/32/libzip.dll
             mv build/Windows/64/zip.dll build/Windows/64/libzip.dll
+            mv build/Windows/32/zip.pdb build/Windows/32/libzip.pdb
+            mv build/Windows/64/zip.pdb build/Windows/64/libzip.pdb
             rm $(Build.ArtifactStagingDirectory)/native/libzip-linux-*.7z
             rm $(Build.ArtifactStagingDirectory)/native/libzip-windows-*.7z
           displayName: 'Find libzip'

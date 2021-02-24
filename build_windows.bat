@@ -16,12 +16,12 @@ pushd .
 mkdir .\build\Windows\64
 cd .\build\Windows\64
 cmake %LIBZIP_FEATURES% %COMMON_CMAKE_PARAMS% -DZLIB_ROOT=..\..\..\external\vcpkg\installed\x64-windows-static -A x64 ..\..\..\external\libzip
-cmake --build . --config Release -v
+cmake --build . --config RelWithDebInfo -v
 popd
 pushd .
 
 mkdir .\build\Windows\32
 cd .\build\Windows\32
 cmake %LIBZIP_FEATURES% %COMMON_CMAKE_PARAMS% -DZLIB_ROOT=..\..\..\external\vcpkg\installed\x86-windows-static -A Win32 ..\..\..\external\libzip
-cmake --build . --config Release -v
+cmake --build . --config RelWithDebInfo -v
 popd
