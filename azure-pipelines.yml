@@ -32,18 +32,14 @@ stages:
           displayName: "Build"
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile:
-            - build\Windows\32\lib\Release\zip.dll
-            - build\Windows\32\lib\Release\zip.pdb
+            rootFolderOrFile: build\Windows\32\lib\Release\zip.*
             includeRootFolder: false
             archiveType: 7z
             replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x86.7z
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile:
-            - build\Windows\64\lib\Release\zip.dll
-            - build\Windows\64\lib\Release\zip.pdb
+            rootFolderOrFile: build\Windows\64\lib\Release\zip.*
             includeRootFolder: false
             archiveType: 7z
             replaceExistingArchive: true
