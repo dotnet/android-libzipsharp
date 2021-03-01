@@ -9,10 +9,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\libzip.dll">
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\libzip.*">
       <Link>lib64\%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
-    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x86\native\libzip.dll">
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x86\native\libzip.*">
       <Link>%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
     <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\osx\native\libzip.dylib">
