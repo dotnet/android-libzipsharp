@@ -51,12 +51,12 @@ stages:
             pathtoPublish: $(Build.ArtifactStagingDirectory)
     - job: buildLinux
       pool:
-        vmImage: ubuntu-16.04
+        vmImage: ubuntu-18.04
       steps:
         - bash: |
             sudo dpkg --add-architecture i386
             sudo apt -y update
-            sudo apt -f -u install ninja-build gcc-multilib lib32z1-dev zlib1g-dev libssl-dev libssl1.1:i386 libssl-dev:i386 libc-dev:i386 libc6-dev-i386 -y
+            sudo apt -f -u install ninja-build lib32z1-dev zlib1g-dev libssl-dev libssl1.1:i386 libssl-dev:i386 libc-dev:i386 libc6-dev-i386 -y
             git submodule update --init --recursive
           displayName: 'Install Tools'
         - bash: |
