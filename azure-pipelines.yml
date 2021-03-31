@@ -32,14 +32,14 @@ stages:
           displayName: "Build"
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build\Windows\32\lib\RelWithDebInfo\
+            rootFolderOrFile: lzsbuild\lib\win32\RelWithDebInfo\
             includeRootFolder: false
             archiveType: 7z
             replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x86.7z
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build\Windows\64\lib\RelWithDebInfo\
+            rootFolderOrFile: lzsbuild\lib\win64\RelWithDebInfo\
             includeRootFolder: false
             archiveType: 7z
             replaceExistingArchive: true
@@ -51,35 +51,23 @@ stages:
             pathtoPublish: $(Build.ArtifactStagingDirectory)
     - job: buildLinux
       pool:
-        vmImage: ubuntu-16.04
+        vmImage: ubuntu-18.04
       steps:
         - bash: |
             sudo dpkg --add-architecture i386
             sudo apt -y update
-            sudo apt -f -u install ninja-build gcc-multilib lib32z1-dev zlib1g-dev libssl-dev libssl1.1:i386 libssl-dev:i386 libc-dev:i386 libc6-dev-i386 -y
+            sudo apt -f -u install ninja-build -y
             git submodule update --init --recursive
           displayName: 'Install Tools'
         - bash: |
-            patch --verbose -d external/libzip -p1 -l < libzip-static.patch
             patch --verbose -d external/libzip -p1 -l < libzip-changes.patch
           displayName: 'Apply Patch'
         - bash: |
-            ./build_native
+            ./build.sh -v
           displayName: 'Build Linux x64'
-        - bash: |
-            PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig ARCH=32 TOOLCHAIN_FILE=../../../linux-32.cmake ./build_native
-            find build/* | grep libzip
-          displayName: 'Build Linux x86'
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: build/Linux/32/lib/libzip.so.5.3
-            includeRootFolder: false
-            archiveType: 7z
-            replaceExistingArchive: true
-            archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x86.7z
-        - task: ArchiveFiles@2
-          inputs:
-            rootFolderOrFile: build/Linux/64/lib/libzip.so.5.3
+            rootFolderOrFile: lzsbuild/lib/Linux/
             includeRootFolder: false
             archiveType: 7z
             replaceExistingArchive: true
@@ -97,23 +85,19 @@ stages:
         vmImage: macOS-latest
       steps:
         - bash: |
-            brew tap xamarin/xamarin-android-windeps
-            brew upgrade https://raw.githubusercontent.com/Homebrew/homebrew-core/a6542037a48a55061a4c319e6bb174b3715f7cbe/Formula/mingw-w64.rb
-            brew install mingw-w64 p7zip
-            brew install ninja xamarin/xamarin-android-windeps/mingw-zlib
+            brew install ninja
             git submodule update --init --recursive
           displayName: 'Install toolchain'
         - bash: |
             patch --verbose -d external/libzip -p1 -l < libzip-changes.patch
           displayName: 'Apply Patch'
         - bash: |
-            HOSTOS=Darwin ./build_native
-            mkdir -p build/Linux/64
-            mkdir -p build/Linux/32
-            mkdir -p build/Windows/64
-            mkdir -p build/Windows/32
-            find build/* | grep libzip
-          displayName: 'Build native and Windows'
+            ./build.sh -v
+            mkdir -p lzsbuild/lib/Linux
+            mkdir -p lzsbuild/lib/win64
+            mkdir -p lzsbuild/lib/win32
+            find lzsbuild -name '*ZipSharpNative*'
+          displayName: 'Build native'
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
           inputs:
@@ -123,48 +107,38 @@ stages:
           displayName: Extract 64 bit Linux native
           inputs:
             archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-linux-x64.7z
-            destinationFolder: build/Linux/64
-        - task: ExtractFiles@1
-          displayName: Extract 32 bit Linux native
-          inputs:
-            archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-linux-x86.7z
-            destinationFolder: build/Linux/32
+            destinationFolder: lzsbuild/lib/Linux
         - task: ExtractFiles@1
           displayName: Extract 64 bit Windows native
           inputs:
             archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-x64.7z
-            destinationFolder: build/Windows/64
+            destinationFolder: lzsbuild/lib/win64
         - task: ExtractFiles@1
           displayName: Extract 32 bit Windows native
           inputs:
             archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-x86.7z
-            destinationFolder: build/Windows/32
+            destinationFolder: lzsbuild/lib/win32
         - bash: |
-            mv build/Linux/32/libzip.so.5.3 build/Linux/32/libzip.so
-            mv build/Linux/64/libzip.so.5.3 build/Linux/64/libzip.so
-            mv build/Windows/32/zip.dll build/Windows/32/libzip.dll
-            mv build/Windows/64/zip.dll build/Windows/64/libzip.dll
-            mv build/Windows/32/zip.pdb build/Windows/32/libzip.pdb
-            mv build/Windows/64/zip.pdb build/Windows/64/libzip.pdb
             rm $(Build.ArtifactStagingDirectory)/native/libzip-linux-*.7z
             rm $(Build.ArtifactStagingDirectory)/native/libzip-windows-*.7z
           displayName: 'Find libzip'
         - task: MSBuild@1
           displayName: 'Build solution libZipSharp.csproj'
           inputs:
-            solution: libZipSharp.csproj
+            solution: LibZipSharp/libZipSharp.csproj
             configuration: Release
             msbuildArguments: /restore /v:diag /p:RunningOnCI=true
         - task: MSBuild@1
           displayName: NuGet pack libZipSharp
           inputs:
-            solution: libZipSharp.csproj
+            solution: LibZipSharp/libZipSharp.csproj
             configuration: Release
             msbuildArguments: /t:Pack
         - task: CopyFiles@2
           displayName: Copy nupkg
           inputs:
-            contents: '*.nupkg'
+            contents: 'LibZipSharp/*.nupkg'
+            flattenFolders: true
             targetFolder: $(Build.ArtifactStagingDirectory)
         - task: CopyFiles@2
           displayName: Copy SignList
@@ -174,7 +148,8 @@ stages:
         - task: CopyFiles@2
           displayName: Copy snupkg
           inputs:
-            contents: '*.snupkg'
+            contents: 'LibZipSharp/*.snupkg'
+            flattenFolders: true
             targetFolder: $(Build.ArtifactStagingDirectory)
         - task: PublishBuildArtifacts@1
           displayName: upload artifacts
@@ -189,7 +164,7 @@ stages:
     - job: testlinux
       displayName: 'Test Linux'
       pool:
-        vmImage: ubuntu-16.04
+        vmImage: ubuntu-18.04
       steps:
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts

@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libZipSharp", "libZipSharp.csproj", "{E248B2CA-303B-4645-ADDC-9D4459D550FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libZipSharp", "LibZipSharp\libZipSharp.csproj", "{E248B2CA-303B-4645-ADDC-9D4459D550FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZipTest", "ZipTest\ZipTest.csproj", "{51489C44-3B62-4BEC-B0D1-6BB5DD53E7C9}"
 EndProject

@@ -49,3 +49,7 @@ build.log
 build/*
 *.nupkg
 TestResult.xml
+artifacts
+lzsbuild
+.ccls-cache
+

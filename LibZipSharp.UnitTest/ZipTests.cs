@@ -22,6 +22,26 @@ namespace Tests {
 
 		const string TEXT =  "oijoihaofiehfeafewufn e;fau 9ubre9wurew9;ru9;0oewubewa9ru bawpeu;9fberbf oiewrf";
 
+		[Test]
+		public void NativeVersions ()
+		{
+			Versions versions = Info.GetVersions ();
+
+			Assert.IsNotNull (versions, "GetVersions must not return null");
+			Assert.IsNotEmpty (versions.BZip2, "BZip2 version must not be empty");
+			Assert.IsNotEmpty (versions.LibZip, "libzip version must not be empty");
+			Assert.IsNotEmpty (versions.Zlib, "zlib version must not be empty");
+			Assert.IsNotEmpty (versions.ZlibNG, "zlib-ng version must not be empty");
+			Assert.IsNotEmpty (versions.LZMA, "LZMA version must not be empty");
+			Assert.IsNotEmpty (versions.LibZipSharp, "LibZipSharp version must not be empty");
+
+			Console.WriteLine ($"LibZipSharp version: {versions.LibZipSharp}");
+			Console.WriteLine ($"BZip2 version: {versions.BZip2}");
+			Console.WriteLine ($"libzip version: {versions.LibZip}");
+			Console.WriteLine ($"zlib version: {versions.Zlib}");
+			Console.WriteLine ($"zlib-ng version: {versions.ZlibNG}");
+			Console.WriteLine ($"LZMA version: {versions.LZMA}");
+		}
 
 		[Test]
 		public void CanCreateZipFile ()
@@ -192,18 +212,20 @@ namespace Tests {
 			}
 		}
 
-		[Test]
-		public void UpdateEntryCompressionMethod ()
+		[TestCase (CompressionMethod.Deflate)]
+		[TestCase (CompressionMethod.Bzip2)]
+		[TestCase (CompressionMethod.XZ)]
+		public void UpdateEntryCompressionMethod (CompressionMethod method)
 		{
 			var zipStream = new MemoryStream ();
 			var encoding = Encoding.UTF8;
 			using (var zip = ZipArchive.Create (zipStream)) {
-				zip.AddEntry ("foo", "bar", encoding, CompressionMethod.Deflate);
+				zip.AddEntry ("foo", "bar", encoding, method);
 			}
 			using (var zip = ZipArchive.Open (zipStream)) {
 				var entry = zip.ReadEntry ("foo");
 				Assert.IsNotNull (entry, "Entry 'foo' should exist!");
-				AssertEntryIsValid (entry, "foo", compression: CompressionMethod.Deflate);
+				AssertEntryIsValid (entry, "foo", compression: method);
 				using (var stream = new MemoryStream ()) {
 					entry.Extract (stream);
 					stream.Position = 0;
