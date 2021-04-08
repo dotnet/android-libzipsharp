@@ -1,7 +1,7 @@
 # LibZipSharp
 A managed wrapper (and then some) around libzip (https://libzip.org/)
 
-[![Build Status](https://devdiv.visualstudio.com/DevDiv/_apis/build/status/xamarin.LibZipSharp?branchName=master)](https://devdiv.visualstudio.com/DevDiv/_build/latest?definitionId=11678&branchName=master)
+[![Build Status](https://devdiv.visualstudio.com/DevDiv/_apis/build/status/xamarin.LibZipSharp?repoName=xamarin%2FLibZipSharp&branchName=main)](https://devdiv.visualstudio.com/DevDiv/_build/latest?definitionId=11678&repoName=xamarin%2FLibZipSharp&branchName=main)
 
 
 The core of `LibZipSharp` is the `ZipArchive` class. You can use this class
