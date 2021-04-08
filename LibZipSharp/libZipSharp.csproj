@@ -2,7 +2,7 @@
 <Project>
     <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
     <Import Project="..\tools\BuildTasks.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-    <Import Project="$(MSBuildThisFileDirectory)LibZipSharp.props" />
+    <Import Project="$(MSBuildThisFileDirectory)..\LibZipSharp.props" />
     <PropertyGroup>
         <AssemblyName>libZipSharp</AssemblyName>
         <AssemblyTitle>libZipSharp</AssemblyTitle>
@@ -12,7 +12,7 @@
         <RootNamespace>Xamarin.Tools.Zip</RootNamespace>
         <Deterministic>false</Deterministic>
         <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-        <NoWarn>3021</NoWarn>
+        <NoWarn>3021,1591</NoWarn>
         <DocumentationFile>libZipSharp.xml</DocumentationFile>
         <GenerateResxSource>true</GenerateResxSource>
     </PropertyGroup>
@@ -43,25 +43,18 @@
     </PropertyGroup>
     <ItemGroup>
         <None Include="Xamarin.LibZipSharp.targets" PackagePath="build" Pack="true" />
-        <None Include="libZipSharp.dll.config" PackagePath="lib\netstandard2.0" Pack="true">
-            <Link>libZipSharp.dll.config</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="libZipSharp.dll.config" PackagePath="lib\net45" Pack="true">
-            <Link>libZipSharp.dll.config</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="build\Darwin\64\lib\libzip.5.3.dylib" PackagePath="runtimes\osx\native\libzip.dylib" Pack="true" />
-        <None Include="build\Windows\64\libzip.dll" PackagePath="runtimes\win-x64\native\libzip.dll" Pack="true" />
-        <None Include="build\Windows\64\libzip.pdb" PackagePath="runtimes\win-x64\native\libzip.pdb" Pack="true" />
-        <None Include="build\Windows\32\libzip.dll" PackagePath="runtimes\win-x86\native\libzip.dll" Pack="true" />
-         <None Include="build\Windows\32\libzip.pdb" PackagePath="runtimes\win-x86\native\libzip.pdb" Pack="true" />
-        <None Include="build\Linux\64\libzip.so" PackagePath="runtimes\linux-x64\native\libzip.so" Pack="true" />
-        <None Include="build\Linux\32\libzip.so" PackagePath="runtimes\linux-x86\native\libzip.so" Pack="true" />
-        <None Include="LICENSE" PackagePath="Licences" Pack="true" />
-        <None Include="external\libzip\LICENSE" PackagePath="Licences\libzip" Pack="true" />
-        <Compile Remove="ZipTest/**/*" />
-        <Compile Remove="LibZipSharp.UnitTest/**/*" />
+        <None Include="$(_NativeBuildDir)\lib\Darwin\libZipSharpNative.dylib" PackagePath="runtimes\osx\native\libZipSharpNative.dylib" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\win64\libZipSharpNative.dll" PackagePath="runtimes\win-x64\native\libZipSharpNative.dll" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\win64\libZipSharpNative.pdb" PackagePath="runtimes\win-x64\native\libZipSharpNative.pdb" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\win32\libZipSharpNative.dll" PackagePath="runtimes\win-x86\native\libZipSharpNative.dll" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\win32\libZipSharpNative.pdb" PackagePath="runtimes\win-x86\native\libZipSharpNative.pdb" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\Linux\libZipSharpNative.so" PackagePath="runtimes\linux-x64\native\libZipSharpNative.so" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\Linux\libZipSharpNative.so.debug" PackagePath="runtimes\linux-x64\native\libZipSharpNative.so.debug" Pack="true" />
+        <None Include="..\LICENSE" PackagePath="Licences" Pack="true" />
+        <None Include="$(_ExternalDir)\libzip\LICENSE" PackagePath="Licences\libzip" Pack="true" />
+        <None Include="$(_ExternalDir)\bzip2\LICENSE" PackagePath="Licences\bzip2" Pack="true" />
+        <None Include="$(_ExternalDir)\xz\COPYING.LGPLv2.1" PackagePath="Licences\liblzma" Pack="true" />
+        <None Include="$(_ExternalDir)\zlib-ng\LICENSE.md" PackagePath="Licences\zlib-ng" Pack="true" />
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" PrivateAssets="none" IncludeAssets="runtime" />

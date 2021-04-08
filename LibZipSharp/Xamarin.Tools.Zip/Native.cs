@@ -34,6 +34,17 @@ namespace Xamarin.Tools.Zip
 	internal class Native
 	{
 		[StructLayout (LayoutKind.Sequential)]
+		public struct LZSVersions
+		{
+			public string bzip2;
+			public string libzip;
+			public string zlib;
+			public string zlibng;
+			public string lzma;
+			public string libzipsharp;
+		};
+
+		[StructLayout (LayoutKind.Sequential)]
 		public struct zip_error_t
 		{
 			public int zip_err;						/* libzip error code (ZIP_ER_*) */
@@ -85,7 +96,23 @@ namespace Xamarin.Tools.Zip
 			return (T)Marshal.PtrToStructure (data, typeof (T));
 		}
 
-		const string ZIP_LIBNAME = "libzip";
+		const string ZIP_LIBNAME = "libZipSharpNative";
+
+		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
+		static extern void lzs_get_versions (out LZSVersions versions);
+
+		public static Versions get_versions ()
+		{
+			lzs_get_versions (out LZSVersions ret);
+			return new Versions {
+				BZip2 = ret.bzip2 ?? String.Empty,
+				LibZip = ret.libzip ?? String.Empty,
+				Zlib = ret.zlib ?? String.Empty,
+				ZlibNG = ret.zlibng ?? String.Empty,
+				LZMA = ret.lzma ?? String.Empty,
+				LibZipSharp = ret.libzipsharp ?? String.Empty
+			};
+		}
 
 		[DllImport (ZIP_LIBNAME, SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr zip_open (IntPtr path, OpenFlags flags, out ErrorCode errorp);

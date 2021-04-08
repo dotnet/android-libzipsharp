@@ -1,27 +1,75 @@
 @echo off
+set BUILD_DIR_ROOT=%CD%\lzsbuild
 
-set LIBZIP_FEATURES=-DENABLE_COMMONCRYPTO=OFF -DENABLE_GNUTLS=OFF -DENABLE_MBEDTLS=OFF -DENABLE_OPENSSL=OFF -DENABLE_WINDOWS_CRYPTO=OFF -DBUILD_TOOLS=OFF -DBUILD_REGRESS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOC=OFF -DENABLE_BZIP2=OFF -DENABLE_LZMA=OFF
-set COMMON_CMAKE_PARAMS=-DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019" -DBUILD_SHARED_LIBS=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_POLICY_DEFAULT_CMP0074=NEW -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+set DEPS_BUILD_DIR_ROOT=%BUILD_DIR_ROOT%\deps
+set DEPS_BUILD_DIR_ROOT_32=%DEPS_BUILD_DIR_ROOT%\win32
+set DEPS_BUILD_DIR_ROOT_64=%DEPS_BUILD_DIR_ROOT%\win64
 
-echo %LIBZIP_FEATURES%
-echo %COMMON_CMAKE_PARAMS%
+set LIB_BUILD_DIR_ROOT=%BUILD_DIR_ROOT%\lib
+set LIB_BUILD_DIR_ROOT_32=%LIB_BUILD_DIR_ROOT%\win32
+set LIB_BUILD_DIR_ROOT_64=%LIB_BUILD_DIR_ROOT%\win64
+
+set ARTIFACTS_DIR_ROOT=%CD%\artifacts
+set ARTIFACTS_DIR_ROOT_64=%ARTIFACTS_DIR_ROOT%\win64
+set ARTIFACTS_DIR_ROOT_32=%ARTIFACTS_DIR_ROOT%\win32
+
+set CONFIG=RelWithDebInfo
+set COMMON_CMAKE_PARAMS=-DCMAKE_BUILD_TYPE=%CONFIG% -G "Visual Studio 16 2019"
+
+echo Common cmake params: %COMMON_CMAKE_PARAMS%
+echo 32-bit dependencies artifacts dir: %ARTIFACTS_DIR_ROOT_32%
+echo 64-bit dependencies artifacts dir: %ARTIFACTS_DIR_ROOT_64%
+echo 32-bit dependencies build root: %DEPS_BUILD_DIR_ROOT_32%
+echo 64-bit dependencies build root: %DEPS_BUILD_DIR_ROOT_64%
+echo 32-bit library build root: %LIB_BUILD_DIR_ROOT_32%
+echo 64-bit library build root: %LIB_BUILD_DIR_ROOT_64%
 
 pushd .
 cd external\vcpkg
 call bootstrap-vcpkg.bat
 popd
 external\vcpkg\vcpkg.exe integrate install
-external\vcpkg\vcpkg.exe install zlib:x64-windows-static zlib:x86-windows-static
-pushd .
-mkdir .\build\Windows\64
-cd .\build\Windows\64
-cmake %LIBZIP_FEATURES% %COMMON_CMAKE_PARAMS% -DZLIB_ROOT=..\..\..\external\vcpkg\installed\x64-windows-static -A x64 ..\..\..\external\libzip
-cmake --build . --config RelWithDebInfo -v
-popd
-pushd .
+if %errorlevel% neq 0 exit /b %errorlevel%
 
-mkdir .\build\Windows\32
-cd .\build\Windows\32
-cmake %LIBZIP_FEATURES% %COMMON_CMAKE_PARAMS% -DZLIB_ROOT=..\..\..\external\vcpkg\installed\x86-windows-static -A Win32 ..\..\..\external\libzip
-cmake --build . --config RelWithDebInfo -v
-popd
+external\vcpkg\vcpkg.exe install liblzma:x64-windows-static liblzma:x86-windows-static
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+REM 64-bit deps
+mkdir "%DEPS_BUILD_DIR_ROOT_64%"
+cmake %COMMON_CMAKE_PARAMS% -B "%DEPS_BUILD_DIR_ROOT_64%" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DBUILD_DEPENDENCIES=ON "-DARTIFACTS_ROOT_DIR=%ARTIFACTS_DIR_ROOT_64%" "-DCMAKE_INSTALL_PREFIX=%ARTIFACTS_DIR_ROOT_64%" -A x64 .
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+cmake --build "%DEPS_BUILD_DIR_ROOT_64%" -v --config %CONFIG%
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+cmake --install "%DEPS_BUILD_DIR_ROOT_64%" --config %CONFIG%
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+REM 32-bit deps
+mkdir "%DEPS_BUILD_DIR_ROOT_32%"
+cmake %COMMON_CMAKE_PARAMS% -B "%DEPS_BUILD_DIR_ROOT_32%" -DVCPKG_TARGET_TRIPLET=x86-windows-static -DBUILD_DEPENDENCIES=ON "-DARTIFACTS_ROOT_DIR=%ARTIFACTS_DIR_ROOT_32%" "-DCMAKE_INSTALL_PREFIX=%ARTIFACTS_DIR_ROOT_32%" -A Win32 .
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+cmake --build "%DEPS_BUILD_DIR_ROOT_32%" --config %CONFIG% -v
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+cmake --install "%DEPS_BUILD_DIR_ROOT_32%" --config %CONFIG%
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+
+REM 64-bit library
+mkdir "%LIB_BUILD_DIR_ROOT_64%"
+cmake %COMMON_CMAKE_PARAMS% -B "%LIB_BUILD_DIR_ROOT_64%" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DBUILD_LIBZIP=ON "-DARTIFACTS_ROOT_DIR=%ARTIFACTS_DIR_ROOT_64%" "-DCMAKE_INSTALL_PREFIX=%ARTIFACTS_DIR_ROOT_64%" -A x64 .
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+cmake --build "%LIB_BUILD_DIR_ROOT_64%" --config %CONFIG% -v
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+REM 32-bit library
+mkdir "%LIB_BUILD_DIR_ROOT_32%"
+cmake %COMMON_CMAKE_PARAMS% -B "%LIB_BUILD_DIR_ROOT_32%" -DVCPKG_TARGET_TRIPLET=x86-windows-static -DBUILD_LIBZIP=ON "-DARTIFACTS_ROOT_DIR=%ARTIFACTS_DIR_ROOT_32%" "-DCMAKE_INSTALL_PREFIX=%ARTIFACTS_DIR_ROOT_32%" -A Win32 .
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+cmake --build "%LIB_BUILD_DIR_ROOT_32%" --config %CONFIG% -v
+if %errorlevel% neq 0 exit /b %errorlevel%
+

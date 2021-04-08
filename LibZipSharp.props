@@ -1,5 +1,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup>
-        <_LibZipSharpNugetVersion>1.0.24</_LibZipSharpNugetVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <_LibZipSharpNugetVersion>2.0.0</_LibZipSharpNugetVersion>
+    <_NativeBuildDir>$(MSBuildThisFileDirectory)lzsbuild</_NativeBuildDir>
+    <_ExternalDir>$(MSBuildThisFileDirectory)external</_ExternalDir>
+  </PropertyGroup>
 </Project>

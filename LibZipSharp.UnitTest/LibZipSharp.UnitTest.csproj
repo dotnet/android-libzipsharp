@@ -20,13 +20,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\libZipSharp.csproj" Condition="'$(ReferenceNuget)' != 'True'" />
-    <None Include="..\build\Darwin\64\lib\libzip.5.0.dylib" Condition="'$(ReferenceNuget)' != 'True' And Exists ('..\build\Darwin\64\lib\libzip.5.0.dylib')">
-      <Link>libzip.dylib</Link>
+    <ProjectReference Include="..\LibZipSharp\libZipSharp.csproj" Condition="'$(ReferenceNuget)' != 'True'" />
+    <None Include="$(_NativeBuildDir)\lib\Darwin\libZipSharpNative.dylib" Condition="'$(ReferenceNuget)' != 'True' And Exists ('$(_NativeBuildDir)\lzsbuild\lib\Darwin\libZipSharpNative.dylib')">
+      <Link>libZipSharpNative.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\build\Windows\64\lib\libzip.dll" Condition="'$(ReferenceNuget)' != 'True' And Exists ('..\build\Windows\64\lib\libzip.dll')">
-      <Link>libzip.dll</Link>
+    <None Include="$(_NativeBuildDir)\lib\win64\RelWithDebInfo\libZipSharpNative.dll" Condition="'$(ReferenceNuget)' != 'True' And Exists ('$(_NativeBuildDir)\lib\win64\RelWithDebInfo\libZipSharpNative.dll')">
+      <Link>libZipSharpNative.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$(_NativeBuildDir)\lib\Linux\libZipSharpNative.so" Condition="'$(ReferenceNuget)' != 'True' And Exists ('$(_NativeBuildDir)\lib\Linux\libZipSharpNative.so')">
+      <Link>libZipSharpNative.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$(_NativeBuildDir)\lib\Linux\libZipSharpNative.so.debug" Condition="'$(ReferenceNuget)' != 'True' And Exists ('$(_NativeBuildDir)\lib\Linux\libZipSharpNative.so.debug')">
+      <Link>libZipSharpNative.so.debug</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packaged_resources">

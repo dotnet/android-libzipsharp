@@ -4,3 +4,16 @@
 [submodule "external/vcpkg"]
 	path = external/vcpkg
 	url = https://github.com/Microsoft/vcpkg
+[submodule "external/zlib-ng"]
+	path = external/zlib-ng
+	url = https://github.com/zlib-ng/zlib-ng.git
+	branch = develop
+[submodule "external/bzip2"]
+	path = external/bzip2
+	url = git://sourceware.org/git/bzip2.git
+	branch = master
+[submodule "external/xz"]
+	path = external/xz
+	url = https://github.com/xz-mirror/xz.git
+	branch = master
+
