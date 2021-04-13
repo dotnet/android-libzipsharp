@@ -32,7 +32,9 @@ namespace Tests {
 			Assert.IsNotEmpty (versions.LibZip, "libzip version must not be empty");
 			Assert.IsNotEmpty (versions.Zlib, "zlib version must not be empty");
 			Assert.IsNotEmpty (versions.ZlibNG, "zlib-ng version must not be empty");
+#if HAVE_XZ
 			Assert.IsNotEmpty (versions.LZMA, "LZMA version must not be empty");
+#endif
 			Assert.IsNotEmpty (versions.LibZipSharp, "LibZipSharp version must not be empty");
 
 			Console.WriteLine ($"LibZipSharp version: {versions.LibZipSharp}");
@@ -214,7 +216,9 @@ namespace Tests {
 
 		[TestCase (CompressionMethod.Deflate)]
 		[TestCase (CompressionMethod.Bzip2)]
+#if HAVE_XZ
 		[TestCase (CompressionMethod.XZ)]
+#endif
 		public void UpdateEntryCompressionMethod (CompressionMethod method)
 		{
 			var zipStream = new MemoryStream ();
