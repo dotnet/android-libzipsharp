@@ -3,5 +3,6 @@
     <_LibZipSharpNugetVersion>2.0.0</_LibZipSharpNugetVersion>
     <_NativeBuildDir>$(MSBuildThisFileDirectory)lzsbuild</_NativeBuildDir>
     <_ExternalDir>$(MSBuildThisFileDirectory)external</_ExternalDir>
+    <UseXZ Condition=" '$(UseXZ)' == '' ">false</UseXZ>
   </PropertyGroup>
 </Project>

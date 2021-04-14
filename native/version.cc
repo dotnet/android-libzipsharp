@@ -1,7 +1,9 @@
 #include <cstring>
 #include <bzlib.h>
 #include <zlib.h>
+#if defined (HAVE_XZ)
 #include <lzma.h>
+#endif // def HAVE_XZ
 #include <zipconf.h>
 
 #include "version.hh"
@@ -10,7 +12,11 @@ constexpr char libzipsharp_version[] = LIBZIPSHARP_VERSION;
 constexpr char libzip_version[] = LIBZIP_VERSION;
 constexpr char libzlib_version[] = ZLIB_VERSION;
 constexpr char libzlibng_version[] = ZLIBNG_VERSION;
+#if defined (HAVE_XZ)
 constexpr char lzma_version[] = LZMA_VERSION_STRING;
+#else
+constexpr char lzma_version[] = "not supported";
+#endif // def HAVE_XZ
 
 void lzs_get_versions (LZSVersions *versions)
 {

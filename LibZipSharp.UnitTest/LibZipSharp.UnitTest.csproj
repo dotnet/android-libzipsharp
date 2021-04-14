@@ -1,4 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(MSBuildThisFileDirectory)..\LibZipSharp.props" />
+
   <PropertyGroup>
     <TargetFrameworks>net471;netcoreapp3.1</TargetFrameworks>
 
@@ -6,9 +9,8 @@
     <LibZipSharpBundleAllNativeLibraries>true</LibZipSharpBundleAllNativeLibraries>
     <ReferenceNuget Condition="'$(ReferenceNuget)' == ''">False</ReferenceNuget>
     <DefineConstants Condition="'$(OS)' == 'Windows_NT'">$(DefineConstants);WINDOWS</DefineConstants>
+    <DefineConstants Condition=" '$(UseXZ)' == 'True' ">$(DefineConstants);HAVE_XZ</DefineConstants>
   </PropertyGroup>
-
-  <Import Project="$(MSBuildThisFileDirectory)..\LibZipSharp.props" />
 
   <ItemGroup>
     <PackageReference Include="nunit" Version="3.12.0" />
