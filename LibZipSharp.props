@@ -3,6 +3,7 @@
     <_LibZipSharpNugetVersion>2.0.0</_LibZipSharpNugetVersion>
     <_NativeBuildDir>$(MSBuildThisFileDirectory)lzsbuild</_NativeBuildDir>
     <_ExternalDir>$(MSBuildThisFileDirectory)external</_ExternalDir>
+    <_MonoPosixNugetVersion>7.0.0-alpha.21276.2</_MonoPosixNugetVersion>
     <UseXZ Condition=" '$(UseXZ)' == '' ">false</UseXZ>
   </PropertyGroup>
 </Project>

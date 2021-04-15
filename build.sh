@@ -85,6 +85,7 @@ where OPTIONS are one or more of:
 
   -h|--help                  show this message
 EOF
+  exit 0
 }
 
 function print_banner()
