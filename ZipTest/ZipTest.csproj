@@ -16,7 +16,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Mono.Posix" Condition=" '$(OS)' == 'Unix'" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(_NativeBuildDir)\win32\RelWithDebInfo\libZipSharpNative.dll" Condition=" Exists ('$(_NativeBuildDir)\win32\RelWithDebInfo\libZipSharpNative.dll') ">
@@ -33,6 +32,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Mono.Unix" Version="$(_MonoPosixNugetVersion)" />
     <ProjectReference Include="..\LibZipSharp\libZipSharp.csproj">
       <Project>{E248B2CA-303B-4645-ADDC-9D4459D550FD}</Project>
       <Name>libZipSharp</Name>
