@@ -60,13 +60,14 @@ set(ZLIB_ENABLE_TESTS OFF CACHE BOOL "Do not build zlib-ng tests" FORCE)
 # Read product version
 #
 file(STRINGS "LibZipSharp.props" LZS_PRODUCT_VERSION_XML REGEX "^[ \t]*<_LibZipSharpNugetVersion>(.*)</_LibZipSharpNugetVersion>")
-string(REGEX REPLACE "^[ \t]*<_LibZipSharpNugetVersion>(.*)</_LibZipSharpNugetVersion>" "\\1" LZS_VERSION "${LZS_PRODUCT_VERSION_XML}")
+string(REGEX REPLACE "^[ \t]*<_LibZipSharpNugetVersion>([0-9.]+).*</_LibZipSharpNugetVersion>" "\\1" LZS_VERSION "${LZS_PRODUCT_VERSION_XML}")
 
 if(WIN32)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE STRING "Statically link MSVC runtime library")
   set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/external/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "Vcpkg toolchain file")
 endif()
 
+message(STATUS "Version: ${LZS_VERSION}")
 project(
   ZipSharpNative
   VERSION ${LZS_VERSION}
