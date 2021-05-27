@@ -2,6 +2,7 @@
 
    <ItemGroup>
      <FirstParty Include="libZipSharp.*" />
+     <FirstParty Include="libZipSharpNative.*" />
      <FirstParty Include="libzip.*" />
    </ItemGroup>
 
