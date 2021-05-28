@@ -57,7 +57,7 @@
         <None Include="$(_ExternalDir)\zlib-ng\LICENSE.md" PackagePath="Licences\zlib-ng" Pack="true" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="Mono.Unix" Version="$(_MonoPosixNugetVersion)" />
+      <PackageReference Include="Mono.Unix" Version="$(_MonoPosixNugetVersion)" PrivateAssets="analyzers" />
       <PackageReference Include="System.Buffers" Version="4.5.0" />
       <PackageReference Include="XliffTasks" Version="1.0.0-beta.20206.1" PrivateAssets="all" />
     </ItemGroup>

@@ -1,6 +1,6 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <_LibZipSharpNugetVersion>2.0.0-alpha</_LibZipSharpNugetVersion>
+    <_LibZipSharpNugetVersion>2.0.0-alpha2</_LibZipSharpNugetVersion>
     <_NativeBuildDir>$(MSBuildThisFileDirectory)lzsbuild</_NativeBuildDir>
     <_ExternalDir>$(MSBuildThisFileDirectory)external</_ExternalDir>
     <_MonoPosixNugetVersion>7.0.0-alpha.21276.2</_MonoPosixNugetVersion>
