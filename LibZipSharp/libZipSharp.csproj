@@ -6,7 +6,7 @@
     <PropertyGroup>
         <AssemblyName>libZipSharp</AssemblyName>
         <AssemblyTitle>libZipSharp</AssemblyTitle>
-        <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+        <TargetFrameworks>netcoreapp3.1;netstandard2.0;net45</TargetFrameworks>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <RootNamespace>Xamarin.Tools.Zip</RootNamespace>
