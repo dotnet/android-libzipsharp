@@ -55,6 +55,7 @@ endif()
 #
 set(ZLIB_COMPAT ON CACHE BOOL "Build zlib-ng for compatibility with zlib" FORCE)
 set(ZLIB_ENABLE_TESTS OFF CACHE BOOL "Do not build zlib-ng tests" FORCE)
+set(WITH_NEW_STRATEGIES OFF CACHE BOOL "Disable faster, but with worse compression, deflate strategies" FORCE)
 
 #
 # Read product version
