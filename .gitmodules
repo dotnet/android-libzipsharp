@@ -17,3 +17,7 @@
 	url = https://github.com/xz-mirror/xz.git
 	branch = master
 
+[submodule "zlib"]
+	path = external/zlib
+	url = https://github.com/madler/zlib.git
+	branch = master
