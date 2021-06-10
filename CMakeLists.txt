@@ -13,6 +13,7 @@ cmake_minimum_required(VERSION 3.18)
 option(BUILD_DEPENDENCIES "Build only libzip dependencies" OFF)
 option(BUILD_LIBZIP "Build libzip and libZipSharp" OFF)
 option(ENABLE_XZ "Enable XZ (LZMA compression) in the build" OFF)
+option(ENABLE_ZLIBNG "Use zlib-ng instead of zlib" OFF)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE True CACHE BOOL "Always build position independent code" FORCE)
 
@@ -53,9 +54,11 @@ endif()
 #
 # zlib-ng
 #
-set(ZLIB_COMPAT ON CACHE BOOL "Build zlib-ng for compatibility with zlib" FORCE)
-set(ZLIB_ENABLE_TESTS OFF CACHE BOOL "Do not build zlib-ng tests" FORCE)
-set(WITH_NEW_STRATEGIES OFF CACHE BOOL "Disable faster, but with worse compression, deflate strategies" FORCE)
+if(ENABLE_ZLIBNG)
+  set(ZLIB_COMPAT ON CACHE BOOL "Build zlib-ng for compatibility with zlib" FORCE)
+  set(ZLIB_ENABLE_TESTS OFF CACHE BOOL "Do not build zlib-ng tests" FORCE)
+  set(WITH_NEW_STRATEGIES OFF CACHE BOOL "Disable faster, but with worse compression, deflate strategies" FORCE)
+endif()
 
 #
 # Read product version
@@ -289,7 +292,11 @@ endforeach()
 set(LZS_CXX_LINKER_FLAGS "${_CHECKED_FLAGS}")
 
 if(BUILD_DEPENDENCIES)
-  add_subdirectory(external/zlib-ng)
+  if(ENABLE_ZLIBNG)
+    add_subdirectory(external/zlib-ng)
+  else()
+    add_subdirectory(external/zlib)
+  endif()
 
   target_compile_options(
     zlib
@@ -521,8 +528,14 @@ else()
     endif()
   else()
     if(WIN32)
+      if(ENABLE_ZLIBNG)
+        set(ZLIB_NAME "zlib.lib")
+      else()
+        set(ZLIB_NAME "zlibstatic.lib")
+      endif()
+
       set(LIBS
-        ${ARTIFACTS_ROOT_DIR}/lib/zlib.lib
+        ${ARTIFACTS_ROOT_DIR}/lib/${ZLIB_NAME}
         ${ARTIFACTS_ROOT_DIR}/lib/bz2.lib
         )
 

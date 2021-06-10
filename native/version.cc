@@ -11,7 +11,11 @@
 constexpr char libzipsharp_version[] = LIBZIPSHARP_VERSION;
 constexpr char libzip_version[] = LIBZIP_VERSION;
 constexpr char libzlib_version[] = ZLIB_VERSION;
+#if defined (ZLIBNG_VERSION)
 constexpr char libzlibng_version[] = ZLIBNG_VERSION;
+#else
+constexpr char libzlibng_version[] = "not used";
+#endif // ndef ZLIBNG_VERSION
 #if defined (HAVE_XZ)
 constexpr char lzma_version[] = LZMA_VERSION_STRING;
 #else

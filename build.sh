@@ -6,6 +6,7 @@ BUILD_DIR_ROOT="${MY_DIR}/lzsbuild"
 OS=$(uname -s)
 LZS_BUILD_DIR="${BUILD_DIR_ROOT}/lib/${OS}"
 DEPS_BASE_BUILD_DIR="${BUILD_DIR_ROOT}/deps/${OS}"
+ZLIB_DIR="external/zlib"
 
 if [ "${OS}" == "Darwin" ]; then
     DEPS_BUILD_DIR="${DEPS_BASE_BUILD_DIR}/native"
@@ -29,6 +30,7 @@ CONFIGURATION="RelWithDebInfo"
 REBUILD="no"
 VERBOSE="no"
 USE_XZ="no"
+USE_ZLIBNG="no"
 
 # The color block is pilfered from the dotnet installer script
 #
@@ -77,6 +79,7 @@ where OPTIONS are one or more of:
   -m|--cmake PATH            use cmake at PATH instead of the default of '${CMAKE}'
 
   -x|--xz                    use the XZ library for LZMA support (default: ${USE_XZ})
+  -g|--zlib-ng               use the zlib-ng library instead of zlib (default: ${USE_ZLIBNG}
   -c|--configuration NAME    build using configuration NAME instead of the default of '${CONFIGURATION}'
   -j|--jobs NUM              run at most this many build jobs in parallel
   -v|--verbose               make cmake and ninja verbose
@@ -233,6 +236,8 @@ while (( "$#" )); do
 
         -x|--xz) USE_XZ="yes"; shift ;;
 
+		-g|--zlib-ng) USE_ZLIBNG="yes"; shift ;;
+
         -v|--verbose) VERBOSE="yes"; shift ;;
 
         -r|--rebuild) REBUILD="yes"; shift ;;
@@ -252,6 +257,14 @@ fi
 
 if [ -z "${NINJA}" ]; then
     die ninja binary must be specified
+fi
+
+if [ "${USE_ZLIBNG}" == "no" ]; then
+	ZLIB_CMAKELISTS_PATH="${ZLIB_DIR}/CMakeLists.txt"
+	if ! $(grep 'lzs: disable-examples' "${ZLIB_CMAKELISTS_PATH}" > /dev/null 2>&1); then
+		print_banner Applying zlib patch
+		$(cd "${ZLIB_DIR}"; git apply "${MY_DIR}/zlib-changes.patch")
+	fi
 fi
 
 if [ "${REBUILD}" == "yes" ]; then
