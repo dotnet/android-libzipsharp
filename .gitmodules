@@ -21,3 +21,6 @@
 	path = external/zlib
 	url = https://github.com/madler/zlib.git
 	branch = master
+[submodule "external/zstd"]
+	path = external/zstd
+	url = https://github.com/facebook/zstd.git

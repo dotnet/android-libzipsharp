@@ -46,10 +46,20 @@ set(ENABLE_GNUTLS OFF CACHE BOOL "Do not use gnutls for libzip" FORCE)
 set(ENABLE_OPENSSL OFF CACHE BOOL "Do not use OpenSSL for libzip" FORCE)
 set(ENABLE_MBEDTLS OFF CACHE BOOL "Do not use mbedtls for libzip" FORCE)
 set(ENABLE_WINDOWS_CRYPTO OFF CACHE BOOL "Do not use Windows Crypto" FORCE)
+set(ENABLE_ZSTD ON CACHE BOOL "Use zstd in libzip" FORCE)
 
 if(NOT ENABLE_XZ)
   set(ENABLE_LZMA OFF CACHE BOOL "Do not use XZ for libzip" FORCE)
 endif()
+
+#
+# zstd
+#
+set(ZSTD_MULTITHREAD_SUPPORT OFF CACHE BOOL "Do not build zstd with multi-thread support" FORCE)
+set(ZSTD_BUILD_STATIC ON CACHE BOOL "Build static zstd" FORCE)
+set(ZSTD_BUILD_SHARED OFF CACHE BOOL "Do not build shared zstd" FORCE)
+set(ZSTD_BUILD_PROGRAMS OFF CACHE BOOL "Do not build zstd programs" FORCE)
+set(ZSTD_BUILD_TESTS OFF CACHE BOOL "Do not build zstd tests" FORCE)
 
 #
 # zlib-ng
@@ -298,11 +308,20 @@ if(BUILD_DEPENDENCIES)
     add_subdirectory(external/zlib)
   endif()
 
+  if(UNIX)
+    set(ZLIB_EXTERN "-DZEXTERN=__attribute__((visibility(\"hidden\")))")
+    target_compile_options(
+      zlibstatic
+      PRIVATE
+      -fvisibility=hidden
+      )
+  endif()
+
   target_compile_options(
-    zlib
+    zlibstatic
     PRIVATE
     ${LZS_C_FLAGS}
-    -fvisibility=hidden
+    "${ZLIB_EXTERN}"
     )
 
 if(NOT WIN32 AND ENABLE_XZ)
@@ -315,6 +334,23 @@ if(NOT WIN32 AND ENABLE_XZ)
     -fvisibility=hidden
     )
 endif()
+
+  add_subdirectory(external/zstd/build/cmake)
+  if(UNIX)
+    set(ZSTD_EXTERN "-DZSTDLIB_VISIBILITY=__attribute__((visibility(\"hidden\")))")
+    target_compile_options(
+      libzstd_static
+      PRIVATE
+      -fvisibility=hidden
+      )
+  endif()
+
+  target_compile_options(
+    libzstd_static
+    PRIVATE
+    ${LZS_C_FLAGS}
+    "${ZSTD_EXTERN}"
+    )
 
     set(BZIP2_SOURCES external/bzip2)
     add_library(
@@ -329,11 +365,19 @@ endif()
       ${BZIP2_SOURCES}/bzlib.c
       )
 
+    if(UNIX)
+      target_compile_options(
+        bz2
+        PRIVATE
+        -fvisibility=hidden
+        ${LZS_C_FLAGS}
+        )
+    endif()
+
     target_compile_options(
       bz2
       PRIVATE
       ${LZS_C_FLAGS}
-      -fvisibility=hidden
       )
 
     configure_file("${CMAKE_SOURCE_DIR}/data/bzip2.pc.in" "${CMAKE_BINARY_DIR}/bzip2.pc")
@@ -371,6 +415,11 @@ else()
 
   list(PREPEND CMAKE_PREFIX_PATH "${ARTIFACTS_ROOT_DIR}")
 
+  if(WIN32)
+    # If we don't rename the library, it won't be detected by libzip's cmake
+    file(RENAME ${ARTIFACTS_ROOT_DIR}/lib/zstd_static.lib ${ARTIFACTS_ROOT_DIR}/lib/zstd.lib)
+  endif()
+
   add_subdirectory(external/libzip)
 
   target_compile_options(
@@ -381,6 +430,8 @@ else()
 
   if(UNIX)
     set(ZIP_EXTERN "-DZIP_EXTERN=__attribute__((visibility(\"default\")))")
+    set(ZSTD_EXTERN "-DZSTDLIB_VISIBILITY=__attribute__((visibility(\"hidden\")))")
+    set(ZLIB_EXTERN "-DZEXTERN=__attribute__((visibility(\"hidden\")))")
     target_compile_options(
       zip
       PRIVATE
@@ -393,6 +444,8 @@ else()
     zip
     PRIVATE
     "${ZIP_EXTERN}"
+    "${ZSTD_EXTERN}"
+    "${ZLIB_EXTERN}"
     )
 
   if(APPLE)
@@ -422,6 +475,7 @@ else()
   else()
     message(STATUS "LZMA: DISABLED")
   endif()
+  message(STATUS "ZSTD: ${Zstd_INCLUDE_DIR}")
   message(STATUS "ZLIB: ${ZLIB_INCLUDE_DIR}")
   message(STATUS "BZ2: ${BZIP2_INCLUDE_DIR}")
 
@@ -430,6 +484,7 @@ else()
     PRIVATE
     ${ZLIB_INCLUDE_DIR}
     ${BZIP2_INCLUDE_DIR}
+    ${Zstd_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/external/libzip
     )
 
@@ -506,6 +561,7 @@ else()
 
     set(ZLIB_PATH "${CMAKE_BINARY_DIR}/libz-fat.a")
     set(BZ2_PATH "${CMAKE_BINARY_DIR}/libbz2-fat.a")
+    set(ZSTD_PATH "${CMAKE_BINARY_DIR}/libzstd-fat.a")
 
     if(ENABLE_XZ)
       set(LZMA_PATH "${CMAKE_BINARY_DIR}/liblzma-fat.a")
@@ -513,6 +569,7 @@ else()
 
     make_fat_archive("${ARTIFACTS_ROOT_DIR}/lib/libz.a" "${ARTIFACTS_OTHER_ROOT_DIR}/lib/libz.a" "${ZLIB_PATH}")
     make_fat_archive("${ARTIFACTS_ROOT_DIR}/lib/libbz2.a" "${ARTIFACTS_OTHER_ROOT_DIR}/lib/libbz2.a" "${BZ2_PATH}")
+    make_fat_archive("${ARTIFACTS_ROOT_DIR}/lib/libzstd.a" "${ARTIFACTS_OTHER_ROOT_DIR}/lib/libzstd.a" "${ZSTD_PATH}")
 
     if(ENABLE_XZ)
       make_fat_archive("${ARTIFACTS_ROOT_DIR}/lib/liblzma.a" "${ARTIFACTS_OTHER_ROOT_DIR}/lib/liblzma.a" "${LZMA_PATH}")
@@ -521,6 +578,7 @@ else()
     set(LIBS
       ${ZLIB_PATH}
       ${BZ2_PATH}
+      ${ZSTD_PATH}
       )
 
     if(ENABLE_XZ)
@@ -537,6 +595,7 @@ else()
       set(LIBS
         ${ARTIFACTS_ROOT_DIR}/lib/${ZLIB_NAME}
         ${ARTIFACTS_ROOT_DIR}/lib/bz2.lib
+        ${ARTIFACTS_ROOT_DIR}/lib/zstd.lib
         )
 
       if(ENABLE_XZ)
@@ -546,6 +605,7 @@ else()
       set(LIBS
         ${ARTIFACTS_ROOT_DIR}/lib/libz.a
         ${ARTIFACTS_ROOT_DIR}/lib/libbz2.a
+        ${ARTIFACTS_ROOT_DIR}/lib/libzstd.a
         )
 
       if(ENABLE_XZ)

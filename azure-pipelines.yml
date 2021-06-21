@@ -24,10 +24,6 @@ stages:
             git submodule update --init --recursive
           displayName: "Update Submodules"
         - script: |
-            cd external/libzip
-            git apply -v ../../libzip-changes.patch
-          displayName: "Apply Patches"
-        - script: |
             build_windows.bat
           displayName: "Build"
         - task: ArchiveFiles@2
@@ -60,9 +56,6 @@ stages:
             git submodule update --init --recursive
           displayName: 'Install Tools'
         - bash: |
-            patch --verbose -d external/libzip -p1 -l < libzip-changes.patch
-          displayName: 'Apply Patch'
-        - bash: |
             ./build.sh -v
           displayName: 'Build Linux x64'
         - task: ArchiveFiles@2
@@ -88,9 +81,6 @@ stages:
             brew install ninja
             git submodule update --init --recursive
           displayName: 'Install toolchain'
-        - bash: |
-            patch --verbose -d external/libzip -p1 -l < libzip-changes.patch
-          displayName: 'Apply Patch'
         - bash: |
             ./build.sh -v
             mkdir -p lzsbuild/lib/Linux

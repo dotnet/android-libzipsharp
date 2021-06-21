@@ -14,6 +14,10 @@ namespace Xamarin.Tools.Zip
 			get; internal set;
 		}
 
+		public string ZStd {
+			get; internal set;
+		}
+
 		public string ZlibNG {
 			get; internal set;
 		}
