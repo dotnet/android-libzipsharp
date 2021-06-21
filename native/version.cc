@@ -1,6 +1,7 @@
 #include <cstring>
 #include <bzlib.h>
 #include <zlib.h>
+#include <zstd.h>
 #if defined (HAVE_XZ)
 #include <lzma.h>
 #endif // def HAVE_XZ
@@ -32,6 +33,7 @@ void lzs_get_versions (LZSVersions *versions)
 	versions->libzip = strdup (libzip_version);
 	versions->zlib = strdup (libzlib_version);
 	versions->zlibng = strdup (libzlibng_version);
+	versions->zstd = strdup (ZSTD_versionString ());
 	versions->lzma = strdup (lzma_version);
 	versions->libzipsharp = strdup (libzipsharp_version);
 }

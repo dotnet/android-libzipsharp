@@ -216,6 +216,7 @@ namespace Tests {
 
 		[TestCase (CompressionMethod.Deflate)]
 		[TestCase (CompressionMethod.Bzip2)]
+		[TestCase (CompressionMethod.ZSTD)]
 #if HAVE_XZ
 		[TestCase (CompressionMethod.XZ)]
 #endif
