@@ -15,6 +15,9 @@
         <NoWarn>3021,1591</NoWarn>
         <DocumentationFile>libZipSharp.xml</DocumentationFile>
         <GenerateResxSource>true</GenerateResxSource>
+        <SignAssembly>true</SignAssembly>
+        <DelaySign>false</DelaySign>
+        <AssemblyOriginatorKeyFile>product.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
     <PropertyGroup>
       <XlfLanguages>cs;de;es;fr;it;ja;ko;pl;pt-BR;ru;tr;zh-Hans;zh-Hant</XlfLanguages>
