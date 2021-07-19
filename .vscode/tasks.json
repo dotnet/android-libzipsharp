@@ -6,7 +6,7 @@
         {
             "label": "Build LibZipSharp",
             "type": "shell",
-            "command": "msbuild LibZipSharp.csproj /restore /t:Build",
+            "command": "msbuild LibZipSharp/libZipSharp.csproj /restore /t:Build",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -18,7 +18,7 @@
         {
           "label": "Regenerate LibZipSharp Localisations",
           "type": "shell",
-          "command": "msbuild LibZipSharp.csproj /restore /t:UpdateXlf",
+          "command": "msbuild LibZipSharp/libZipSharp.csproj /restore /t:UpdateXlf",
           "group": {
               "kind": "build",
               "isDefault": true
@@ -30,7 +30,7 @@
         {
             "label": "Pack LibZipSharp Nuget",
             "type": "shell",
-            "command": "msbuild LibZipSharp.csproj /t:Pack",
+            "command": "msbuild LibZipSharp/libZipSharp.csproj /t:Pack",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -42,7 +42,7 @@
         {
             "label": "Clean LibZipSharp",
             "type": "shell",
-            "command": "msbuild LibZipSharp.csproj /restore /t:Clean",
+            "command": "msbuild LibZipSharp/libZipSharp.csproj /restore /t:Clean",
             "group": {
                 "kind": "build",
                 "isDefault": true

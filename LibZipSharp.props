@@ -1,6 +1,11 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <_LibZipSharpNugetVersion>2.0.0-alpha8</_LibZipSharpNugetVersion>
+    <_LibZipSharpAssemblyVersion>2.0.0</_LibZipSharpAssemblyVersion>
+    <!--
+      Nuget Version. You can append things like -alpha-1 etc to this value.
+      But always leave the $(_LibZipSharpAssemblyVersion) value at the start.
+     -->
+    <_LibZipSharpNugetVersion>$(_LibZipSharpAssemblyVersion)</_LibZipSharpNugetVersion>
     <_NativeBuildDir>$(MSBuildThisFileDirectory)lzsbuild</_NativeBuildDir>
     <_ExternalDir>$(MSBuildThisFileDirectory)external</_ExternalDir>
     <_MonoPosixNugetVersion>7.0.0-alpha8.21302.6</_MonoPosixNugetVersion>

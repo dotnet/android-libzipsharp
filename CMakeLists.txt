@@ -73,8 +73,8 @@ endif()
 #
 # Read product version
 #
-file(STRINGS "LibZipSharp.props" LZS_PRODUCT_VERSION_XML REGEX "^[ \t]*<_LibZipSharpNugetVersion>(.*)</_LibZipSharpNugetVersion>")
-string(REGEX REPLACE "^[ \t]*<_LibZipSharpNugetVersion>([0-9.]+).*</_LibZipSharpNugetVersion>" "\\1" LZS_VERSION "${LZS_PRODUCT_VERSION_XML}")
+file(STRINGS "LibZipSharp.props" LZS_PRODUCT_VERSION_XML REGEX "^[ \t]*<_LibZipSharpAssemblyVersion>(.*)</_LibZipSharpAssemblyVersion>")
+string(REGEX REPLACE "^[ \t]*<_LibZipSharpAssemblyVersion>([0-9.]+).*</_LibZipSharpAssemblyVersion>" "\\1" LZS_VERSION "${LZS_PRODUCT_VERSION_XML}")
 
 if(WIN32)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE STRING "Statically link MSVC runtime library")
