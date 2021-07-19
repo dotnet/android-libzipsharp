@@ -24,6 +24,11 @@
       <UpdateXlfOnBuild Condition="'$(RunningOnCI)' != 'true'">true</UpdateXlfOnBuild>
     </PropertyGroup>
     <PropertyGroup>
+        <!-- Assembly Info -->
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <AssemblyVersion>$(_LibZipSharpAssemblyVersion)</AssemblyVersion>
+        <FileVersion>$(_LibZipSharpAssemblyVersion)</FileVersion>
+        <InformationalVersion>$(_LibZipSharpAssemblyVersion)</InformationalVersion>
         <!--
         nuget packaging
         -->
