@@ -8,7 +8,7 @@
     <_LibZipSharpNugetVersion>$(_LibZipSharpAssemblyVersion)</_LibZipSharpNugetVersion>
     <_NativeBuildDir>$(MSBuildThisFileDirectory)lzsbuild</_NativeBuildDir>
     <_ExternalDir>$(MSBuildThisFileDirectory)external</_ExternalDir>
-    <_MonoPosixNugetVersion>7.0.0-alpha8.21302.6</_MonoPosixNugetVersion>
+    <_MonoPosixNugetVersion>7.0.0-final.1.21369.2</_MonoPosixNugetVersion>
     <UseXZ Condition=" '$(UseXZ)' == '' ">false</UseXZ>
   </PropertyGroup>
 </Project>
