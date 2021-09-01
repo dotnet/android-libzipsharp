@@ -43,7 +43,7 @@
         <Owners>Microsoft, Xamarin</Owners>
         <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
         <PackageProjectUrl>https://github.com/xamarin/LibZipSharp</PackageProjectUrl>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/xamarin/LibZipSharp/master/LICENSE</PackageLicenseUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageTags></PackageTags>
         <PackageOutputPath>$(MSBuildThisFileDirectory)</PackageOutputPath>
