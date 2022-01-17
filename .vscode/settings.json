@@ -1,5 +1,4 @@
 {
-    "nxunitExplorer.nunit": "/Users/dean/.nuget/packages/nunit.consolerunner/3.10.0/tools/nunit3-console.exe",
     "nxunitExplorer.modules": [
         "LibZipSharp.UnitTest/bin/Debug/net471/LibZipSharp.UnitTest.dll",
     ]

@@ -40,6 +40,11 @@ namespace Xamarin.Tools.Zip
 	/// </summary>
 	public abstract partial class ZipArchive : IDisposable, IEnumerable <ZipEntry>
 	{
+		internal class CallbackContext {
+			public Stream Source { get; set; } = null;
+			public Stream Destination {get; set;} = null;
+			public string DestinationFileName {get; set; } = null;
+		}
 		public const EntryPermissions DefaultFilePermissions = EntryPermissions.OwnerRead | EntryPermissions.OwnerWrite | EntryPermissions.GroupRead | EntryPermissions.WorldRead;
 		public const EntryPermissions DefaultDirectoryPermissions = EntryPermissions.OwnerAll | EntryPermissions.GroupRead | EntryPermissions.GroupExecute |  EntryPermissions.WorldRead | EntryPermissions.WorldExecute;
 
@@ -87,9 +92,12 @@ namespace Xamarin.Tools.Zip
 				throw new ArgumentNullException (nameof (options));
 			Options = options;
 			Native.zip_error_t errorp;
-			var streamHandle = GCHandle.Alloc (stream, GCHandleType.Normal);
-			IntPtr h = GCHandle.ToIntPtr (streamHandle);
-			IntPtr source = Native.zip_source_function_create (callback, h, out errorp);
+			CallbackContext context = new CallbackContext () {
+				Source = stream,
+				Destination = null,
+			};
+			var contextHandle = GCHandle.Alloc (context, GCHandleType.Normal);
+			IntPtr source = Native.zip_source_function_create (callback, GCHandle.ToIntPtr (contextHandle), out errorp);
 			archive = Native.zip_open_from_source (source, flags, out errorp);
 			if (archive == IntPtr.Zero) {
 				// error;
@@ -323,7 +331,10 @@ namespace Xamarin.Tools.Zip
 				throw new ArgumentNullException (nameof (stream));
 			sources.Add (stream);
 			string destPath = EnsureArchivePath (archivePath);
-			var handle = GCHandle.Alloc (stream, GCHandleType.Normal);
+			var context = new CallbackContext () {
+				Source = stream,
+			};
+			var handle = GCHandle.Alloc (context, GCHandleType.Normal);
 			IntPtr h = GCHandle.ToIntPtr (handle);
 			IntPtr source = Native.zip_source_function (archive, callback, h);
 			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
@@ -758,9 +769,13 @@ namespace Xamarin.Tools.Zip
 			var handle = GCHandle.FromIntPtr (state);
 			if (!handle.IsAllocated)
 				return -1;
-			var stream = handle.Target as Stream;
+			var context = handle.Target as CallbackContext;
+			if (context == null)
+				return -1;
+			var stream = context.Source;
 			if (stream == null)
 				return -1;
+			var destination = context.Destination ?? context.Source;
 			switch (cmd) {
 				case SourceCommand.Stat:
 					if (len < (UInt64)sizeof (Native.zip_stat_t))
@@ -773,34 +788,68 @@ namespace Xamarin.Tools.Zip
 					return (Int64)sizeof (Native.zip_stat_t);
 
 				case SourceCommand.Tell:
-				case SourceCommand.TellWrite:
 					return (Int64)stream.Position;
+				case SourceCommand.TellWrite:
+					return (Int64)destination.Position;
 
 				case SourceCommand.Write:
 					buffer = ArrayPool<byte>.Shared.Rent (length);
 					try {
 						Marshal.Copy (data, buffer, 0, length);
-						stream.Write (buffer, 0, length);
+						destination.Write (buffer, 0, length);
 						return length;
 					} finally {
 						ArrayPool<byte>.Shared.Return (buffer);
 					}
 
 				case SourceCommand.SeekWrite:
-				case SourceCommand.Seek:
 					Native.zip_error_t error;
-					UInt64 offset = Native.zip_source_seek_compute_offset ((UInt64)stream.Position, (UInt64)stream.Length, data, len, out error);
-					stream.Seek ((long)offset, SeekOrigin.Begin);
+					Int64 offset = Native.zip_source_seek_compute_offset ((UInt64)destination.Position, (UInt64)destination.Length, data, len, out error);
+					if (offset < 0) {
+						return offset;
+					}
+					if (offset != stream.Seek (offset, SeekOrigin.Begin)) {
+						return -1;
+					}
+					break;
+				case SourceCommand.Seek:
+					offset = Native.zip_source_seek_compute_offset ((UInt64)stream.Position, (UInt64)stream.Length, data, len, out error);
+					if (offset < 0) {
+						return offset;
+					}
+					if (offset != stream.Seek (offset, SeekOrigin.Begin)) {
+						return -1;
+					}
 					break;
 
 				case SourceCommand.CommitWrite:
+					destination.Flush ();
+					stream.Position = 0;
+					destination.Position = 0;
+					stream.SetLength (destination.Length);
+					destination.CopyTo (stream);
 					stream.Flush ();
+					stream.Position = 0;
+					destination.Dispose ();
+					context.Destination = null;
+					if (!string.IsNullOrEmpty (context.DestinationFileName)&& File.Exists (context.DestinationFileName)) {
+						try {
+							File.Delete (context.DestinationFileName);
+						} catch (Exception) {
+							// we are deleting a temp file. So we can ignore any error.
+							// it will get cleaned up eventually.
+							Console.WriteLine ($"warning: Could not delete {context.DestinationFileName}.");
+						}
+						context.DestinationFileName = null;
+					}
+					break;
+				case SourceCommand.RollbackWrite:
+					destination.Dispose ();
+					context.Destination = null;
 					break;
 
 				case SourceCommand.Read:
-					if (length > stream.Length - stream.Position) {
-						length = (int)(stream.Length - stream.Position);
-					}
+					length = (int)Math.Min (stream.Length - stream.Position, length);
 					buffer = ArrayPool<byte>.Shared.Rent (length);
 					try {
 						int bytesRead = stream.Read (buffer, 0, length);
@@ -809,8 +858,18 @@ namespace Xamarin.Tools.Zip
 					} finally {
 						ArrayPool<byte>.Shared.Return (buffer);
 					}
-
 				case SourceCommand.BeginWrite:
+					try {
+						string tempFile = Path.GetTempFileName ();
+						context.Destination = File.Open (tempFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+						context.DestinationFileName = tempFile;
+					} catch (IOException) {
+						// ok use a memory stream as a backup
+						context.Destination = new MemoryStream ();
+					}
+					destination = context.Destination;
+					destination.Position = 0;
+					break;
 				case SourceCommand.Open:
 					stream.Position = 0;
 					return 0;
