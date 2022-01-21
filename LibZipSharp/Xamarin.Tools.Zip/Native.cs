@@ -356,7 +356,7 @@ namespace Xamarin.Tools.Zip
 			[MarshalAs (UnmanagedType.FunctionPtr)]zip_source_callback callback, IntPtr user_data, out zip_error_t errorp);
 
 		[DllImport (ZIP_LIBNAME, SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
-		public static extern UInt64 zip_source_seek_compute_offset (UInt64 offset, UInt64 length, IntPtr data, UInt64 data_length, out zip_error_t error);
+		public static extern Int64 zip_source_seek_compute_offset (UInt64 offset, UInt64 length, IntPtr data, UInt64 data_length, out zip_error_t error);
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
 		public static extern Int64 zip_dir_add (IntPtr archive, IntPtr name, OperationFlags flags);

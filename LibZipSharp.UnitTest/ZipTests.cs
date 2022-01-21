@@ -257,6 +257,54 @@ namespace Tests {
 			}
 		}
 
+		[Test]
+		public void InMemoryZipFile ()
+		{
+			string filePath = Path.GetFullPath ("info.json");
+			if (!File.Exists (filePath)) {
+				filePath = Path.GetFullPath (Path.Combine ("LibZipSharp.UnitTest", "info.json"));
+			}
+			string fileRoot = Path.GetDirectoryName (filePath);
+			using (var stream = new MemoryStream ()) {
+				using (var zip = ZipArchive.Create (stream)) {
+					zip.AddFile (filePath, "info.json");
+					zip.AddFile (Path.Combine (fileRoot, "characters_players.json"), "characters_players.json");
+					zip.AddFile (Path.Combine (fileRoot, "object_spawn.json"), "object_spawn.json");
+				}
+
+				stream.Position = 0;
+				using (var zip = ZipArchive.Open (stream)) {
+					Assert.AreEqual (3, zip.EntryCount);
+					foreach (var e in zip) {
+						Console.WriteLine (e.FullName);
+					}
+					zip.DeleteEntry ("info.json");
+				}
+
+				stream.Position = 0;
+				using (var zip = ZipArchive.Open (stream)) {
+					Assert.AreEqual (2, zip.EntryCount);
+					zip.AddEntry ("info.json", File.ReadAllText (filePath), Encoding.UTF8, CompressionMethod.Deflate);
+				}
+
+				stream.Position = 0;
+				using (var zip = ZipArchive.Open (stream)) {
+					Assert.AreEqual (3, zip.EntryCount);
+					Assert.IsTrue (zip.ContainsEntry ("info.json"));
+					var entry1 = zip.ReadEntry ("info.json");
+					using (var s = new MemoryStream ()) {
+						entry1.Extract (s);
+						s.Position = 0;
+						using (var sr = new StreamReader (s)) {
+							var t = sr.ReadToEnd ();
+							Assert.AreEqual (File.ReadAllText (filePath), t);
+						}
+
+					}
+				}
+			}
+		}
+
 		[TestCase (false)]
 		[TestCase (true)]
 		public void EnumerateSkipDeletedEntries (bool deleteFromExistingFile)

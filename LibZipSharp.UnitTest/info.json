@@ -1,0 +1,21 @@
+{
+	"version": 22,
+	"type": "Object",
+	"id": "c9bb1a03-cb8a-4f9f-b298-49ee26fa1fd9",
+	"ownerId": "47b9d124-6421-4055-abf4-b5fc8fbfe784",
+	"name": "OBJECT NAME",
+	"description": "",
+	"blockCount": 9,
+	"created": "2019-06-21T14:20:42.000Z",
+	"lastChanged": "0001-01-01T00:00:00.000Z",
+	"tags": [
+		{
+			"value": "some_tag",
+			"origin": "category"
+		},
+		{
+			"value": "some_other_tag",
+			"origin": "category"
+		}
+	]
+}
