@@ -808,7 +808,7 @@ namespace Xamarin.Tools.Zip
 					if (offset < 0) {
 						return offset;
 					}
-					if (offset != stream.Seek (offset, SeekOrigin.Begin)) {
+					if (offset != destination.Seek (offset, SeekOrigin.Begin)) {
 						return -1;
 					}
 					break;
