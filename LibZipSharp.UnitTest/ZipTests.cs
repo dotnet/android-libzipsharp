@@ -315,11 +315,11 @@ namespace Tests {
 		[Test]
 		[NonParallelizable]
 		//[Repeat (100)]
-		public void SimilateXamarinAndroidUsage ([Values (true, false)] bool copyArchive)
+		public void SimilateXamarinAndroidUsage ([Values (true, false)] bool copyArchive, [Values (true, false)] bool useFiles)
 		{
 			string filePath = Path.GetFullPath ("packaged_resources");
 			if (!File.Exists (filePath)) {
-				filePath = Path.GetFullPath (Path.Combine ("LibZipSharp.UnitTest", "packaged_resources"));
+				filePath = Path.GetFullPath (Path.Combine ("/Users/dean/Documents/Sandbox/dellis1972/LibZipSharp/LibZipSharp.UnitTest", "packaged_resources"));
 			}
 
 			if (File.Exists ("base.zip"))
@@ -359,12 +359,17 @@ namespace Tests {
 					byte[] buffer = new byte[fileSize];
 					rnd.NextBytes (buffer);
 					CompressionMethod compression = rnd.NextDouble () < 0.2 ? CompressionMethod.Deflate : CompressionMethod.Store;
-
-					var ms = new MemoryStream (buffer);
-					ms.Position = 0;
 					string entryName = $"temp/file_{i}_size_{fileSize}_{compression}.bin";
 					TestContext.Out.WriteLine ($"Adding {entryName} to base.zip");
-					baseZip.Archive.AddStream (ms, entryName, compressionMethod: compression);
+					if (useFiles) {
+						Directory.CreateDirectory ("temp");
+						File.WriteAllBytes (entryName, buffer);
+						baseZip.Archive.AddFile (entryName, compressionMethod: compression);
+					} else {
+						var ms = new MemoryStream (buffer);
+						ms.Position = 0;
+						baseZip.Archive.AddStream (ms, entryName, compressionMethod: compression);
+					}
 					expectedFiles.Add ((entryName, compression, fileSize));
 
 					if (rnd.NextDouble () < 0.2)
