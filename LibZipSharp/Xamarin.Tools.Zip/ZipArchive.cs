@@ -852,8 +852,14 @@ namespace Xamarin.Tools.Zip
 					length = (int)Math.Min (stream.Length - stream.Position, length);
 					buffer = ArrayPool<byte>.Shared.Rent (length);
 					try {
-						int bytesRead = stream.Read (buffer, 0, length);
-						Marshal.Copy (buffer, 0, data, bytesRead);
+						int bytesRead = 0;
+						int startIndex = 0;
+						while (length > 0) {
+							bytesRead = stream.Read (buffer, 0, length);
+							Marshal.Copy (buffer, startIndex, data, bytesRead);
+							startIndex += bytesRead;
+							length -= bytesRead;
+						}
 						return bytesRead;
 					} finally {
 						ArrayPool<byte>.Shared.Return (buffer);
