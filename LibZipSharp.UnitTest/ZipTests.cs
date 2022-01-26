@@ -319,7 +319,7 @@ namespace Tests {
 		{
 			string filePath = Path.GetFullPath ("packaged_resources");
 			if (!File.Exists (filePath)) {
-				filePath = Path.GetFullPath (Path.Combine ("/Users/dean/Documents/Sandbox/dellis1972/LibZipSharp/LibZipSharp.UnitTest", "packaged_resources"));
+				filePath = Path.GetFullPath (Path.Combine ("LibZipSharp.UnitTest", "packaged_resources"));
 			}
 
 			if (File.Exists ("base.zip"))
@@ -358,7 +358,7 @@ namespace Tests {
 					uint fileSize = (uint)rnd.Next (341, 3535592);
 					byte[] buffer = new byte[fileSize];
 					rnd.NextBytes (buffer);
-					CompressionMethod compression = rnd.NextDouble () < 0.2 ? CompressionMethod.Deflate : CompressionMethod.Store;
+					CompressionMethod compression = rnd.NextDouble () < 0.8 ? CompressionMethod.Deflate : CompressionMethod.Store;
 					string entryName = $"temp/file_{i}_size_{fileSize}_{compression}.bin";
 					TestContext.Out.WriteLine ($"Adding {entryName} to base.zip");
 					if (useFiles) {
