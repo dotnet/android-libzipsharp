@@ -314,7 +314,7 @@ namespace Tests {
 
 		[Test]
 		[NonParallelizable]
-		//[Repeat (100)]
+		[Repeat (100)]
 		public void SimilateXamarinAndroidUsage ([Values (true, false)] bool copyArchive, [Values (true, false)] bool useFiles)
 		{
 			string filePath = Path.GetFullPath ("packaged_resources");
@@ -336,19 +336,19 @@ namespace Tests {
 			Random rnd = new Random (3456464);
 
 			using (var baseZip = new ZipWrapper ("base.zip", mode)) {
-				if (!copyArchive) {
-					using (var zip = ZipArchive.Open (filePath, FileMode.Open)) {
-						foreach (var entry in zip) {
-							var entryName = entry.FullName;
-							if (entryName.Contains ("\\")) {
-								entryName = entryName.Replace ('\\', '/');
-							}
-							var ms = new MemoryStream ();
-							entry.Extract (ms);
-							TestContext.Out.WriteLine ($"Adding {entryName} to base.zip");
-							baseZip.Archive.AddStream (ms, entryName, compressionMethod: entry.CompressionMethod);
-							expectedFiles.Add ((entryName, entry.CompressionMethod, entry.Size));
+				using (var zip = ZipArchive.Open (filePath, FileMode.Open)) {
+					foreach (var entry in zip) {
+						var entryName = entry.FullName;
+						if (entryName.Contains ("\\")) {
+							entryName = entryName.Replace ('\\', '/');
 						}
+						expectedFiles.Add ((entryName, entry.CompressionMethod, entry.Size));
+						if (!copyArchive)
+							continue;
+						var ms = new MemoryStream ();
+						entry.Extract (ms);
+						TestContext.Out.WriteLine ($"Adding {entryName} to base.zip");
+						baseZip.Archive.AddStream (ms, entryName, compressionMethod: entry.CompressionMethod);
 					}
 				}
 
@@ -385,6 +385,9 @@ namespace Tests {
 					Assert.AreEqual (file.c, e.CompressionMethod, $"{file} should be {file.c} but was {e.CompressionMethod}.");
 				}
 			}
+
+			if (File.Exists ("base.zip"))
+				File.Delete ("base.zip");
 		}
 
 		[Test]
