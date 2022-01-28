@@ -11,61 +11,6 @@ namespace Tests {
 
 	public class ZipTests {
 
-		public class ZipWrapper : IDisposable {
-			ZipArchive archive;
-			string filename;
-			public ZipArchive Archive => archive;
-
-			public ZipWrapper (string file, FileMode mode = FileMode.CreateNew) {
-				filename = file;
-				archive = ZipArchive.Open (filename, mode);
-			}
-
-			public void Flush () {
-				if (archive != null) {
-					archive.Close ();
-					archive.Dispose ();
-					archive = null;
-				}
-				archive = ZipArchive.Open (filename, FileMode.Open);
-			}
-
-			/// <summary>
-			/// HACK: aapt2 is creating zip entries on Windows such as `assets\subfolder/asset2.txt`
-			/// </summary>
-			public void FixupWindowsPathSeparators (Action<string, string> onRename)
-			{
-				bool modified = false;
-				foreach (var entry in archive) {
-					if (entry.FullName.Contains ("\\")) {
-						var name = entry.FullName.Replace ('\\', '/');
-						onRename?.Invoke (entry.FullName, name);
-						entry.Rename (name);
-						modified = true;
-					}
-				}
-				if (modified) {
-					Flush ();
-				}
-			}
-
-			public void Dispose ()
-			{
-				Dispose(true);
-				GC.SuppressFinalize (this);
-			}
-
-			protected virtual void Dispose(bool disposing) {
-				if (disposing) {
-					if (archive != null) {
-						archive.Close ();
-						archive.Dispose ();
-						archive = null;
-					}
-				}
-			}
-		}
-
 		void AssertEntryIsValid (ZipEntry e, string expectedArchivePath,
 				EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compression = CompressionMethod.Store)
 		{
@@ -319,15 +264,17 @@ namespace Tests {
 		{
 			string filePath = Path.GetFullPath ("packaged_resources");
 			if (!File.Exists (filePath)) {
-				filePath = Path.GetFullPath (Path.Combine ("LibZipSharp.UnitTest", "packaged_resources"));
+				filePath = Path.GetFullPath (Path.Combine ("/Users/dean/Documents/Sandbox/dellis1972/LibZipSharp/LibZipSharp.UnitTest", "packaged_resources"));
 			}
 
-			if (File.Exists ("base.zip"))
-				File.Delete ("base.zip");
+			string baseArchive = $"base_{copyArchive}_{useFiles}.zip";
+
+			if (File.Exists (baseArchive))
+				File.Delete (baseArchive);
 
 			var mode = FileMode.Create;
 			if (copyArchive) {
-				File.Copy (filePath, "base.zip");
+				File.Copy (filePath, baseArchive);
 				mode = FileMode.Open;
 			}
 
@@ -335,7 +282,7 @@ namespace Tests {
 			// use a specific seed so we always generate the same files
 			Random rnd = new Random (3456464);
 
-			using (var baseZip = new ZipWrapper ("base.zip", mode)) {
+			using (var baseZip = new ZipWrapper (baseArchive, mode)) {
 				using (var zip = ZipArchive.Open (filePath, FileMode.Open)) {
 					foreach (var entry in zip) {
 						var entryName = entry.FullName;
@@ -343,7 +290,7 @@ namespace Tests {
 							entryName = entryName.Replace ('\\', '/');
 						}
 						expectedFiles.Add ((entryName, entry.CompressionMethod, entry.Size));
-						if (!copyArchive)
+						if (copyArchive)
 							continue;
 						var ms = new MemoryStream ();
 						entry.Extract (ms);
@@ -360,24 +307,25 @@ namespace Tests {
 					rnd.NextBytes (buffer);
 					CompressionMethod compression = rnd.NextDouble () < 0.8 ? CompressionMethod.Deflate : CompressionMethod.Store;
 					string entryName = $"temp/file_{i}_size_{fileSize}_{compression}.bin";
+					string archivePath = rnd.NextDouble () < 0.3 ? entryName : Path.GetFileName (entryName);
 					TestContext.Out.WriteLine ($"Adding {entryName} to base.zip");
 					if (useFiles) {
 						Directory.CreateDirectory ("temp");
 						File.WriteAllBytes (entryName, buffer);
-						baseZip.Archive.AddFile (entryName, compressionMethod: compression);
+						baseZip.Archive.AddFile (entryName, archivePath, compressionMethod: compression);
 					} else {
 						var ms = new MemoryStream (buffer);
 						ms.Position = 0;
-						baseZip.Archive.AddStream (ms, entryName, compressionMethod: compression);
+						baseZip.Archive.AddStream (ms, archivePath, compressionMethod: compression);
 					}
-					expectedFiles.Add ((entryName, compression, fileSize));
+					expectedFiles.Add ((archivePath, compression, fileSize));
 
 					if (rnd.NextDouble () < 0.2)
 						baseZip.Flush ();
 				}
 
 			}
-			using (var zip = ZipArchive.Open ("base.zip", FileMode.Open, strictConsistencyChecks: true)) {
+			using (var zip = ZipArchive.Open (baseArchive, FileMode.Open, strictConsistencyChecks: true)) {
 				foreach (var file in expectedFiles) {
 					Assert.IsTrue (zip.ContainsEntry (file.name), $"zip should contain {file}.");
 					var e = zip.ReadEntry(file.name);
@@ -386,8 +334,8 @@ namespace Tests {
 				}
 			}
 
-			if (File.Exists ("base.zip"))
-				File.Delete ("base.zip");
+			if (File.Exists (baseArchive))
+				File.Delete (baseArchive);
 		}
 
 		[Test]
