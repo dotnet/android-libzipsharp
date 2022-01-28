@@ -264,7 +264,7 @@ namespace Tests {
 		{
 			string filePath = Path.GetFullPath ("packaged_resources");
 			if (!File.Exists (filePath)) {
-				filePath = Path.GetFullPath (Path.Combine ("/Users/dean/Documents/Sandbox/dellis1972/LibZipSharp/LibZipSharp.UnitTest", "packaged_resources"));
+				filePath = Path.GetFullPath (Path.Combine ("LibZipSharp.UnitTest", "packaged_resources"));
 			}
 
 			string baseArchive = $"base_{copyArchive}_{useFiles}.zip";
