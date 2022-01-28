@@ -259,7 +259,7 @@ namespace Tests {
 
 		[Test]
 		[NonParallelizable]
-		[Repeat (100)]
+		[Repeat (10)]
 		public void SimilateXamarinAndroidUsage ([Values (true, false)] bool copyArchive, [Values (true, false)] bool useFiles)
 		{
 			string filePath = Path.GetFullPath ("packaged_resources");
