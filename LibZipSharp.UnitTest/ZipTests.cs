@@ -258,7 +258,7 @@ namespace Tests {
 		}
 
 		[Test]
-		public void SimilateXamarinAndroidUsage ([Values (true, false)] bool copyArchive, [Values (true, false)] bool useFiles)
+		public void SimulateXamarinAndroidUsage ([Values (true, false)] bool copyArchive, [Values (true, false)] bool useFiles)
 		{
 			string filePath = Path.GetFullPath ("packaged_resources");
 			if (!File.Exists (filePath)) {
