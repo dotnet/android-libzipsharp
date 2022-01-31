@@ -258,6 +258,85 @@ namespace Tests {
 		}
 
 		[Test]
+		public void SimulateXamarinAndroidUsage ([Values (true, false)] bool copyArchive, [Values (true, false)] bool useFiles)
+		{
+			string filePath = Path.GetFullPath ("packaged_resources");
+			if (!File.Exists (filePath)) {
+				filePath = Path.GetFullPath (Path.Combine ("LibZipSharp.UnitTest", "packaged_resources"));
+			}
+
+			string baseArchive = $"base_{copyArchive}_{useFiles}.zip";
+
+			if (File.Exists (baseArchive))
+				File.Delete (baseArchive);
+
+			var mode = FileMode.Create;
+			if (copyArchive) {
+				File.Copy (filePath, baseArchive);
+				mode = FileMode.Open;
+			}
+
+			List<(string name, CompressionMethod c, ulong size)> expectedFiles = new List<(string name, CompressionMethod c, ulong size)> ();
+			// use a specific seed so we always generate the same files
+			Random rnd = new Random (3456464);
+
+			using (var baseZip = new ZipWrapper (baseArchive, mode)) {
+				using (var zip = ZipArchive.Open (filePath, FileMode.Open)) {
+					foreach (var entry in zip) {
+						var entryName = entry.FullName;
+						if (entryName.Contains ("\\")) {
+							entryName = entryName.Replace ('\\', '/');
+						}
+						expectedFiles.Add ((entryName, entry.CompressionMethod, entry.Size));
+						if (copyArchive)
+							continue;
+						var ms = new MemoryStream ();
+						entry.Extract (ms);
+						TestContext.Out.WriteLine ($"Adding {entryName} to base.zip");
+						baseZip.Archive.AddStream (ms, entryName, compressionMethod: entry.CompressionMethod);
+					}
+				}
+
+				baseZip.FixupWindowsPathSeparators ((a, b) => TestContext.Out.WriteLine ($"Fixing up malformed entry `{a}` -> `{b}`"));
+
+				for (int i=0; i< 200; i++) {
+					uint fileSize = (uint)rnd.Next (341, 3535592);
+					byte[] buffer = new byte[fileSize];
+					rnd.NextBytes (buffer);
+					CompressionMethod compression = rnd.NextDouble () < 0.8 ? CompressionMethod.Deflate : CompressionMethod.Store;
+					string entryName = $"temp/file_{i}_size_{fileSize}_{compression}.bin";
+					string archivePath = rnd.NextDouble () < 0.3 ? entryName : Path.GetFileName (entryName);
+					TestContext.Out.WriteLine ($"Adding {entryName} to base.zip");
+					if (useFiles) {
+						Directory.CreateDirectory ("temp");
+						File.WriteAllBytes (entryName, buffer);
+						baseZip.Archive.AddFile (entryName, archivePath, compressionMethod: compression);
+					} else {
+						var ms = new MemoryStream (buffer);
+						ms.Position = 0;
+						baseZip.Archive.AddStream (ms, archivePath, compressionMethod: compression);
+					}
+					expectedFiles.Add ((archivePath, compression, fileSize));
+
+					if (rnd.NextDouble () < 0.2)
+						baseZip.Flush ();
+				}
+
+			}
+			using (var zip = ZipArchive.Open (baseArchive, FileMode.Open, strictConsistencyChecks: true)) {
+				foreach (var file in expectedFiles) {
+					Assert.IsTrue (zip.ContainsEntry (file.name), $"zip should contain {file}.");
+					var e = zip.ReadEntry(file.name);
+					Assert.AreEqual (file.size, e.Size, $"{file} should be {file.size} but was {e.Size}.");
+					Assert.AreEqual (file.c, e.CompressionMethod, $"{file} should be {file.c} but was {e.CompressionMethod}.");
+				}
+			}
+
+			if (File.Exists (baseArchive))
+				File.Delete (baseArchive);
+		}
+
+		[Test]
 		public void InMemoryZipFile ()
 		{
 			string filePath = Path.GetFullPath ("info.json");
