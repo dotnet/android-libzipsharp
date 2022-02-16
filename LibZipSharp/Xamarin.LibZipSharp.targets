@@ -6,7 +6,7 @@
     <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\libZipSharpNative.*">
       <Link>lib64\%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
-    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-arm-x64\native\libZipSharpNative.*">
+    <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-arm64\native\libZipSharpNative.*">
       <Link>%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
     <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x86\native\libZipSharpNative.*">
