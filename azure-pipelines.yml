@@ -19,7 +19,7 @@ stages:
       pool:
         name: AzurePipelines-EO
         demands:
-        - ImageOverride -equals AzurePipelinesWindows2022compliant
+        - ImageOverride -equals AzurePipelinesWindows2019compliant
       steps:
         - script: |
             echo "Hello"
