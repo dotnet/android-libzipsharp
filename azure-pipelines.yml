@@ -115,6 +115,11 @@ stages:
             archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-x64.7z
             destinationFolder: lzsbuild/lib/win64
         - task: ExtractFiles@1
+          displayName: Extract 64 bit ARM Windows native
+          inputs:
+            archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-arm-x64.7z
+            destinationFolder: lzsbuild/lib/winarm64
+        - task: ExtractFiles@1
           displayName: Extract 32 bit Windows native
           inputs:
             archiveFilePatterns: $(Build.ArtifactStagingDirectory)/native/libzip-windows-x86.7z
