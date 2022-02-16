@@ -17,7 +17,7 @@ stages:
     jobs:
     - job: buildWindows
       pool:
-        vmImage: windows-latest
+        vmImage: AzurePipelinesWindows2022compliant
       steps:
         - script: |
             echo "Hello"
@@ -47,7 +47,7 @@ stages:
             pathtoPublish: $(Build.ArtifactStagingDirectory)
     - job: buildLinux
       pool:
-        vmImage: ubuntu-18.04
+        vmImage: AzurePipelinesUbuntu18.04compliant
       steps:
         - bash: |
             sudo dpkg --add-architecture i386
@@ -75,7 +75,7 @@ stages:
         - buildlinux
         - buildWindows
       pool:
-        vmImage: macOS-latest
+        vmImage: internal-macos-11
       steps:
         - bash: |
             brew install ninja
