@@ -17,6 +17,7 @@ stages:
     jobs:
     - job: buildWindows
       pool:
+        name: AzurePipelines-EO
         vmImage: AzurePipelinesWindows2022compliant
       steps:
         - script: |
@@ -47,6 +48,7 @@ stages:
             pathtoPublish: $(Build.ArtifactStagingDirectory)
     - job: buildLinux
       pool:
+        name: AzurePipelines-EO
         vmImage: AzurePipelinesUbuntu18.04compliant
       steps:
         - bash: |
