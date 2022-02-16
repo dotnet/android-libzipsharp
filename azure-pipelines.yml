@@ -19,7 +19,7 @@ stages:
       pool:
         name: AzurePipelines-EO
         demands:
-        - ImageOverride -equals AzurePipelinesWindows2019compliant
+        - ImageOverride -equals AzurePipelinesWindows2022compliant
       steps:
         - script: |
             echo "Hello"
@@ -170,7 +170,9 @@ stages:
     - job: testlinux
       displayName: 'Test Linux'
       pool:
-        vmImage: ubuntu-18.04
+        name: AzurePipelines-EO
+        demands:
+        - ImageOverride -equals AzurePipelinesUbuntu18.04compliant
       steps:
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
@@ -197,7 +199,7 @@ stages:
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
-        vmImage: macOS-latest
+        vmImage: internal-macos-11
       steps:
         - template: yaml-templates/use-dot-net.yaml
           parameters:
@@ -227,7 +229,9 @@ stages:
     - job: testwindows
       displayName: 'Test Windows'
       pool:
-        vmImage: windows-latest
+        name: AzurePipelines-EO
+        demands:
+        - ImageOverride -equals AzurePipelinesWindows2022compliant
       steps:
         - template: yaml-templates/use-dot-net.yaml
           parameters:
