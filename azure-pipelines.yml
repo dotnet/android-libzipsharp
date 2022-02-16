@@ -42,6 +42,13 @@ stages:
             archiveType: 7z
             replaceExistingArchive: true
             archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x64.7z
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: lzsbuild\lib\winarm64\RelWithDebInfo\
+            includeRootFolder: false
+            archiveType: 7z
+            replaceExistingArchive: true
+            archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-arm-x64.7z
         - task: PublishBuildArtifacts@1
           displayName: upload artifacts
           inputs:
