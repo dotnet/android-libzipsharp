@@ -18,7 +18,8 @@ stages:
     - job: buildWindows
       pool:
         name: AzurePipelines-EO
-        vmImage: AzurePipelinesWindows2022compliant
+        demands:
+        - ImageOverride -equals AzurePipelinesWindows2022compliant
       steps:
         - script: |
             echo "Hello"
@@ -49,7 +50,8 @@ stages:
     - job: buildLinux
       pool:
         name: AzurePipelines-EO
-        vmImage: AzurePipelinesUbuntu18.04compliant
+        demands:
+        - ImageOverride -equals AzurePipelinesUbuntu18.04compliant
       steps:
         - bash: |
             sudo dpkg --add-architecture i386
