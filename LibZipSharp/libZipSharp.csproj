@@ -54,6 +54,8 @@
         <None Include="$(_NativeBuildDir)\lib\Darwin\libZipSharpNative.dylib" PackagePath="runtimes\osx\native\libZipSharpNative.dylib" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\win64\libZipSharpNative.dll" PackagePath="runtimes\win-x64\native\libZipSharpNative.dll" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\win64\libZipSharpNative.pdb" PackagePath="runtimes\win-x64\native\libZipSharpNative.pdb" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\winarm64\libZipSharpNative.dll" PackagePath="runtimes\win-arm64\native\libZipSharpNative.dll" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\winarm64\libZipSharpNative.pdb" PackagePath="runtimes\win-arm64\native\libZipSharpNative.pdb" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\win32\libZipSharpNative.dll" PackagePath="runtimes\win-x86\native\libZipSharpNative.dll" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\win32\libZipSharpNative.pdb" PackagePath="runtimes\win-x86\native\libZipSharpNative.pdb" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\Linux\libZipSharpNative.so" PackagePath="runtimes\linux-x64\native\libZipSharpNative.so" Pack="true" />
