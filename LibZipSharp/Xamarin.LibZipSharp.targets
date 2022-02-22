@@ -4,13 +4,13 @@
   </PropertyGroup>
   <ItemGroup>
     <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\libZipSharpNative.*">
-      <Link>lib64\%(FileName)%(Extension)</Link>
+      <Link>x64\%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
     <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-arm64\native\libZipSharpNative.*">
-      <Link>%(FileName)%(Extension)</Link>
+      <Link>arm64\%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
     <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\win-x86\native\libZipSharpNative.*">
-      <Link>%(FileName)%(Extension)</Link>
+      <Link>x86\%(FileName)%(Extension)</Link>
     </_LibZipNativeLibs>
     <_LibZipNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\osx\native\libZipSharpNative.dylib">
       <Link>%(FileName)%(Extension)</Link>
