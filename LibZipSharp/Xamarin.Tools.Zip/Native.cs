@@ -455,6 +455,7 @@ namespace Xamarin.Tools.Zip
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
 				string executingDirectory = System.IO.Path.GetDirectoryName (typeof(Native).Assembly.Location);
+	#if !NET45
 				string arch = RuntimeInformation.ProcessArchitecture.ToString ().ToLower ();
 				string path = System.IO.Path.Combine (executingDirectory, arch);
 				if (System.IO.Directory.Exists (path)) {
@@ -462,6 +463,9 @@ namespace Xamarin.Tools.Zip
 					return;
 				}
 				SetDllDirectory (executingDirectory);
+	#else
+				SetDllDirectory (Environment.Is64BitProcess ? System.IO.Path.Combine (executingDirectory, "x64") : executingDirectory);
+	#endif
 			}
 		}
 	}
