@@ -459,7 +459,7 @@ namespace Xamarin.Tools.Zip
 				string arch = RuntimeInformation.ProcessArchitecture.ToString ().ToLower ();
 				string path = System.IO.Path.Combine (executingDirectory, arch);
 	#else
-				string path = System.IO.Path.Combine (executingDirectory, Environment.Is64BitProcess ? "x64" : "x86"));
+				string path = System.IO.Path.Combine (executingDirectory, Environment.Is64BitProcess ? "x64" : "x86");
 	#endif
 				if (System.IO.Directory.Exists (path)) {
 					SetDllDirectory (path);
