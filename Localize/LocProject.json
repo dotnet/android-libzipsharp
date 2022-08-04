@@ -1,0 +1,14 @@
+{
+    "Projects": [
+      {
+        "LanguageSet": "VS_Main_Languages",
+        "LocItems": [
+          {
+            "CopyOption": "LangIDOnName",
+            "SourceFile": ".\\LibZipSharp\\Properties\\Resources.resx",
+            "OutputPath": ".\\LibZipSharp\\Properties"
+          }
+        ]
+      }
+    ]
+  }
