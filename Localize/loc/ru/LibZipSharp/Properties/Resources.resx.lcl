@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LCX SchemaVersion="6.0" Name="D:\a\_work\1\s\LibZipSharp\Properties\Resources.resx" PsrId="211" SrcCul="en-US" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx" TgtCul="ru-RU">
+  <OwnedComments>
+    <Cmt Name="Dev" />
+    <Cmt Name="LcxAdmin" />
+    <Cmt Name="Rccx" />
+  </OwnedComments>
+  <Item ItemId=";Resources.resx" ItemType="0" PsrId="211" Leaf="false">
+    <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
+    <Item ItemId=";Strings" ItemType="0" PsrId="211" Leaf="false">
+      <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";DestinationMustNotBeEmpty" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Archive destination path must not be empty.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ErrorReadingFile_file" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Error occured while reading the file '{0}'.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";ErrorReadingStream" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[An error occured while reading the stream.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ExpectedAnInstanceOf_string_type" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{0}' is an instance of '{1}' instead of the expected type '{2}'.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - The expected type of the parameter.]D;]A;{1} - The name of the parameter.]D;]A;{2} - The actual type of the parameter.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FailedToReadSymLink_link_error" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Could not read the symbolic link '{0}': {1}.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - The symbolic link that was being read.]D;]A;{1} - The actual error message reported by the operating system.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FailedToSetOwner_entry_error_oserror" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: failed to set owner of entry '{0}' ({1}:{2}).]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename.]D;]A;{1} - The error message.]D;]A;{2} - The operating system error.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FailedToStatFile_file_error" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: failed to stat file '{0}': {1}.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename.]D;]A;{1} - The error message.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FileAlreadyExists" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The file already exists.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FileCouldNotBeOpened_file" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The file '{0}' could not be opened.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FileDoesNotExist_file" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The file '{0}' does not exist and file creation wasn't requested.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FileDoesNotSupportSeeking_file" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The file '{0}' does not support seeking.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FileFailedConsistencyChecks_file" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The file {0} failed consistency checks.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FileIsNotAZip_file" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The file '{0}' is not a ZIP archive.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FilePathAlreadyExists_file" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[File '{0}' already exists.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";FileTypeNotSupported_filetype" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Storing files of type '{0}' is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - The type of the file.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";InvalidEntryType_string_type" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA['{0}' is an instance of '{1}', which is not a valid entry type. The expected type is '{2}'.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - The name of the parameter.]D;]A;{1} - The expected type of the parameter.]D;]A;{2} - The actual type of the parameter.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";MustBeAnInstanceOf_string_type" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA['{0}' must be an instance of '{1}'.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - The name of the parameter.]D;]A;{1} - The type the parameter should be.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";MustNotBeNullOrEmpty_string" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA['{0}' must not be null or empty.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - The name of the parameter]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";OutOfMemory" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[libzip failed due to an out of memory error.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[The following terms should not be translated: libzip]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";StreamCouldNotBeOpened" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Stream could not be opened.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StreamDoesNotExist" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Stream does not exist and file creation wasn't requested.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StreamDoesNotSupportSeeking" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The stream does not support seeking.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StreamFailedConsistencyChecks" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The stream failed consistency checks.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StreamIsNotAZip" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Stream is not a ZIP archive.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UnableToDetermineFileType_file" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Failed to determine type of the file '{0}'.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - A filename]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";UnexpectedLibZipError_error" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unexpected libzip error: {0}.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[The following is the name of a library and should not be translated: libzip]D;]A;{0} - An error message from libzip.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";UnexpectedOptionsType_string_type_type" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA['{0}' is an instance of '{1}', which is not a valid options type. The expected type is '{2}'.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - The parameter name.]D;]A;{1} - The expected type of the parameter.]D;]A;{2} - The actual type of the parameter.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";UnknownError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unknown error.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UnsupportedPermission_UnixExternalPermissions" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA['{0}' is not a supported file type. Only regular files, directories, and symbolic links are currently supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[{0} - The name of the permission.]]></Cmt>
+        </Cmts>
+      </Item>
+    </Item>
+  </Item>
+</LCX>
