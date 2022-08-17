@@ -1,0 +1,239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MustNotBeNullOrEmpty_string" xml:space="preserve">
+    <value>'{0}' must not be null or empty.</value>
+    <comment>{0} - The name of the parameter</comment>
+  </data>
+  <data name="InvalidEntryType_string_type" xml:space="preserve">
+    <value>'{0}' is an instance of '{1}', which is not a valid entry type. The expected type is '{2}'.</value>
+    <comment>{0} - The name of the parameter.
+{1} - The expected type of the parameter.
+{2} - The actual type of the parameter.</comment>
+  </data>
+  <data name="UnsupportedPermission_UnixExternalPermissions" xml:space="preserve">
+    <value>'{0}' is not a supported file type. Only regular files, directories, and symbolic links are currently supported.</value>
+    <comment>{0} - The name of the permission.</comment>
+  </data>
+  <data name="MustBeAnInstanceOf_string_type" xml:space="preserve">
+    <value>'{0}' must be an instance of '{1}'.</value>
+    <comment>{0} - The name of the parameter.
+{1} - The type the parameter should be.</comment>
+  </data>
+  <data name="ExpectedAnInstanceOf_string_type" xml:space="preserve">
+    <value>{0}' is an instance of '{1}' instead of the expected type '{2}'.</value>
+    <comment>{0} - The expected type of the parameter.
+{1} - The name of the parameter.
+{2} - The actual type of the parameter.</comment>
+  </data>
+  <data name="UnableToDetermineFileType_file" xml:space="preserve">
+    <value>Failed to determine type of the file '{0}'.</value>
+    <comment>{0} - A filename</comment>
+  </data>
+  <data name="FailedToReadSymLink_link_error" xml:space="preserve">
+    <value>Could not read the symbolic link '{0}': {1}.</value>
+    <comment>{0} - The symbolic link that was being read.
+{1} - The actual error message reported by the operating system.</comment>
+  </data>
+  <data name="FileTypeNotSupported_filetype" xml:space="preserve">
+    <value>Storing files of type '{0}' is not supported.</value>
+    <comment>{0} - The type of the file.</comment>
+  </data>
+  <data name="FailedToSetOwner_entry_error_oserror" xml:space="preserve">
+    <value>Warning: failed to set owner of entry '{0}' ({1}:{2}).</value>
+    <comment>{0} - A filename.
+{1} - The error message.
+{2} - The operating system error.</comment>
+  </data>
+  <data name="FailedToStatFile_file_error" xml:space="preserve">
+    <value>Warning: failed to stat file '{0}': {1}.</value>
+    <comment>{0} - A filename.
+{1} - The error message.</comment>
+  </data>
+  <data name="UnexpectedOptionsType_string_type_type" xml:space="preserve">
+    <value>'{0}' is an instance of '{1}', which is not a valid options type. The expected type is '{2}'.</value>
+    <comment>{0} - The parameter name.
+{1} - The expected type of the parameter.
+{2} - The actual type of the parameter.</comment>
+  </data>
+  <data name="FileAlreadyExists" xml:space="preserve">
+    <value>ファイルは既に存在します。</value>
+  </data>
+  <data name="FilePathAlreadyExists_file" xml:space="preserve">
+    <value>File '{0}' already exists.</value>
+    <comment>{0} - A filename.</comment>
+  </data>
+  <data name="OutOfMemory" xml:space="preserve">
+    <value>libzip failed due to an out of memory error.</value>
+    <comment>The following terms should not be translated: libzip</comment>
+  </data>
+  <data name="StreamFailedConsistencyChecks" xml:space="preserve">
+    <value>The stream failed consistency checks.</value>
+  </data>
+  <data name="StreamDoesNotExist" xml:space="preserve">
+    <value>Stream does not exist and file creation wasn't requested.</value>
+  </data>
+  <data name="StreamIsNotAZip" xml:space="preserve">
+    <value>Stream is not a ZIP archive.</value>
+  </data>
+  <data name="StreamCouldNotBeOpened" xml:space="preserve">
+    <value>Stream could not be opened.</value>
+  </data>
+  <data name="ErrorReadingStream" xml:space="preserve">
+    <value>An error occured while reading the stream.</value>
+  </data>
+  <data name="StreamDoesNotSupportSeeking" xml:space="preserve">
+    <value>The stream does not support seeking.</value>
+  </data>
+  <data name="UnexpectedLibZipError_error" xml:space="preserve">
+    <value>Unexpected libzip error: {0}.</value>
+    <comment>The following is the name of a library and should not be translated: libzip
+{0} - An error message from libzip.</comment>
+  </data>
+  <data name="FileFailedConsistencyChecks_file" xml:space="preserve">
+    <value>The file {0} failed consistency checks.</value>
+    <comment>{0} - A filename.</comment>
+  </data>
+  <data name="FileDoesNotExist_file" xml:space="preserve">
+    <value>The file '{0}' does not exist and file creation wasn't requested.</value>
+    <comment>{0} - A filename.</comment>
+  </data>
+  <data name="FileIsNotAZip_file" xml:space="preserve">
+    <value>The file '{0}' is not a ZIP archive.</value>
+    <comment>{0} - A filename.</comment>
+  </data>
+  <data name="FileCouldNotBeOpened_file" xml:space="preserve">
+    <value>ファイル '{0}' を開けませんでした。</value>
+    <comment>{0} - A filename.</comment>
+  </data>
+  <data name="ErrorReadingFile_file" xml:space="preserve">
+    <value>Error occured while reading the file '{0}'.</value>
+    <comment>{0} - A filename.</comment>
+  </data>
+  <data name="FileDoesNotSupportSeeking_file" xml:space="preserve">
+    <value>The file '{0}' does not support seeking.</value>
+    <comment>{0} - A filename.</comment>
+  </data>
+  <data name="DestinationMustNotBeEmpty" xml:space="preserve">
+    <value>Archive destination path must not be empty.</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>不明なエラー。</value>
+  </data>
+</root>
