@@ -14,8 +14,6 @@ variables:
   - group: Xamarin-Secrets
   - name: Codeql.Enabled
     value: True
-#  - name: Codeql.TSAEnabled
-#    value: True
 stages:
   - stage: Build
     jobs:
