@@ -12,8 +12,6 @@ resources:
       ref: refs/heads/main
 variables:
   - group: Xamarin-Secrets
-  - name: Codeql.Enabled
-    value: True
 stages:
   - stage: Build
     jobs:
@@ -23,7 +21,7 @@ stages:
         demands:
         - ImageOverride -equals AzurePipelinesWindows2022compliant
       variables:
-        Codeql.BuildIdentifier: WindowsBuild
+        Codeql.Enabled: true
       steps:
         - script: |
             echo "Hello"
@@ -63,8 +61,6 @@ stages:
         name: AzurePipelines-EO
         demands:
         - ImageOverride -equals AzurePipelinesUbuntu18.04compliant
-      variables:
-        Codeql.SkipTaskAutoInjection: true
       steps:
         - bash: |
             sudo dpkg --add-architecture i386
@@ -93,8 +89,6 @@ stages:
         - buildWindows
       pool:
         vmImage: internal-macos-11
-      variables:
-        Codeql.SkipTaskAutoInjection: true
       steps:
         - bash: |
             brew install ninja
@@ -174,7 +168,6 @@ stages:
     dependsOn: Build
     variables:
       DotNetCoreVersion: 3.1.201
-      Codeql.SkipTaskAutoInjection: true
     jobs:
     - job: testlinux
       displayName: 'Test Linux'
@@ -209,8 +202,6 @@ stages:
       displayName: 'Test MacOS'
       pool:
         vmImage: internal-macos-11
-      variables:
-        Codeql.SkipTaskAutoInjection: true
       steps:
         - template: yaml-templates/use-dot-net.yaml
           parameters:
@@ -243,8 +234,6 @@ stages:
         name: AzurePipelines-EO
         demands:
         - ImageOverride -equals AzurePipelinesWindows2022compliant
-      variables:
-        Codeql.SkipTaskAutoInjection: true
       steps:
         - template: yaml-templates/use-dot-net.yaml
           parameters:
