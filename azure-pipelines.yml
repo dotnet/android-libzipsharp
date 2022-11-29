@@ -61,6 +61,8 @@ stages:
         name: AzurePipelines-EO
         demands:
         - ImageOverride -equals AzurePipelinesUbuntu18.04compliant
+      variables:
+        Codeql.Enabled: true
       steps:
         - bash: |
             sudo dpkg --add-architecture i386
@@ -89,6 +91,8 @@ stages:
         - buildWindows
       pool:
         vmImage: internal-macos-11
+      variables:
+        Codeql.Enabled: true
       steps:
         - bash: |
             brew install ninja
