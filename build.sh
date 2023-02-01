@@ -25,6 +25,7 @@ fi
 #
 NINJA="ninja"
 CMAKE="cmake"
+GENERATOR="Ninja"
 JOBS=""
 CONFIGURATION="RelWithDebInfo"
 REBUILD="no"
@@ -131,7 +132,7 @@ function cmake_configure()
     run_cmake_common \
         -B "${build_dir}" \
         -S "${MY_DIR}" \
-        -G Ninja \
+        -G "${GENERATOR}" \
         -DCMAKE_BUILD_TYPE="${CONFIGURATION}" ${use_xz} \
         "$@"
 }
@@ -234,7 +235,10 @@ while (( "$#" )); do
             fi
             ;;
 
-        -x|--xz) USE_XZ="yes"; shift ;;
+        -x|--xz)
+			USE_XZ="yes"
+			GENERATOR="Unix Makefiles"
+			shift ;;
 
 		-g|--zlib-ng) USE_ZLIBNG="yes"; shift ;;
 
@@ -277,6 +281,7 @@ if [ "${OS}" == "Darwin" ]; then
 fi
 
 if [ "${OS}" == "Darwin" ]; then
+	MAKE="gmake"
     X86_NATIVE="no"
     X86_BUILD_DIR=""
     X86_ARTIFACTS_DIR=""
@@ -325,6 +330,8 @@ if [ "${OS}" == "Darwin" ]; then
         cmake_install "${X86_BUILD_DIR}"
     fi
 else
+	MAKE="make"
+
     print_banner "Configuring dependency libraries"
     cmake_configure "${DEPS_BUILD_DIR}" -DBUILD_DEPENDENCIES=ON "-DARTIFACTS_ROOT_DIR=${ARTIFACTS_DIR_ROOT}" "-DCMAKE_INSTALL_PREFIX=${ARTIFACTS_DIR_ROOT}"
 
