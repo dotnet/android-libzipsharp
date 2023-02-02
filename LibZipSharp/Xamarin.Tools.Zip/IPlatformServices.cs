@@ -23,7 +23,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
 using System.Collections.Generic;
 
 namespace Xamarin.Tools.Zip
@@ -37,8 +36,10 @@ namespace Xamarin.Tools.Zip
 		/// Checks whether the filesystem location identified by <paramref name="path"/> is a regular
 		/// file. Irregular files include device nodes, sockets, character or block devices on Unix systems etc.
 		/// </summary>
-		/// <returns><c>true</c> if <paramref name="path"/> points to regular file</returns>
+		/// <returns><c>true</c> if operation was successful, <c>false</c> otherwise</returns>
+		/// <param name="archive">ZipArchive to operate on</param>
 		/// <param name="path">Path to the filesystem location</param>
+		/// <param name="result"><c>true</c> if <paramref name="path"/> points to regular file</param>
 		bool IsRegularFile (ZipArchive archive, string path, out bool result);
 		bool IsDirectory (ZipArchive archive, string path, out bool result);
 		bool GetFilesystemPermissions (ZipArchive archive, string path, out EntryPermissions permissions);

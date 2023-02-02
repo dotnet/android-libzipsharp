@@ -459,10 +459,18 @@ else()
   add_library(
     ${PROJECT_NAME}
     SHARED
+    native/sizes.cc
+    native/values.cc
     native/version.cc
     )
 
   add_dependencies(${PROJECT_NAME} zip)
+
+  target_include_directories(
+    ${PROJECT_NAME}
+    PRIVATE
+    "external/libzip/lib"
+  )
 
   target_compile_definitions(
     ${PROJECT_NAME}

@@ -74,8 +74,27 @@ namespace Xamarin.Tools.Zip
 			get { return Native.zip_get_num_entries (archive, OperationFlags.None); }
 		}
 
+		/// <summary>
+		/// Get or set the archive comment.  If <c>null</c> is passed when setting, comment is removed
+		/// from the archive.
+		/// </summary>
+		public string Comment {
+			get => Native.zip_get_archive_comment (archive);
+			set {
+				if (Native.zip_set_archive_comment (archive, value) != 0) {
+					throw GetErrorException ();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Get options used when the archive was opened/created.
+		/// </summary>
 		public IPlatformOptions Options { get; private set; }
 
+		/// <summary>
+		/// Called before and after each entry is extracted.
+		/// </summary>
 		public event EventHandler<EntryExtractEventArgs> EntryExtract;
 
 		internal ZipArchive (string defaultExtractionDir, IPlatformOptions options)
@@ -196,12 +215,13 @@ namespace Xamarin.Tools.Zip
 		/// <paramref name="mode"/> parameter. If <paramref name="strictConsistencyChecks"/> is <c>true</c>
 		/// some extra checks will be performed on the ZIP being opened. If <paramref name="defaultExtractionDir"/> is
 		/// not <c>null</c> or empty it is used by default by all the entries as the destination directory. Otherwise the
-		/// current directory is used as the destination. Output directory can be different for each entry, see <see cref="ZipEntry.Extract"/>
+		/// current directory is used as the destination. Output directory can be different for each entry, see <see cref="ZipEntry.Extract(string, string, FileMode, bool, string)"/>
 		/// </summary>
 		/// <param name="path">Path to the ZIP archive.</param>
 		/// <param name="mode">File open mode.</param>
 		/// <param name="defaultExtractionDir">default target directory</param>
 		/// <param name="strictConsistencyChecks">Perform strict consistency checks.</param>
+		/// <param name="options">Platform-specific options, or <c>null</c> if none necessary (the default)</param>
 		/// <returns>Opened ZIP archive</returns>
 		public static ZipArchive Open (string path, FileMode mode, string defaultExtractionDir = null, bool strictConsistencyChecks = false, IPlatformOptions options = null)
 		{
@@ -325,6 +345,7 @@ namespace Xamarin.Tools.Zip
 		/// <param name="permissions">The permissions which the stream should have when extracted (Unix Only)</param>
 		/// <param name="compressionMethod">The compression method to use</param>
 		/// <param name="overwriteExisting">If true an existing entry will be overwritten. If false and an existing entry exists and error will be raised</param>
+		/// <param name="modificationTime">Set the entry's modification time to this value, if not <c>null</c>. Defaults to <c>null</c></param>
 		public ZipEntry AddStream (Stream stream, string archivePath, EntryPermissions permissions = EntryPermissions.Default, CompressionMethod compressionMethod = CompressionMethod.Default, bool overwriteExisting = true, DateTime? modificationTime = null)
 		{
 			if (stream == null)
@@ -371,17 +392,17 @@ namespace Xamarin.Tools.Zip
 		/// <param name="overwriteExisting">If set to <c>true</c> overwrite existing entry in the archive.</param>
 		/// <param name="useFileDirectory">If set to <c>true</c> use file directory part.</param>
 		public ZipEntry AddFileToDirectory (string sourcePath, string archiveDirectory = null,
-											EntryPermissions permissions = EntryPermissions.Default,
-											CompressionMethod compressionMethod = CompressionMethod.Default,
-											bool overwriteExisting = true, bool useFileDirectory = true)
+		                                    EntryPermissions permissions = EntryPermissions.Default,
+		                                    CompressionMethod compressionMethod = CompressionMethod.Default,
+		                                    bool overwriteExisting = true, bool useFileDirectory = true)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (sourcePath)), nameof (sourcePath));
 			string destDir = NormalizeArchivePath (true, archiveDirectory);
 			string destFile = useFileDirectory ? GetRootlessPath (sourcePath) : Path.GetFileName (sourcePath);
 			return AddFile (sourcePath,
-					String.IsNullOrEmpty (destDir) ? null : destDir + "/" + destFile,
-					permissions, compressionMethod, overwriteExisting);
+			                String.IsNullOrEmpty (destDir) ? null : destDir + "/" + destFile,
+			                permissions, compressionMethod, overwriteExisting);
 		}
 
 		/// <summary>
@@ -399,9 +420,9 @@ namespace Xamarin.Tools.Zip
 		/// <param name="compressionMethod">Compression method.</param>
 		/// <param name="overwriteExisting">Overwrite existing entries in the archive.</param>
 		public ZipEntry AddFile (string sourcePath, string archivePath = null,
-								 EntryPermissions permissions = EntryPermissions.Default,
-								 CompressionMethod compressionMethod = CompressionMethod.Default,
-								 bool overwriteExisting = true)
+		                         EntryPermissions permissions = EntryPermissions.Default,
+		                         CompressionMethod compressionMethod = CompressionMethod.Default,
+		                         bool overwriteExisting = true)
 		{
 			if (String.IsNullOrEmpty (sourcePath))
 				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (sourcePath)), nameof (sourcePath));
@@ -426,10 +447,12 @@ namespace Xamarin.Tools.Zip
 			PlatformServices.Instance.SetEntryPermissions (this, sourcePath, (ulong)index, permissions);
 			ZipEntry entry = ReadEntry ((ulong)index);
 			IList<ExtraField> fields = new List<ExtraField> ();
-			ExtraField_ExtendedTimestamp timestamp = new ExtraField_ExtendedTimestamp (entry, 0,
+			ExtraField_ExtendedTimestamp timestamp = new ExtraField_ExtendedTimestamp (
+				entry, 0,
 				createTime: File.GetCreationTimeUtc (sourcePath),
 				accessTime: File.GetLastAccessTimeUtc (sourcePath),
-				modificationTime: File.GetLastWriteTimeUtc (sourcePath));
+				modificationTime: File.GetLastWriteTimeUtc (sourcePath)
+			);
 			fields.Add (timestamp);
 			if (!PlatformServices.Instance.WriteExtraFields (this, entry, fields))
 				throw GetErrorException ();
@@ -802,6 +825,7 @@ namespace Xamarin.Tools.Zip
 						ArrayPool<byte>.Shared.Return (buffer);
 					}
 
+				// TODO: we should use the passed args, without zip_source_seek_compute_offset
 				case SourceCommand.SeekWrite:
 					Native.zip_error_t error;
 					Int64 offset = Native.zip_source_seek_compute_offset ((UInt64)destination.Position, (UInt64)destination.Length, data, len, out error);
@@ -812,6 +836,7 @@ namespace Xamarin.Tools.Zip
 						return -1;
 					}
 					break;
+
 				case SourceCommand.Seek:
 					offset = Native.zip_source_seek_compute_offset ((UInt64)stream.Position, (UInt64)stream.Length, data, len, out error);
 					if (offset < 0) {
@@ -920,6 +945,7 @@ namespace Xamarin.Tools.Zip
 				default:
 					break;
 			}
+
 			return 0;
 		}
 
@@ -991,4 +1017,3 @@ namespace Xamarin.Tools.Zip
 		}
 	}
 }
-

@@ -28,7 +28,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-      
+
 namespace Xamarin.Tools.Zip
 {
 	/// <summary>
@@ -117,6 +117,15 @@ namespace Xamarin.Tools.Zip
 		/// <value><c>true</c> for directory entry</value>
 		public bool IsDirectory { get; internal set; }
 
+		public string Comment {
+			get => Native.zip_file_get_comment (archive.ArchivePointer, Index, out UInt32 _);
+			set {
+				if (Native.zip_file_set_comment (archive.ArchivePointer, Index, value) != 0) {
+					throw archive.GetErrorException ();
+				}
+			}
+		}
+
 		public uint ExternalAttributes { get; private set; }
 
 		public OperatingSystem OperatingSystem { get; private set; }
@@ -130,7 +139,7 @@ namespace Xamarin.Tools.Zip
 		{
 			if (archive == null)
 				throw new ArgumentNullException (nameof (archive));
-			
+
 			this.archive = archive;
 			this.stat = stat;
 		}
@@ -138,13 +147,13 @@ namespace Xamarin.Tools.Zip
 		internal void Init ()
 		{
 			valid = (StatFlags)stat.valid;
-			
+
 			// We mustn't free stat.name, it's handled by libzip and freeing it here would cause a crash.
 			FullName = Utilities.SanitizeFilePath (GetStatField (StatFlags.Name, () => Utilities.GetStringFromNativeAnsi (stat.name), String.Empty));
 			Index = GetStatField (StatFlags.Index, () => stat.index);
 			Size = GetStatField (StatFlags.Size, () => stat.size);
 			CompressedSize = GetStatField (StatFlags.CompSize, () => stat.comp_size);
-			
+
 			// This value may be overriden on Unix systems if the extended fields with ID 0x000d, 0x5455 or 0x5855 are found for this entry
 			ModificationTime = GetStatField (StatFlags.MTime, () => Utilities.DateTimeFromUnixTime ((ulong)stat.mtime.ToInt64 ()), Utilities.UnixEpoch);
 			CRC = GetStatField (StatFlags.CRC, () => stat.crc);
@@ -159,7 +168,7 @@ namespace Xamarin.Tools.Zip
 				return EncryptionMethod.Unknown;
 			});
 			IsDirectory = Size == 0 && FullName.EndsWith ("/", StringComparison.Ordinal);
-			
+
 			byte opsys;
 			uint xattr;
 			if (Native.zip_file_get_external_attributes (archive.ArchivePointer, Index, OperationFlags.None, out opsys, out xattr) == 0) {
@@ -169,10 +178,10 @@ namespace Xamarin.Tools.Zip
 				OperatingSystem = OperatingSystem.DOS;
 				ExternalAttributes = 0;
 			}
-			
+
 			localExtraFieldsCount = Native.zip_file_extra_fields_count (archive.ArchivePointer, Index, OperationFlags.Local);
 			centralExtraFieldsCount = Native.zip_file_extra_fields_count (archive.ArchivePointer, Index, OperationFlags.Central);
-			
+
 			PlatformServices.Instance.ReadAndProcessExtraFields (this);
 		}
 
@@ -191,7 +200,7 @@ namespace Xamarin.Tools.Zip
 				return;
 
 			newName = archive.EnsureArchivePath (newName, IsDirectory);
-			if (Native.zip_rename (archive.ArchivePointer, Index, newName) < 0)
+			if (Native.zip_file_rename (archive.ArchivePointer, Index, newName) < 0)
 				throw archive.GetErrorException ();
 			FullName = newName;
 			nativeName = null;
@@ -201,7 +210,7 @@ namespace Xamarin.Tools.Zip
 		/// Delete this entry from the associated archive. An exception is thrown if the entry's index doesn't exist in the archive.
 		/// </summary>
 		/// <exception cref="ZipException">Thrown if the entry's index is invalid for this archive</exception>
-		/// <seealso cref="ZipArchive.DeleteEntry"/>
+		/// <seealso cref="ZipArchive.DeleteEntry(ZipEntry)"/>
 		public void Delete ()
 		{
 			archive.DeleteEntry (Index);
@@ -348,7 +357,7 @@ namespace Xamarin.Tools.Zip
 		{
 			if (count == 0)
 				return;
-			
+
 			ushort fieldLength;
 			IntPtr fieldData;
 
@@ -366,7 +375,7 @@ namespace Xamarin.Tools.Zip
 					Marshal.Copy (fieldData, data, 0, fieldLength);
 				} else
 					data = null;
-				
+
 				fields.Add (new ExtraField {
 					RawData = data,
 					EntryIndex = Index,
@@ -432,4 +441,3 @@ namespace Xamarin.Tools.Zip
 		}
 	}
 }
-

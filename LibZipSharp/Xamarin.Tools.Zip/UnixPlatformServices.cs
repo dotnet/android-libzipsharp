@@ -408,8 +408,8 @@ namespace Xamarin.Tools.Zip
 			// would really mean just 64-bit values). The casts below are thus slightly unsafer, but I
 			// don't really think it matters that much...
 			//
-			uint uid = entry.UID.HasValue ? (uint)entry.UID : unchecked((uint)-1);
-			uint gid = entry.GID.HasValue ? (uint)entry.GID : unchecked((uint)-1);
+			int uid = entry.UID.HasValue ? (int)entry.UID : -1;
+			int gid = entry.GID.HasValue ? (int)entry.GID : -1;
 			if (Syscall.chown (extractedFilePath, uid, gid) < 0) {
 				// TODO: log it properly
 				var archive = entry.Archive as UnixZipArchive;

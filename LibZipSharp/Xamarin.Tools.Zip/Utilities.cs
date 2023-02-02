@@ -122,11 +122,16 @@ namespace Xamarin.Tools.Zip
 
 		public unsafe static IntPtr StringToUtf8StringPtr (string str)
 		{
+			return StringToUtf8StringPtr (str, out int _);
+		}
+
+		public unsafe static IntPtr StringToUtf8StringPtr (string str, out int count)
+		{
 			if (str == null)
 				throw new ArgumentNullException (nameof (str));
 
 			var encoding = Encoding.UTF8;
-			int count = encoding.GetByteCount (str);
+			count = encoding.GetByteCount (str);
 			IntPtr memory = Marshal.AllocHGlobal (count + 1);
 			fixed (char *pStr = str)
 				encoding.GetBytes (pStr, str.Length, (byte*)memory, count);
@@ -162,4 +167,3 @@ namespace Xamarin.Tools.Zip
 		}
 	}
 }
-
