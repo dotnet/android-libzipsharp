@@ -801,9 +801,11 @@ namespace Xamarin.Tools.Zip
 			var destination = context.Destination ?? context.Source;
 			switch (cmd) {
 				case SourceCommand.Stat:
-					if (len < (UInt64)sizeof (Native.zip_stat_t))
+					Native.zip_stat_t stat;
+					if (!Native.ZipSourceGetArgs (data, len, out stat)) {
 						return -1;
-					var stat = Native.ZipSourceGetArgs<Native.zip_stat_t> (data, len);
+					}
+
 					stat.size = (UInt64)stream.Length;
 					stat.mtime = new IntPtr ((long)Utilities.UnixTimeFromDateTime (DateTime.UtcNow));
 					stat.valid |= (ulong)(StatFlags.Size | StatFlags.MTime);
@@ -825,20 +827,32 @@ namespace Xamarin.Tools.Zip
 						ArrayPool<byte>.Shared.Return (buffer);
 					}
 
-				// TODO: we should use the passed args, without zip_source_seek_compute_offset
 				case SourceCommand.SeekWrite:
-					Native.zip_error_t error;
-					Int64 offset = Native.zip_source_seek_compute_offset ((UInt64)destination.Position, (UInt64)destination.Length, data, len, out error);
-					if (offset < 0) {
-						return offset;
+					Native.zip_source_args_seek_t args;
+					if (!Native.ZipSourceGetArgs (data, len, out args)) {
+						return -1;
 					}
-					if (offset != destination.Seek (offset, SeekOrigin.Begin)) {
+
+					long firstOffset, secondOffset;
+					if (args.offset > Int64.MaxValue) {
+						// Stream.Seek uses a signed 64-bit value for the offset, we need to split it up
+						firstOffset = Int64.MaxValue;
+						secondOffset = (long)(args.offset - Int64.MaxValue);
+					} else {
+						firstOffset = (long)args.offset;
+						secondOffset = 0;
+					}
+
+					SeekOrigin seek = Native.ConvertWhence (args.whence);
+					Native.zip_error_t error;
+
+					if (!SeekIfNeeded (destination, seek, firstOffset) || !SeekIfNeeded (destination, seek, secondOffset)) {
 						return -1;
 					}
 					break;
 
 				case SourceCommand.Seek:
-					offset = Native.zip_source_seek_compute_offset ((UInt64)stream.Position, (UInt64)stream.Length, data, len, out error);
+					long offset = Native.zip_source_seek_compute_offset ((UInt64)stream.Position, (UInt64)stream.Length, data, len, out error);
 					if (offset < 0) {
 						return offset;
 					}
@@ -947,6 +961,15 @@ namespace Xamarin.Tools.Zip
 			}
 
 			return 0;
+
+			bool SeekIfNeeded (Stream s, SeekOrigin origin, long offset)
+			{
+				if (offset == 0) {
+					return true;
+				}
+
+				return s.Seek (offset, origin) == offset;
+			}
 		}
 
 		internal void OnEntryExtract (EntryExtractEventArgs args)

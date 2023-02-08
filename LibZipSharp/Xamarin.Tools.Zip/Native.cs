@@ -99,9 +99,19 @@ namespace Xamarin.Tools.Zip
 			return 1 << (int)cmd;
 		}
 
-		public static T ZipSourceGetArgs<T> (IntPtr data, UInt64 len)
+		public unsafe static bool ZipSourceGetArgs<T> (IntPtr data, UInt64 len, out T ret) where T : unmanaged
 		{
-			return (T)Marshal.PtrToStructure (data, typeof (T));
+			ret = default(T);
+			if (data == IntPtr.Zero) {
+				return false;
+			}
+
+			if (len < (ulong)sizeof (T)) {
+				return false;
+			}
+
+			ret = (T)Marshal.PtrToStructure (data, typeof (T));
+			return true;
 		}
 
 		const string ZIP_LIBNAME = "libZipSharpNative";
