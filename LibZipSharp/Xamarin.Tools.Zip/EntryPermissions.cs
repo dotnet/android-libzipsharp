@@ -26,11 +26,11 @@
 using System;
 namespace Xamarin.Tools.Zip
 {
-	[Flags]
 	/// <summary>
 	/// ZIP (as opposed to filesystem) entry permission bits. The bits are used only
 	/// on the Unix systems.
 	/// </summary>
+	[Flags]
 	public enum EntryPermissions : uint
 	{
 		Default = 0,
@@ -55,4 +55,3 @@ namespace Xamarin.Tools.Zip
 		SetDirectoryPermissionControl = UnixExternalPermissions.ISVTX,
 	}
 }
-

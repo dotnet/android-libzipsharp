@@ -25,6 +25,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 [assembly: DefaultDllImportSearchPathsAttribute(DllImportSearchPath.SafeDirectories | DllImportSearchPath.AssemblyDirectory)]
@@ -33,6 +34,11 @@ namespace Xamarin.Tools.Zip
 {
 	internal class Native
 	{
+		const UInt32 LZS_SEEK_SET     = 0;
+		const UInt32 LZS_SEEK_CUR     = 1;
+		const UInt32 LZS_SEEK_END     = 2;
+		const UInt32 LZS_SEEK_INVALID = 0xDEADBEEFu;
+
 		[StructLayout (LayoutKind.Sequential)]
 		public struct LZSVersions
 		{
@@ -53,6 +59,7 @@ namespace Xamarin.Tools.Zip
 			public IntPtr str;							/* string representation or NULL */
 		};
 
+		[StructLayout (LayoutKind.Sequential)]
 		public struct zip_source_args_seek_t
 		{
 			public UInt64 offset;
@@ -92,15 +99,48 @@ namespace Xamarin.Tools.Zip
 			return 1 << (int)cmd;
 		}
 
-		public static T ZipSourceGetArgs<T> (IntPtr data, UInt64 len)
+		public unsafe static bool ZipSourceGetArgs<T> (IntPtr data, UInt64 len, out T ret) where T : unmanaged
 		{
-			return (T)Marshal.PtrToStructure (data, typeof (T));
+			ret = default(T);
+			if (data == IntPtr.Zero) {
+				return false;
+			}
+
+			if (len < (ulong)sizeof (T)) {
+				return false;
+			}
+
+			ret = (T)Marshal.PtrToStructure (data, typeof (T));
+			return true;
 		}
 
 		const string ZIP_LIBNAME = "libZipSharpNative";
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
 		static extern void lzs_get_versions (out LZSVersions versions);
+
+		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
+		public static extern UInt64 lzs_get_size_zip_source_args_seek ();
+
+		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
+		public static extern UInt32 lzs_convert_whence_value (Int32 whence);
+
+		public static SeekOrigin ConvertWhence (Int32 whence)
+		{
+			switch (lzs_convert_whence_value (whence)) {
+				case LZS_SEEK_SET:
+					return SeekOrigin.Begin;
+
+				case LZS_SEEK_CUR:
+					return SeekOrigin.Current;
+
+				case LZS_SEEK_END:
+					return SeekOrigin.End;
+
+				default:
+					throw new InvalidOperationException ($"Invalid whence value: {whence}");
+			}
+		}
 
 		public static Versions get_versions ()
 		{
@@ -208,10 +248,36 @@ namespace Xamarin.Tools.Zip
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int zip_stat_index (IntPtr archive, UInt64 index, OperationFlags flags, out zip_stat_t sb);
 
+		static void StringToComment (string comment, out IntPtr utfString, out UInt16 len)
+		{
+			if (comment == null) {
+				utfString = IntPtr.Zero;
+				len = 0;
+				return;
+			}
+
+			utfString = Utilities.StringToUtf8StringPtr (comment, out int count);
+			len = count > UInt16.MaxValue ? UInt16.MaxValue : (UInt16)count;
+		}
+
+		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
+		public static extern int zip_file_set_comment (IntPtr archive, UInt64 index, IntPtr comment, UInt16 len, OperationFlags flags);
+
+		public static int zip_file_set_comment (IntPtr archive, UInt64 index, string comment)
+		{
+			StringToComment (comment, out IntPtr utfComment, out UInt16 len);
+
+			try {
+				return zip_file_set_comment (archive, index, utfComment, len, OperationFlags.Enc_UTF_8);
+			} finally {
+				Utilities.FreeUtf8StringPtr (utfComment);
+			}
+		}
+
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl, EntryPoint="zip_file_get_comment")]
 		public static extern IntPtr zip_file_get_comment_ptr (IntPtr archive, UInt64 index, out UInt32 lenp, OperationFlags flags);
 
-		public static string zip_file_get_comment (IntPtr archive, UInt64 index, out UInt32 lenp, OperationFlags flags)
+		public static string zip_file_get_comment (IntPtr archive, UInt64 index, out UInt32 lenp, OperationFlags flags = OperationFlags.Enc_Guess)
 		{
 			return Utilities.Utf8StringPtrToString (zip_file_get_comment_ptr (archive, index, out lenp, flags));
 		}
@@ -219,9 +285,23 @@ namespace Xamarin.Tools.Zip
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl, EntryPoint="zip_get_archive_comment")]
 		public static extern IntPtr zip_get_archive_comment_ptr (IntPtr archive, out int lenp, OperationFlags flags);
 
-		public static string zip_get_archive_comment (IntPtr archive, out int lenp, OperationFlags flags)
+		public static string zip_get_archive_comment (IntPtr archive, OperationFlags flags = OperationFlags.Enc_Guess)
 		{
-			return Utilities.Utf8StringPtrToString (zip_get_archive_comment_ptr (archive, out lenp, flags));
+			return Utilities.Utf8StringPtrToString (zip_get_archive_comment_ptr (archive, out int _, flags));
+		}
+
+		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
+		public static extern int zip_set_archive_comment (IntPtr archive, IntPtr comment, UInt16 len);
+
+		public static int zip_set_archive_comment (IntPtr archive, string comment)
+		{
+			StringToComment (comment, out IntPtr utfComment, out UInt16 len);
+
+			try {
+				return zip_set_archive_comment (archive, utfComment, len);
+			} finally {
+				Utilities.FreeUtf8StringPtr (utfComment);
+			}
 		}
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
@@ -242,13 +322,13 @@ namespace Xamarin.Tools.Zip
 		public static extern int zip_set_default_password (IntPtr archive, string password);
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int zip_rename (IntPtr archive, UInt64 index, IntPtr name);
+		public static extern int zip_file_rename (IntPtr archive, UInt64 index, IntPtr name, OperationFlags flags);
 
-		public static int zip_rename (IntPtr archive, UInt64 index, string name)
+		public static int zip_file_rename (IntPtr archive, UInt64 index, string name)
 		{
 			var utfName = Utilities.StringToUtf8StringPtr (name);
 			try {
-				return zip_rename (archive, index, utfName);
+				return zip_file_rename (archive, index, utfName, OperationFlags.Enc_UTF_8);
 			} finally {
 				Utilities.FreeUtf8StringPtr (utfName);
 			}
@@ -386,19 +466,6 @@ namespace Xamarin.Tools.Zip
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int zip_file_replace (IntPtr archive, UInt64 index, IntPtr source, OperationFlags flags);
-
-		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
-		public static extern int zip_set_file_comment (IntPtr archive, UInt64 index, IntPtr comment, UInt16 len, OperationFlags flags);
-
-		public static int zip_set_file_comment (IntPtr archive, UInt64 index, string comment, UInt16 len, OperationFlags flags)
-		{
-			IntPtr utfComment = Utilities.StringToUtf8StringPtr (comment);
-			try {
-				return zip_set_file_comment (archive, index, utfComment, len, flags);
-			} finally {
-				Utilities.FreeUtf8StringPtr (utfComment);
-			}
-		}
 
 		[DllImport (ZIP_LIBNAME, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int zip_set_file_compression (IntPtr archive, UInt64 index, CompressionMethod comp, UInt32 comp_flags);

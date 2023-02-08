@@ -192,5 +192,15 @@ namespace Xamarin.Tools.Zip
 		/// Tell error
 		/// </summary>
 		Tell           = 30,
+
+		/// <summary>
+		/// Compressed data invalid
+		/// </summary>
+		CompressedData = 31,
+
+		/// <summary>
+		/// Operation cancelled
+		/// </summary>
+		Cancelled      = 32,
 	}
 }

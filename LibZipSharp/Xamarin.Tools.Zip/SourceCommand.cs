@@ -31,6 +31,8 @@ namespace Xamarin.Tools.Zip
 	/// Commands sent to user-defined ZIP source callback function/method. Enumeration
 	/// members correspond to the members of the <c>zip_source_cmd</c> enum defined in
 	/// the <c>zip.h</c> header file (the <c>ZIP_SOURCE_*</c> symbols).
+	///
+	/// <remarks>Order of members MUST be the same as in the C enum</remarks>
 	/// </summary>
 	public enum SourceCommand
 	{
@@ -112,6 +114,26 @@ namespace Xamarin.Tools.Zip
 		/// <summary>
 		/// Remove the underlying file. This is called if a zip archive is empty when closed.
 		/// </summary>
-		Remove
+		Remove,
+
+		/// <summary>
+		/// Previously used internally
+		/// </summary>
+		Reserved1,
+
+		/// <summary>
+		/// Like <see cref="BeginWrite"/>, but keep part of original file
+		/// </summary>
+		BeginWriteCloning,
+
+		/// <summary>
+		/// Whether empty files are valid archives
+		/// </summary>
+		AcceptEmpty,
+
+		/// <summary>
+		/// Get additional file attributes
+		/// </summary>
+		GetFileAttributes,
 	}
 }

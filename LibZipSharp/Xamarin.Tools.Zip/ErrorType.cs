@@ -46,6 +46,10 @@ namespace Xamarin.Tools.Zip
 		/// Error code field is zlib error code
 		/// </summary>
 		Zlib           = 2,
+
+		/// <summary>
+		/// Error code field is libzip error code
+		/// </summary>
+		Libzip         = 3,
 	}
 }
-

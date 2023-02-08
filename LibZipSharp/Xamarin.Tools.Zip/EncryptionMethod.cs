@@ -45,57 +45,90 @@ namespace Xamarin.Tools.Zip
 
 		/// <summary>
 		/// Strong encryption: DES
-		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
+		/// <remarks>Not supported by the native libzip yet (as of v1.9.2)</remarks>
 		/// </summary>
 		DES             = 0x6601,
 
 		/// <summary>
 		/// Strong encryption: RC2, version &lt; 5.2
-		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
+		/// <remarks>Not supported by the native libzip yet (as of v1.9.2)</remarks>
 		/// </summary>
 		RC2_Old         = 0x6602,
 
 		/// <summary>
 		/// Strong encryption: 3DES (168-bit key)
-		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
+		/// <remarks>Not supported by the native libzip yet (as of v1.9.2)</remarks>
 		/// </summary>
 		Three_DES_168   = 0x6603,
 
 		/// <summary>
 		/// Strong encryption: 3DES (112-bit key)
-		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
+		/// <remarks>Not supported by the native libzip yet (as of v1.9.2)</remarks>
 		/// </summary>
 		Three_DES_112   = 0x6609,
 
 		/// <summary>
-		/// Strong encryption: AES (128-bit key)
-		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
+		/// Strong encryption: PKZIP AES (128-bit key)
+		/// <remarks>Not supported by the native libzip yet (as of v1.9.2)</remarks>
 		/// </summary>
-		AES_128         = 0x660e,
+		PKZIP_AES_128    = 0x660e,
 
 		/// <summary>
-		/// Strong encryption: AES (192-bit key)
-		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
+		/// Deprecated alias for <see cref="AES_128"/>
 		/// </summary>
-		AES_192         = 0x660f,
+		[Obsolete ("Use EncryptionMethod.PKZIP_AES_128")]
+		AES_128          = PKZIP_AES_128,
+
+		/// <summary>
+		/// Strong encryption: PKZIP AES (192-bit key)
+		/// <remarks>Not supported by the native libzip yet (as of v1.9.2)</remarks>
+		/// </summary>
+		PKZIP_AES_192    = 0x660f,
+
+		/// <summary>
+		/// Deprecated alias for <see cref="AES_192"/>
+		/// </summary>
+		[Obsolete ("Use EncryptionMethod.PKZIP_AES_192")]
+		AES_192          = PKZIP_AES_192,
 
 		/// <summary>
 		/// Strong encryption: AES (256-bit key)
-		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
+		/// <remarks>Not supported by the native libzip yet (as of v1.9.2)</remarks>
 		/// </summary>
-		AES_256         = 0x6610,
+		PKZIP_AES_256    = 0x6610,
+
+		/// <summary>
+		/// Deprecated alias for <see cref="AES_256"/>
+		/// </summary>
+		[Obsolete ("Use EncryptionMethod.PKZIP_AES_256")]
+		AES_256          = PKZIP_AES_256,
 
 		/// <summary>
 		/// Strong encryption: RC2, version >= 5.2
-		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
+		/// <remarks>Not supported by the native libzip yet (as of v1.9.2)</remarks>
 		/// </summary>
 		RC2             = 0x6702,
 
 		/// <summary>
 		/// Strong encryption: RC4
-		/// <remarks>Not supported by the native libzip yet (as of v1.0.1)</remarks>
+		/// <remarks>Not supported by the native libzip yet (as of v1.9.2)</remarks>
 		/// </summary>
 		RC4             = 0x6801,
+
+		/// <summary>
+		/// WinZIP AES encryption (128-bit key)
+		/// </summary>
+		WINZIP_AES_128  = 0x0101,
+
+		/// <summary>
+		/// WinZIP AES encryption (192-bit key)
+		/// </summary>
+		WINZIP_AES_192  = 0x0102,
+
+		/// <summary>
+		/// WinZIP AES encryption (256-bit key)
+		/// </summary>
+		WINZIP_AES_256  = 0x0103,
 
 		/// <summary>
 		/// Unknown algorithm
@@ -103,4 +136,3 @@ namespace Xamarin.Tools.Zip
 		Unknown         = 0xffff,
 	}
 }
-
