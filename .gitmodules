@@ -1,6 +1,6 @@
 [submodule "external/libzip"]
 	path = external/libzip
-	url = https://github.com/nih-at/libzip.git
+	url = https://github.com/infinitespace-studios/libzip.git
 [submodule "external/vcpkg"]
 	path = external/vcpkg
 	url = https://github.com/Microsoft/vcpkg
