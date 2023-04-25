@@ -1,11 +1,11 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <_LibZipSharpAssemblyVersionMajor>2</_LibZipSharpAssemblyVersionMajor>
-    <_LibZipSharpAssemblyVersionMinor>1</_LibZipSharpAssemblyVersionMinor>
+    <_LibZipSharpAssemblyVersionMinor>2</_LibZipSharpAssemblyVersionMinor>
     <_LibZipSharpAssemblyVersionPatch>0</_LibZipSharpAssemblyVersionPatch>
     <_LibZipSharpAssemblyVersion>$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch)</_LibZipSharpAssemblyVersion>
     <_NativeLibraryVersionForName>$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor)</_NativeLibraryVersionForName>
-    <_NativeLibraryBaseName>libZipSharp-$(_NativeLibraryVersionForName)</_NativeLibraryBaseName>
+    <_NativeLibraryBaseName>libZipSharpNative-$(_NativeLibraryVersionForName)</_NativeLibraryBaseName>
 
     <!--
       Nuget Version. You can append things like -alpha-1 etc to this value.
