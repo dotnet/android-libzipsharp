@@ -649,7 +649,7 @@ else()
     )
 
   #
-  # Place debug info in separate files, if possible
+  # Place debug info in separate files, if possible, and get rid of symlinks
   #
   if(IS_LINUX OR IS_ANDROID)
     if(IS_LINUX)
@@ -667,6 +667,16 @@ else()
       COMMAND ${OBJCOPY} --only-keep-debug "$<TARGET_FILE_NAME:${PROJECT_NAME}>" "$<TARGET_FILE_NAME:${PROJECT_NAME}>.debug"
       COMMAND ${STRIP} --strip-debug --strip-unneeded "$<TARGET_FILE_NAME:${PROJECT_NAME}>"
       COMMAND ${OBJCOPY} --add-gnu-debuglink="$<TARGET_FILE_NAME:${PROJECT_NAME}>.debug" "$<TARGET_FILE_NAME:${PROJECT_NAME}>"
-      )
+    )
+
+	add_custom_command(
+	  TARGET ${PROJECT_NAME}
+      POST_BUILD
+	  WORKING_DIRECTORY "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+	  COMMAND rm lib${PROJECT_NAME}-${LT_RELEASE}.so
+	  COMMAND rm lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_RELEASE}
+	  COMMAND ln lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION} lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_RELEASE}
+	  COMMAND ln lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION} lib${PROJECT_NAME}-${LT_RELEASE}.so
+	)
   endif()
 endif()
