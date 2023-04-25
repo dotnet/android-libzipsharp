@@ -35,8 +35,8 @@
       <Link>$(_NativeLibraryBaseName).so</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(_NativeBuildDir)\lib\Linux\$(_NativeLibraryBaseName).so.debug" Condition="'$(ReferenceNuget)' != 'True' And Exists ('$(_NativeBuildDir)\lib\Linux\$(_NativeLibraryBaseName).so.debug')">
-      <Link>$(_NativeLibraryBaseName).so.debug</Link>
+    <None Include="$(_NativeBuildDir)\lib\Linux\$(_NativeLibraryBaseName).so.$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch).debug" Condition="'$(ReferenceNuget)' != 'True' And Exists ('$(_NativeBuildDir)\lib\Linux\$(_NativeLibraryBaseName).so.$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch).debug')">
+      <Link>$(_NativeLibraryBaseName).so.$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch).debug</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packaged_resources">
