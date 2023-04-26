@@ -3,7 +3,7 @@
   <Import Project="$(MSBuildThisFileDirectory)..\LibZipSharp.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net471;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net471;net7.0</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
     <LibZipSharpBundleAllNativeLibraries>true</LibZipSharpBundleAllNativeLibraries>

@@ -134,18 +134,18 @@ stages:
             rm $(Build.ArtifactStagingDirectory)/native/libzip-linux-*.7z
             rm $(Build.ArtifactStagingDirectory)/native/libzip-windows-*.7z
           displayName: 'Find libzip'
-        - task: MSBuild@1
+        - task: DotNetCoreCLI@2
           displayName: 'Build solution libZipSharp.csproj'
           inputs:
-            solution: LibZipSharp/libZipSharp.csproj
+            projects:  LibZipSharp/libZipSharp.csproj
             configuration: Release
-            msbuildArguments: /restore /v:diag /p:RunningOnCI=true
-        - task: MSBuild@1
+            arguments: -v:diag -p:RunningOnCI=true
+        - task: DotNetCoreCLI@2
           displayName: NuGet pack libZipSharp
           inputs:
-            solution: LibZipSharp/libZipSharp.csproj
+            projects:  LibZipSharp/libZipSharp.csproj
             configuration: Release
-            msbuildArguments: /t:Pack
+            arguments: -t:Pack
         - task: CopyFiles@2
           displayName: Copy nupkg
           inputs:
@@ -185,12 +185,12 @@ stages:
           inputs:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
-        - task: MSBuild@1
+        - task: DotNetCoreCLI@2
           displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
-            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            msbuildArguments: /restore /p:ReferenceNuget=True /v:diag
+            arguments: -p:ReferenceNuget=True -v:diag
         - task: MSBuild@1
           displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
@@ -201,7 +201,7 @@ stages:
           displayName: "Run Tests under .net Core"
           inputs:
             command: test
-            arguments: 'LibZipSharp.UnitTest/bin/Release/netcoreapp3.1/LibZipSharp.UnitTest.dll'
+            arguments: 'LibZipSharp.UnitTest/bin/Release/net7.0/LibZipSharp.UnitTest.dll'
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
@@ -215,12 +215,12 @@ stages:
           inputs:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
-        - task: MSBuild@1
+        - task: DotNetCoreCLI@2
           displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
-            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            msbuildArguments: /restore /p:ReferenceNuget=True /v:diag
+            arguments: -p:ReferenceNuget=True -v:diag
         - task: MSBuild@1
           displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
@@ -231,7 +231,7 @@ stages:
           displayName: "Run Tests under .net Core"
           inputs:
             command: test
-            arguments: 'LibZipSharp.UnitTest/bin/Release/netcoreapp3.1/LibZipSharp.UnitTest.dll'
+            arguments: 'LibZipSharp.UnitTest/bin/Release/net7.0/LibZipSharp.UnitTest.dll'
     - job: testwindows
       displayName: 'Test Windows'
       pool:
@@ -247,12 +247,12 @@ stages:
           inputs:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
-        - task: MSBuild@1
+        - task: DotNetCoreCLI@2
           displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
-            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            msbuildArguments: /restore /p:ReferenceNuget=True /v:diag
+            arguments: -p:ReferenceNuget=True -v:diag
         - task: MSBuild@1
           displayName: 'Run Tests LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
@@ -263,7 +263,7 @@ stages:
           displayName: "Run Tests under .net Core"
           inputs:
             command: test
-            arguments: 'LibZipSharp.UnitTest\bin\Release\netcoreapp3.1\LibZipSharp.UnitTest.dll'
+            arguments: 'LibZipSharp.UnitTest\bin\Release\net7.0\LibZipSharp.UnitTest.dll'
 
   - stage: Publish
     dependsOn: Test
