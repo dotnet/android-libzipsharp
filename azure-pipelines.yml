@@ -134,18 +134,18 @@ stages:
             rm $(Build.ArtifactStagingDirectory)/native/libzip-linux-*.7z
             rm $(Build.ArtifactStagingDirectory)/native/libzip-windows-*.7z
           displayName: 'Find libzip'
-        - task: MSBuild@1
+        - task: DotNetCoreCLI@2
           displayName: 'Build solution libZipSharp.csproj'
           inputs:
-            solution: LibZipSharp/libZipSharp.csproj
+            projects:  LibZipSharp/libZipSharp.csproj
             configuration: Release
-            msbuildArguments: /restore /v:diag /p:RunningOnCI=true
-        - task: MSBuild@1
+            arguments: -v:diag -p:RunningOnCI=true
+        - task: DotNetCoreCLI@2
           displayName: NuGet pack libZipSharp
           inputs:
-            solution: LibZipSharp/libZipSharp.csproj
+            projects:  LibZipSharp/libZipSharp.csproj
             configuration: Release
-            msbuildArguments: /t:Pack
+            arguments: -t:Pack
         - task: CopyFiles@2
           displayName: Copy nupkg
           inputs:
@@ -171,7 +171,7 @@ stages:
   - stage: Test
     dependsOn: Build
     variables:
-      DotNetCoreVersion: 3.1.201
+      DotNetCoreVersion: 7.0.200
     jobs:
     - job: testlinux
       displayName: 'Test Linux'
@@ -180,28 +180,27 @@ stages:
         demands:
         - ImageOverride -equals AzurePipelinesUbuntu18.04compliant
       steps:
+        - template: yaml-templates/use-dot-net.yaml
+          parameters:
+            version: $(DotNetCoreVersion)
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
           inputs:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
-        - task: MSBuild@1
-          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-          inputs:
-            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-            configuration: Release
-            msbuildArguments: /restore /p:ReferenceNuget=True /v:diag
-        - task: MSBuild@1
-          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-          inputs:
-            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-            configuration: Release
-            msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
         - task: DotNetCoreCLI@2
-          displayName: "Run Tests under .net Core"
+          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+          inputs:
+            projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            arguments: -p:ReferenceNuget=True -v:diag
+        - task: DotNetCoreCLI@2
+          displayName: 'Run Unit tests for .net'
           inputs:
             command: test
-            arguments: 'LibZipSharp.UnitTest/bin/Release/netcoreapp3.1/LibZipSharp.UnitTest.dll'
+            projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            arguments: -p:ReferenceNuget=True -v:diag
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
@@ -215,23 +214,19 @@ stages:
           inputs:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
-        - task: MSBuild@1
-          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-          inputs:
-            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-            configuration: Release
-            msbuildArguments: /restore /p:ReferenceNuget=True /v:diag
-        - task: MSBuild@1
-          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-          inputs:
-            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-            configuration: Release
-            msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
         - task: DotNetCoreCLI@2
-          displayName: "Run Tests under .net Core"
+          displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+          inputs:
+            projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            arguments: -p:ReferenceNuget=True -v:diag
+        - task: DotNetCoreCLI@2
+          displayName: 'Run Tests under .net'
           inputs:
             command: test
-            arguments: 'LibZipSharp.UnitTest/bin/Release/netcoreapp3.1/LibZipSharp.UnitTest.dll'
+            projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            arguments: -p:ReferenceNuget=True -v:diag
     - job: testwindows
       displayName: 'Test Windows'
       pool:
@@ -247,23 +242,19 @@ stages:
           inputs:
             artifactName: NuGet
             downloadPath: $(Build.SourcesDirectory)
-        - task: MSBuild@1
+        - task: DotNetCoreCLI@2
           displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
-            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            msbuildArguments: /restore /p:ReferenceNuget=True /v:diag
-        - task: MSBuild@1
+            arguments: -p:ReferenceNuget=True -v:diag
+        - task: DotNetCoreCLI@2
           displayName: 'Run Tests LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
-            solution: LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-            configuration: Release
-            msbuildArguments: /restore /t:RunNunitTests /p:ReferenceNuget=True /v:diag
-        - task: DotNetCoreCLI@2
-          displayName: "Run Tests under .net Core"
-          inputs:
             command: test
-            arguments: 'LibZipSharp.UnitTest\bin\Release\netcoreapp3.1\LibZipSharp.UnitTest.dll'
+            projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+            configuration: Release
+            arguments: -p:ReferenceNuget=True -v:diag
 
   - stage: Publish
     dependsOn: Test
