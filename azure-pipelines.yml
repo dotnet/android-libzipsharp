@@ -171,7 +171,7 @@ stages:
   - stage: Test
     dependsOn: Build
     variables:
-      DotNetCoreVersion: 3.1.201
+      DotNetCoreVersion: 7.0.200
     jobs:
     - job: testlinux
       displayName: 'Test Linux'
@@ -180,6 +180,9 @@ stages:
         demands:
         - ImageOverride -equals AzurePipelinesUbuntu18.04compliant
       steps:
+        - template: yaml-templates/use-dot-net.yaml
+          parameters:
+            version: $(DotNetCoreVersion)
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
           inputs:
