@@ -46,7 +46,7 @@
     <Import Project="libZipSharp.targets" />
 
     <ItemGroup>
-        <None Include="$(IntermediateOutputPath)/netcoreapp3.1/$(XamarinLibZipSharpTargetsName)" PackagePath="build" Pack="true" />
+        <None Include="$(IntermediateOutputPath)/net7.0/$(XamarinLibZipSharpTargetsName)" PackagePath="build" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\Darwin\$(_NativeLibraryBaseName).dylib" PackagePath="runtimes\osx\native\$(_NativeLibraryBaseName).dylib" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\win64\$(_NativeLibraryBaseName).dll" PackagePath="runtimes\win-x64\native\$(_NativeLibraryBaseName).dll" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\win64\$(_NativeLibraryBaseName).pdb" PackagePath="runtimes\win-x64\native\$(_NativeLibraryBaseName).pdb" Pack="true" />
