@@ -197,14 +197,10 @@ stages:
         - task: DotNetCoreCLI@2
           displayName: 'Run Unit tests for .net'
           inputs:
+            command: test
             projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            arguments: -t:RunNunitTests -p:ReferenceNuget=True -v:diag
-        - task: DotNetCoreCLI@2
-          displayName: "Run Tests under .net Core"
-          inputs:
-            command: test
-            arguments: 'LibZipSharp.UnitTest/bin/Release/net7.0/LibZipSharp.UnitTest.dll'
+            arguments: -p:ReferenceNuget=True -v:diag
     - job: testmacos
       displayName: 'Test MacOS'
       pool:
@@ -227,14 +223,10 @@ stages:
         - task: DotNetCoreCLI@2
           displayName: 'Run Tests under .net'
           inputs:
+            command: test
             projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            arguments: -t:RunNunitTests -p:ReferenceNuget=True -v:diag
-        - task: DotNetCoreCLI@2
-          displayName: "Run Tests under .net Core"
-          inputs:
-            command: test
-            arguments: 'LibZipSharp.UnitTest/bin/Release/net7.0/LibZipSharp.UnitTest.dll'
+            arguments: -p:ReferenceNuget=True -v:diag
     - job: testwindows
       displayName: 'Test Windows'
       pool:
@@ -259,14 +251,10 @@ stages:
         - task: DotNetCoreCLI@2
           displayName: 'Run Tests LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
           inputs:
+            command: test
             projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
             configuration: Release
-            arguments: -t:RunNunitTests -p:ReferenceNuget=True -v:diag
-        - task: DotNetCoreCLI@2
-          displayName: "Run Tests under .net Core"
-          inputs:
-            command: test
-            arguments: 'LibZipSharp.UnitTest\bin\Release\net7.0\LibZipSharp.UnitTest.dll'
+            arguments: -p:ReferenceNuget=True -v:diag
 
   - stage: Publish
     dependsOn: Test
