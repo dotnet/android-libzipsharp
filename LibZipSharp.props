@@ -1,6 +1,6 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <_LibZipSharpAssemblyVersion>2.1.0</_LibZipSharpAssemblyVersion>
+    <_LibZipSharpAssemblyVersion>3.0.0</_LibZipSharpAssemblyVersion>
     <!--
       Nuget Version. You can append things like -alpha-1 etc to this value.
       But always leave the $(_LibZipSharpAssemblyVersion) value at the start.
