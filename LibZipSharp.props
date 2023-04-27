@@ -4,7 +4,7 @@
     <_LibZipSharpAssemblyVersionMinor>0</_LibZipSharpAssemblyVersionMinor>
     <_LibZipSharpAssemblyVersionPatch>0</_LibZipSharpAssemblyVersionPatch>
     <_LibZipSharpAssemblyVersion>$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch)</_LibZipSharpAssemblyVersion>
-    <_NativeLibraryVersionForName>$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor)</_NativeLibraryVersionForName>
+    <_NativeLibraryVersionForName>$(_LibZipSharpAssemblyVersionMajor)-$(_LibZipSharpAssemblyVersionMinor)</_NativeLibraryVersionForName>
     <_NativeLibraryBaseName>libZipSharpNative-$(_NativeLibraryVersionForName)</_NativeLibraryBaseName>
 
     <!--
