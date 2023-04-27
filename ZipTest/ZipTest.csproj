@@ -18,16 +18,16 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(_NativeBuildDir)\win32\RelWithDebInfo\libZipSharpNative.dll" Condition=" Exists ('$(_NativeBuildDir)\win32\RelWithDebInfo\libZipSharpNative.dll') ">
-      <Link>libZipSharpNative.dll</Link>
+    <Content Include="$(_NativeBuildDir)\win32\RelWithDebInfo\$(_NativeLibraryBaseName).dll" Condition=" Exists ('$(_NativeBuildDir)\win32\RelWithDebInfo\$(_NativeLibraryBaseName).dll') ">
+      <Link>$(_NativeLibraryBaseName).dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(_NativeBuildDir)\win64\RelWithDebInfo\libZipSharpNative.dll" Condition=" Exists ('$(_NativeBuildDir)\win64\RelWithDebInfo\libZipSharpNative.dll') ">
-      <Link>x64\libZipSharpNative.dll</Link>
+    <Content Include="$(_NativeBuildDir)\win64\RelWithDebInfo\$(_NativeLibraryBaseName).dll" Condition=" Exists ('$(_NativeBuildDir)\win64\RelWithDebInfo\$(_NativeLibraryBaseName).dll') ">
+      <Link>x64\$(_NativeLibraryBaseName).dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(_NativeBuildDir)\lib\Darwin\libZipSharpNative.dylib" Condition="Exists ('$(_NativeBuildDir)\lib\Darwin\libZipSharpNative.dylib')">
-      <Link>libZipSharpNative.dylib</Link>
+    <Content Include="$(_NativeBuildDir)\lib\Darwin\$(_NativeLibraryBaseName).dylib" Condition="Exists ('$(_NativeBuildDir)\lib\Darwin\$(_NativeLibraryBaseName).dylib')">
+      <Link>$(_NativeLibraryBaseName).dylib</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

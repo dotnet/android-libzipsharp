@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="ReplaceFileContents" Condition=" '$(OS)' == 'Windows_NT' or '$(MSBuildRuntimeType)' != 'Mono' " TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <SourceFile ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <DestinationFile ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <Replacements ParameterType="System.String[]" />
+      <ReplacementFilePath ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Class" Language="cs" Source="../build-tools/prep/ReplaceFileContents.cs"/>
+    </Task>
+  </UsingTask>
+  <UsingTask TaskName="ReplaceFileContents" Condition=" '$(OS)' != 'Windows_NT' and '$(MSBuildRuntimeType)' == 'Mono' " TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <SourceFile ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <DestinationFile ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <Replacements ParameterType="System.String[]" />
+      <ReplacementFilePath ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Class" Language="cs" Source="../build-tools/prep/ReplaceFileContents.cs"/>
+    </Task>
+  </UsingTask>
+
+  <PropertyGroup>
+    <XamarinLibZipSharpTargetsName>Xamarin.LibZipSharp.targets</XamarinLibZipSharpTargetsName>
+    <ConstantsName>Constants.cs</ConstantsName>
+  </PropertyGroup>
+
+  <Target Name="GenerateSourceFiles"
+          BeforeTargets="BeforeCompile">
+    <PropertyGroup>
+      <XamarinLibZipSharpTargetsInFile>$(XamarinLibZipSharpTargetsName).in</XamarinLibZipSharpTargetsInFile>
+      <XamarinLibZipSharpTargetsOutFile>$(IntermediateOutputPath)/$(XamarinLibZipSharpTargetsName)</XamarinLibZipSharpTargetsOutFile>
+      <ConstantsInFile>Xamarin.Tools.Zip/$(ConstantsName).in</ConstantsInFile>
+      <ConstantsOutFile>$(IntermediateOutputPath)/$(ConstantsName)</ConstantsOutFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Replacement Include="@LibraryVersionMajor@=$(_LibZipSharpAssemblyVersionMajor)" />
+      <Replacement Include="@LibraryVersionMinor@=$(_LibZipSharpAssemblyVersionMinor)" />
+      <Replacement Include="@LibraryVersionPatch@=$(_LibZipSharpAssemblyVersionPatch)" />
+      <Replacement Include="@LibraryBaseFileName@=$(_NativeLibraryBaseName)" />
+    </ItemGroup>
+
+    <ReplaceFileContents
+        SourceFile="$(XamarinLibZipSharpTargetsInFile)"
+        DestinationFile="$(XamarinLibZipSharpTargetsOutFile)"
+        Replacements="@(Replacement)" />
+
+    <ReplaceFileContents
+        SourceFile="$(ConstantsInFile)"
+        DestinationFile="$(ConstantsOutFile)"
+        Replacements="@(Replacement)" />
+  </Target>
+</Project>

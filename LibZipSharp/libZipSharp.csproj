@@ -42,17 +42,20 @@
         <PackageOutputPath>$(MSBuildThisFileDirectory)</PackageOutputPath>
         <AllowedOutputExtensionsInPackageBuildOutputFolder>.pdb;$(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
     </PropertyGroup>
+
+    <Import Project="libZipSharp.targets" />
+
     <ItemGroup>
-        <None Include="Xamarin.LibZipSharp.targets" PackagePath="build" Pack="true" />
-        <None Include="$(_NativeBuildDir)\lib\Darwin\libZipSharpNative.dylib" PackagePath="runtimes\osx\native\libZipSharpNative.dylib" Pack="true" />
-        <None Include="$(_NativeBuildDir)\lib\win64\libZipSharpNative.dll" PackagePath="runtimes\win-x64\native\libZipSharpNative.dll" Pack="true" />
-        <None Include="$(_NativeBuildDir)\lib\win64\libZipSharpNative.pdb" PackagePath="runtimes\win-x64\native\libZipSharpNative.pdb" Pack="true" />
-        <None Include="$(_NativeBuildDir)\lib\winarm64\libZipSharpNative.dll" PackagePath="runtimes\win-arm64\native\libZipSharpNative.dll" Pack="true" />
-        <None Include="$(_NativeBuildDir)\lib\winarm64\libZipSharpNative.pdb" PackagePath="runtimes\win-arm64\native\libZipSharpNative.pdb" Pack="true" />
-        <None Include="$(_NativeBuildDir)\lib\win32\libZipSharpNative.dll" PackagePath="runtimes\win-x86\native\libZipSharpNative.dll" Pack="true" />
-        <None Include="$(_NativeBuildDir)\lib\win32\libZipSharpNative.pdb" PackagePath="runtimes\win-x86\native\libZipSharpNative.pdb" Pack="true" />
-        <None Include="$(_NativeBuildDir)\lib\Linux\libZipSharpNative.so" PackagePath="runtimes\linux-x64\native\libZipSharpNative.so" Pack="true" />
-        <None Include="$(_NativeBuildDir)\lib\Linux\libZipSharpNative.so.debug" PackagePath="runtimes\linux-x64\native\libZipSharpNative.so.debug" Pack="true" />
+        <None Include="$(IntermediateOutputPath)/net7.0/$(XamarinLibZipSharpTargetsName)" PackagePath="build" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\Darwin\$(_NativeLibraryBaseName).dylib" PackagePath="runtimes\osx\native\$(_NativeLibraryBaseName).dylib" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\win64\$(_NativeLibraryBaseName).dll" PackagePath="runtimes\win-x64\native\$(_NativeLibraryBaseName).dll" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\win64\$(_NativeLibraryBaseName).pdb" PackagePath="runtimes\win-x64\native\$(_NativeLibraryBaseName).pdb" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\winarm64\$(_NativeLibraryBaseName).dll" PackagePath="runtimes\win-arm64\native\$(_NativeLibraryBaseName).dll" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\winarm64\$(_NativeLibraryBaseName).pdb" PackagePath="runtimes\win-arm64\native\$(_NativeLibraryBaseName).pdb" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\win32\$(_NativeLibraryBaseName).dll" PackagePath="runtimes\win-x86\native\$(_NativeLibraryBaseName).dll" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\win32\$(_NativeLibraryBaseName).pdb" PackagePath="runtimes\win-x86\native\$(_NativeLibraryBaseName).pdb" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\Linux\$(_NativeLibraryBaseName).so" PackagePath="runtimes\linux-x64\native\$(_NativeLibraryBaseName).so" Pack="true" />
+        <None Include="$(_NativeBuildDir)\lib\Linux\$(_NativeLibraryBaseName).so.$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch).debug" PackagePath="runtimes\linux-x64\native\$(_NativeLibraryBaseName).so.$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch).debug" Pack="true" />
         <None Include="..\LICENSE" PackagePath="Licences" Pack="true" />
         <None Include="$(_ExternalDir)\libzip\LICENSE" PackagePath="Licences\libzip" Pack="true" />
         <None Include="$(_ExternalDir)\bzip2\LICENSE" PackagePath="Licences\bzip2" Pack="true" />
@@ -69,6 +72,7 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>Resources.resx</DependentUpon>
       </Compile>
+      <Compile Include="$(IntermediateOutputPath)/$(ConstantsName)" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Update="Properties\Resources.resx">

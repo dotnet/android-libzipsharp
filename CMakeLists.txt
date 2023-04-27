@@ -73,8 +73,15 @@ endif()
 #
 # Read product version
 #
-file(STRINGS "LibZipSharp.props" LZS_PRODUCT_VERSION_XML REGEX "^[ \t]*<_LibZipSharpAssemblyVersion>(.*)</_LibZipSharpAssemblyVersion>")
-string(REGEX REPLACE "^[ \t]*<_LibZipSharpAssemblyVersion>([0-9.]+).*</_LibZipSharpAssemblyVersion>" "\\1" LZS_VERSION "${LZS_PRODUCT_VERSION_XML}")
+file(STRINGS "LibZipSharp.props" LZS_PRODUCT_VERSION_XML_MAJOR REGEX "^[ \t]*<_LibZipSharpAssemblyVersionMajor>(.*)</_LibZipSharpAssemblyVersionMajor>")
+file(STRINGS "LibZipSharp.props" LZS_PRODUCT_VERSION_XML_MINOR REGEX "^[ \t]*<_LibZipSharpAssemblyVersionMinor>(.*)</_LibZipSharpAssemblyVersionMinor>")
+file(STRINGS "LibZipSharp.props" LZS_PRODUCT_VERSION_XML_PATCH REGEX "^[ \t]*<_LibZipSharpAssemblyVersionPatch>(.*)</_LibZipSharpAssemblyVersionPatch>")
+
+string(REGEX REPLACE "^[ \t]*<_LibZipSharpAssemblyVersionMajor>([0-9.]+).*</_LibZipSharpAssemblyVersionMajor>" "\\1" LZS_VERSION_MAJOR "${LZS_PRODUCT_VERSION_XML_MAJOR}")
+string(REGEX REPLACE "^[ \t]*<_LibZipSharpAssemblyVersionMinor>([0-9.]+).*</_LibZipSharpAssemblyVersionMinor>" "\\1" LZS_VERSION_MINOR "${LZS_PRODUCT_VERSION_XML_MINOR}")
+string(REGEX REPLACE "^[ \t]*<_LibZipSharpAssemblyVersionPatch>([0-9.]+).*</_LibZipSharpAssemblyVersionPatch>" "\\1" LZS_VERSION_PATCH "${LZS_PRODUCT_VERSION_XML_PATCH}")
+
+set(LZS_VERSION "${LZS_VERSION_MAJOR}.${LZS_VERSION_MINOR}.${LZS_VERSION_PATCH}")
 
 if(WIN32)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE STRING "Statically link MSVC runtime library")
@@ -516,17 +523,31 @@ else()
     ${LZS_CXX_FLAGS}
     )
 
+  set(LT_VERSION "${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}")
+  set(LT_VERSION_SHORT "${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}")
+  set(LT_RELEASE "${CMAKE_PROJECT_VERSION_MAJOR}-${CMAKE_PROJECT_VERSION_MINOR}")
+  set(NATIVE_LIB_OUTPUT_NAME "${PROJECT_NAME}-${LT_RELEASE}")
+
   if(APPLE)
     set_target_properties(
       ${PROJECT_NAME}
       PROPERTIES
       OSX_ARCHITECTURES "${LZS_OSX_ARCHITECTURES}"
-      )
+      OUTPUT_NAME "${NATIVE_LIB_OUTPUT_NAME}"
+    )
+  elseif(UNIX)
+    set_target_properties(
+      ${PROJECT_NAME}
+      PROPERTIES
+      VERSION ${LT_VERSION}
+      SOVERSION ${LT_RELEASE}
+      OUTPUT_NAME "${NATIVE_LIB_OUTPUT_NAME}"
+    )
   elseif(WIN32)
     set_target_properties(
       ${PROJECT_NAME}
       PROPERTIES
-      OUTPUT_NAME "lib${PROJECT_NAME}"
+      OUTPUT_NAME "lib${NATIVE_LIB_OUTPUT_NAME}"
       )
   endif()
 
@@ -629,7 +650,7 @@ else()
     )
 
   #
-  # Place debug info in separate files, if possible
+  # Place debug info in separate files, if possible, and get rid of symlinks
   #
   if(IS_LINUX OR IS_ANDROID)
     if(IS_LINUX)
@@ -647,6 +668,16 @@ else()
       COMMAND ${OBJCOPY} --only-keep-debug "$<TARGET_FILE_NAME:${PROJECT_NAME}>" "$<TARGET_FILE_NAME:${PROJECT_NAME}>.debug"
       COMMAND ${STRIP} --strip-debug --strip-unneeded "$<TARGET_FILE_NAME:${PROJECT_NAME}>"
       COMMAND ${OBJCOPY} --add-gnu-debuglink="$<TARGET_FILE_NAME:${PROJECT_NAME}>.debug" "$<TARGET_FILE_NAME:${PROJECT_NAME}>"
-      )
+    )
+
+    add_custom_command(
+      TARGET ${PROJECT_NAME}
+      POST_BUILD
+      WORKING_DIRECTORY "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+      COMMAND rm lib${PROJECT_NAME}-${LT_RELEASE}.so
+      COMMAND rm lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_RELEASE}
+      COMMAND ln lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION} lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION_SHORT}
+      COMMAND ln lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION} lib${PROJECT_NAME}-${LT_RELEASE}.so
+    )
   endif()
 endif()

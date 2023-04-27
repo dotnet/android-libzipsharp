@@ -1,0 +1,7 @@
+namespace Xamarin.Tools.Zip
+{
+	static class Constants
+	{
+		public const string ZIP_LIBNAME = "@LibraryBaseFileName@";
+	}
+}
