@@ -12,6 +12,8 @@ resources:
       ref: refs/heads/main
 variables:
   - group: Xamarin-Secrets
+  - name: DisablePipelineConfigDetector
+    value: true
 stages:
   - stage: Build
     jobs:
