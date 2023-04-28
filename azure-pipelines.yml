@@ -173,7 +173,8 @@ stages:
   - stage: Test
     dependsOn: Build
     variables:
-      DotNetCoreVersion: 7.0.200
+      DotNetCoreVersion: 3.1.201
+      DotNetVersion: 7.0.202
     jobs:
     - job: testlinux
       displayName: 'Test Linux'
@@ -185,6 +186,9 @@ stages:
         - template: yaml-templates/use-dot-net.yaml
           parameters:
             version: $(DotNetCoreVersion)
+        - template: yaml-templates/use-dot-net.yaml
+          parameters:
+            version: $(DotNetVersion)
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
           inputs:
@@ -211,6 +215,9 @@ stages:
         - template: yaml-templates/use-dot-net.yaml
           parameters:
             version: $(DotNetCoreVersion)
+        - template: yaml-templates/use-dot-net.yaml
+          parameters:
+            version: $(DotNetVersion)
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
           inputs:
@@ -239,6 +246,9 @@ stages:
         - template: yaml-templates/use-dot-net.yaml
           parameters:
             version: $(DotNetCoreVersion)
+        - template: yaml-templates/use-dot-net.yaml
+          parameters:
+            version: $(DotNetVersion)
         - task: DownloadBuildArtifacts@0
           displayName: download artifacts
           inputs:
