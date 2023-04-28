@@ -174,7 +174,7 @@ stages:
     dependsOn: Build
     variables:
       DotNetCoreVersion: 3.1.201
-      DotNetVersion: 7.0.202
+      DotNetVersion: 7.0.203
     jobs:
     - job: testlinux
       displayName: 'Test Linux'
