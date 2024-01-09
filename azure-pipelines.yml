@@ -3,6 +3,7 @@ trigger:
     include:
       - main
       - refs/tags/*
+
 resources:
   repositories:
     - repository: internal-templates
@@ -10,10 +11,16 @@ resources:
       name: xamarin/yaml-templates
       endpoint: xamarin
       ref: refs/heads/main
+
+parameters:
+- name: ApiScanSourceBranch
+  default: 'refs/heads/main'
+
 variables:
   - group: Xamarin-Secrets
   - name: DisablePipelineConfigDetector
     value: true
+
 stages:
   - stage: Build
     jobs:
@@ -276,6 +283,69 @@ stages:
       parameters:
         signListPath: 'SignList.xml'
         condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+
+  - stage: compliance_scan
+    displayName: Compliance
+    dependsOn: Build
+    condition: and(eq(dependencies.Build.result, 'Succeeded'), eq(variables['Build.SourceBranch'], '${{ parameters.ApiScanSourceBranch }}'))
+    jobs:
+    - job: api_scan
+      displayName: API Scan
+      pool:
+        name: Azure Pipelines
+        vmImage: windows-2022
+      timeoutInMinutes: 480
+      workspace:
+        clean: all
+      steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: download artifacts
+        inputs:
+          artifactName: NuGet
+          downloadPath: $(Build.StagingDirectory)
+
+      - task: ExtractFiles@1
+        displayName: Extract nuget
+        inputs:
+          archiveFilePatterns: $(Build.StagingDirectory)\*.nupkg
+          destinationFolder: $(Build.StagingDirectory)\apiscan
+
+      - powershell: Get-ChildItem -Path "$(Build.StagingDirectory)\apiscan" -Recurse
+        displayName: List Files for APIScan
+
+      - task: APIScan@2
+        displayName: Run APIScan
+        inputs:
+          softwareFolder: $(Build.StagingDirectory)\apiscan
+          symbolsFolder: 'SRV*http://symweb;$(Build.StagingDirectory)\apiscan'
+          softwareName: $(ApiScanName)
+          softwareVersionNum: $(Build.SourceBranchName)-$(Build.SourceVersion)$(System.JobAttempt)
+          isLargeApp: true
+          toolVersion: Latest
+        env:
+          AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId);TenantId=$(ApiScanTenant);AppKey=$(ApiScanSecret)
+
+      - task: SdtReport@2
+        displayName: Guardian Export - Security Report
+        inputs:
+          GdnExportAllTools: false
+          GdnExportGdnToolApiScan: true
+          GdnExportOutputSuppressionFile: source.gdnsuppress
+
+      - task: PublishSecurityAnalysisLogs@3
+        displayName: Publish Guardian Artifacts
+        inputs:
+          ArtifactName: APIScan Logs
+          ArtifactType: Container
+          AllTools: false
+          APIScan: true
+          ToolLogsNotFoundAction: Warning
+
+      - task: PostAnalysis@2
+        displayName: Fail Build on Guardian Issues
+        inputs:
+          GdnBreakAllTools: false
+          GdnBreakGdnToolApiScan: true
 
   - stage: Localization
     dependsOn: []
