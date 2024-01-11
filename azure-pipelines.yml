@@ -307,7 +307,7 @@ stages:
       - task: ExtractFiles@1
         displayName: Extract nuget
         inputs:
-          archiveFilePatterns: $(Build.StagingDirectory)\*.nupkg
+          archiveFilePatterns: $(Build.StagingDirectory)\**\*.nupkg
           destinationFolder: $(Build.StagingDirectory)\apiscan
 
       - powershell: Get-ChildItem -Path "$(Build.StagingDirectory)\apiscan" -Recurse
