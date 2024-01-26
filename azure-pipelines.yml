@@ -325,7 +325,7 @@ stages:
           softwareFolder: $(Build.StagingDirectory)\apiscan
           symbolsFolder: 'SRV*http://symweb;$(Build.StagingDirectory)\apiscan'
           softwareName: $(ApiScanName)
-          softwareVersionNum: $(Build.SourceBranchName)-$(Build.SourceVersion)$(System.JobAttempt)
+          softwareVersionNum: 3.1
           exclusionList: $(Build.SourcesDirectory)/build-tools/automation/ApiScanExclusionList.gen.xml
           isLargeApp: true
           toolVersion: Latest

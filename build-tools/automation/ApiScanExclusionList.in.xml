@@ -1,6 +1,6 @@
 <ExclusionList version="1.0">
   <SoftwareNames>
-    <Software name="xamarin_LibZipSharp" version="3">
+    <Software name="xamarin_LibZipSharp" version="3.1">
       <ExcludedCalledFiles>
         <ExcludedCalledFile name="@LibraryBaseFileName@" />
       </ExcludedCalledFiles>
