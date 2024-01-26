@@ -2,7 +2,7 @@
   <SoftwareNames>
     <Software name="xamarin_LibZipSharp" version="3">
       <ExcludedCalledFiles>
-        <ExcludedCalledFile name="libzipsharpnative" />
+        <ExcludedCalledFile name="@LibraryBaseFileName@" />
       </ExcludedCalledFiles>
     </Software>
   </SoftwareNames>
