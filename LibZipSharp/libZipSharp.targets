@@ -54,11 +54,4 @@
         DestinationFile="$(ConstantsOutFile)"
         Replacements="@(Replacement)" />
   </Target>
-
-  <Target Name="GenerateApiScanExclusions" >
-    <ReplaceFileContents
-        SourceFile="$(MSBuildThisFileDirectory)..\build-tools\automation\ApiScanExclusionList.in.xml"
-        DestinationFile="$(MSBuildThisFileDirectory)..\build-tools\automation\ApiScanExclusionList.gen.xml"
-        Replacements="@LibraryBaseFileName@=$(_NativeLibraryBaseName)" />
-  </Target>
 </Project>

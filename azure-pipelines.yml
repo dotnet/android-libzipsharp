@@ -313,20 +313,13 @@ stages:
       - powershell: Get-ChildItem -Path "$(Build.StagingDirectory)\apiscan" -Recurse
         displayName: List Files for APIScan
 
-      - task: DotNetCoreCLI@2
-        displayName: Generate exclusion list
-        inputs:
-          projects: LibZipSharp/libZipSharp.csproj
-          arguments: -v:n -t:GenerateApiScanExclusions
-
       - task: APIScan@2
         displayName: Run APIScan
         inputs:
           softwareFolder: $(Build.StagingDirectory)\apiscan
           symbolsFolder: 'SRV*http://symweb;$(Build.StagingDirectory)\apiscan'
           softwareName: $(ApiScanName)
-          softwareVersionNum: 3.1
-          exclusionList: $(Build.SourcesDirectory)/build-tools/automation/ApiScanExclusionList.gen.xml
+          softwareVersionNum: $(Build.SourceBranchName)-$(Build.SourceVersion)$(System.JobAttempt)
           isLargeApp: true
           toolVersion: Latest
         env:
