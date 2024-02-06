@@ -576,6 +576,7 @@ else()
     target_link_options(
       ${PROJECT_NAME}
       PRIVATE
+      /PROFILE
       /wholearchive:$<TARGET_FILE:zip>
       )
   endif()
