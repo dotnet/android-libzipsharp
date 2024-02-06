@@ -322,6 +322,9 @@ stages:
           softwareVersionNum: $(Build.SourceBranchName)-$(Build.SourceVersion)$(System.JobAttempt)
           isLargeApp: true
           toolVersion: Latest
+          preserveTempFiles: true
+          preserveLogsFolder: true
+          verbosityLevel: verbose
         env:
           AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId);TenantId=$(ApiScanTenant);AppKey=$(ApiScanSecret)
 
