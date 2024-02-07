@@ -308,7 +308,15 @@ stages:
         displayName: Extract nuget
         inputs:
           archiveFilePatterns: $(Build.StagingDirectory)\**\*.nupkg
-          destinationFolder: $(Build.StagingDirectory)\apiscan
+          destinationFolder: $(Build.SourcesDirectory))\nuget
+
+      - task: CopyFiles@2
+        displayName: Collect Files for APIScan
+        inputs:
+          Contents: |
+            $(Build.SourcesDirectory))\nuget
+            !$(Build.SourcesDirectory)\**\runtimes\win-arm64\native\libzipsharpnative*.dll
+          TargetFolder: $(Build.StagingDirectory)\apiscan
 
       - powershell: Get-ChildItem -Path "$(Build.StagingDirectory)\apiscan" -Recurse
         displayName: List Files for APIScan
