@@ -4,7 +4,7 @@
       <ExcludedCalledFiles>
         <ExcludedCalledFile name="@LibraryBaseFileName@" >
           <ExcludedCalledFunctions>
-              <ExcludedCalledFunction name="FlsAlloc" />
+              <ExcludedCalledFunction name="*" />
           </ExcludedCalledFunctions>
         </ExcludedCalledFile>
       </ExcludedCalledFiles>
