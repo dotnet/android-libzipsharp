@@ -321,12 +321,6 @@ stages:
       - powershell: Get-ChildItem -Path "$(Build.StagingDirectory)\apiscan" -Recurse
         displayName: List Files for APIScan
 
-      - task: DotNetCoreCLI@2
-        displayName: Generate exclusion list and set ApiScanVersion
-        inputs:
-          projects: LibZipSharp/libZipSharp.csproj
-          arguments: -v:n -t:GenerateApiScanExclusions
-
       - task: APIScan@2
         displayName: Run APIScan
         inputs:
@@ -334,13 +328,8 @@ stages:
           symbolsFolder: 'SRV*http://symweb;$(Build.StagingDirectory)\apiscan'
           softwareName: $(ApiScanName)
           softwareVersionNum: $(ApiScanVersion)
-          exclusionList: $(Build.SourcesDirectory)/build-tools/automation/ApiScanExclusionList.gen.xml
           isLargeApp: true
           toolVersion: Latest
-          modeType: prerelease
-          preserveTempFiles: true
-          preserveLogsFolder: true
-          verbosityLevel: verbose
         env:
           AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId);TenantId=$(ApiScanTenant);AppKey=$(ApiScanSecret)
 
