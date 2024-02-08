@@ -54,4 +54,16 @@
         DestinationFile="$(ConstantsOutFile)"
         Replacements="@(Replacement)" />
   </Target>
+
+  <Target Name="GenerateApiScanExclusions" >
+    <ItemGroup>
+      <_ExclusionReplacement Include="@LibraryBaseFileName@=$(_NativeLibraryBaseName)" />
+      <_ExclusionReplacement Include="@AssemblyVersion@=$(_LibZipSharpAssemblyVersion)" />
+    </ItemGroup>
+    <Message Text="##vso[task.setvariable variable=ApiScanVersion]$(_LibZipSharpAssemblyVersion)" Importance="high" />
+    <ReplaceFileContents
+        SourceFile="$(MSBuildThisFileDirectory)..\build-tools\automation\ApiScanExclusionList.in.xml"
+        DestinationFile="$(MSBuildThisFileDirectory)..\build-tools\automation\ApiScanExclusionList.gen.xml"
+        Replacements="@(_ExclusionReplacement)" />
+  </Target>
 </Project>
