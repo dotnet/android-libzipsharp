@@ -314,7 +314,7 @@ stages:
         displayName: Collect Files for APIScan
         inputs:
           Contents: |
-            $(Build.SourcesDirectory))\nuget
+            $(Build.SourcesDirectory))\nuget\**\?(*.dll|*.exe|*.pdb)
             !$(Build.SourcesDirectory)\**\runtimes\win-arm64\native\libzipsharpnative*.dll
           TargetFolder: $(Build.StagingDirectory)\apiscan
 
