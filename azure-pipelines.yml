@@ -327,7 +327,7 @@ stages:
           softwareFolder: $(Build.StagingDirectory)\apiscan
           symbolsFolder: 'SRV*http://symweb;$(Build.StagingDirectory)\apiscan'
           softwareName: $(ApiScanName)
-          softwareVersionNum: $(ApiScanVersion)
+          softwareVersionNum: $(Build.SourceBranchName)-$(Build.SourceVersion)
           isLargeApp: true
           toolVersion: Latest
         env:
