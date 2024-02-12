@@ -209,10 +209,10 @@ extends:
             image: AzurePipelinesUbuntu22.04compliantGPT
             os: linux
           steps:
-            - template: yaml-templates/use-dot-net.yaml
+            - template: yaml-templates/use-dot-net.yaml@self
               parameters:
                 version: $(DotNetCoreVersion)
-            - template: yaml-templates/use-dot-net.yaml
+            - template: yaml-templates/use-dot-net.yaml@self
               parameters:
                 version: $(DotNetVersion)
             - task: DownloadPipelineArtifact@2
@@ -241,10 +241,10 @@ extends:
             vmImage: macOS-12
             os: macOS
           steps:
-            - template: yaml-templates/use-dot-net.yaml
+            - template: yaml-templates/use-dot-net.yaml@self
               parameters:
                 version: $(DotNetCoreVersion)
-            - template: yaml-templates/use-dot-net.yaml
+            - template: yaml-templates/use-dot-net.yaml@self
               parameters:
                 version: $(DotNetVersion)
             - task: DownloadPipelineArtifact@2
@@ -272,10 +272,10 @@ extends:
             name: AzurePipelines-EO
             image: AzurePipelinesWindows2022compliantGPT
           steps:
-            - template: yaml-templates/use-dot-net.yaml
+            - template: yaml-templates/use-dot-net.yaml@self
               parameters:
                 version: $(DotNetCoreVersion)
-            - template: yaml-templates/use-dot-net.yaml
+            - template: yaml-templates/use-dot-net.yaml@self
               parameters:
                 version: $(DotNetVersion)
             - task: DownloadPipelineArtifact@2
