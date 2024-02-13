@@ -10,7 +10,7 @@ resources:
       type: github
       name: xamarin/yaml-templates
       endpoint: xamarin
-      ref: refs/heads/main
+      ref: refs/heads/dev/pjc/1es-sign-artifacts
     - repository: 1esPipelines
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
@@ -303,6 +303,8 @@ extends:
         jobs:
         - template: sign-artifacts/jobs/v2.yml@internal-templates
           parameters:
+            usePipelineArtifactTasks: true
+            use1ESArtifactTasks: true
             signListPath: 'SignList.xml'
             condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
 
