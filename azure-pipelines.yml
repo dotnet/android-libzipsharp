@@ -26,12 +26,16 @@ variables:
     value: true
 
 extends:
-  ${{ if eq(variables['Build.Reason'], 'Manual') }}:
-    template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
-  ${{ else }}:
+  ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
     template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
+  ${{ else }}:
+    template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   parameters:
     sdl:
+      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        enableAllTools: false
+      suppression:
+        suppressionFile: $(Build.SourcesDirectory)/.gdn/.gdnsuppress
       sourceAnalysisPool:
         name: AzurePipelines-EO
         image: AzurePipelinesWindows2022compliantGPT
