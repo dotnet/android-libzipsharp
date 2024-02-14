@@ -26,7 +26,10 @@ variables:
     value: true
 
 extends:
-  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  ${{ if eq(variables['Build.Reason'], 'Manual') }}:
+    template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  ${{ else }}:
+    template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
   parameters:
     sdl:
       sourceAnalysisPool:
