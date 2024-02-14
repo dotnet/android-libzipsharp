@@ -12,6 +12,9 @@
 	path = external/bzip2
 	url = https://sourceware.org/git/bzip2.git
 	branch = master
+[submodule "external/xz"]
+	path = external/xz
+	url = https://git.tukaani.org/xz.git
 [submodule "zlib"]
 	path = external/zlib
 	url = https://github.com/madler/zlib.git
