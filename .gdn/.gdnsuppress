@@ -1,0 +1,28 @@
+{
+  "hydrated": false,
+  "properties": {
+    "helpUri": "https://eng.ms/docs/microsoft-security/security/azure-security/cloudai-security-fundamentals-engineering/security-integration/guardian-wiki/microsoft-guardian/general/suppressions",
+    "hydrationStatus": "This file does not contain identifying data. It is safe to check into your repo. To hydrate this file with identifying data, run `guardian hydrate --help` and follow the guidance."
+  },
+  "version": "1.0.0",
+  "suppressionSets": {
+    "default": {
+      "name": "default",
+      "createdDate": "2024-02-13 23:43:02Z",
+      "lastUpdatedDate": "2024-02-13 23:43:02Z"
+    }
+  },
+  "results": {
+    "106ebf57147abe7cd400e99216306929d7fa316d10e3d30dc218c74b9bd7795e": {
+      "signature": "106ebf57147abe7cd400e99216306929d7fa316d10e3d30dc218c74b9bd7795e",
+      "alternativeSignatures": [
+        "f7e9384d5be4600dadfdbeceff23d1468f682e9d6998ce6d54f9379bbe1e535a"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external vcpkg .ps1 file.",
+      "createdDate": "2024-02-13 23:43:02Z"
+    }
+  }
+}
