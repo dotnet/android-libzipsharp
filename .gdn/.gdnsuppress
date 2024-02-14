@@ -23,6 +23,402 @@
       ],
       "justification": "Reference to an external vcpkg .ps1 file.",
       "createdDate": "2024-02-13 23:43:02Z"
+    },
+    "39b5eea31b6779ed59ae6854d2c15e17ceb93e3067a87138748fc8f02d734625": {
+      "signature": "39b5eea31b6779ed59ae6854d2c15e17ceb93e3067a87138748fc8f02d734625",
+      "alternativeSignatures": [
+        "59a87f4e078c6ab72fe39adc6139c86d18cddbcd40221114c4a683666bcaadf4"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "5de03a75690304a14d72fbda42973d7eaf8d2fa3719b0ba9d923748eaf5f9c30": {
+      "signature": "5de03a75690304a14d72fbda42973d7eaf8d2fa3719b0ba9d923748eaf5f9c30",
+      "alternativeSignatures": [
+        "ce37089bcd078cf92143b539ff9e1613e0764c4ef33edd42f9061b2f9521f9e1"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "db23c01102a9a14bcccc30bf88ccfeee2ac83b2e609805ba92a56bea7dab221d": {
+      "signature": "db23c01102a9a14bcccc30bf88ccfeee2ac83b2e609805ba92a56bea7dab221d",
+      "alternativeSignatures": [
+        "abdcc158618eba3857576f08d4cdb83f5398b76c1cf56b1f3e02c32a37eb0a84"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "8da940fdab098cc33decf40e50364a917fa8de121823766d4cae004afdf22a3b": {
+      "signature": "8da940fdab098cc33decf40e50364a917fa8de121823766d4cae004afdf22a3b",
+      "alternativeSignatures": [
+        "7f7452f2cdf62ab9364dc7b5a73a2b6835638a3c610041594d669f9e2ce7a14e"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "4b61adeeb4b0237fbe2352c290a84dc686067351e66810c27192c6a00d9ecbc7": {
+      "signature": "4b61adeeb4b0237fbe2352c290a84dc686067351e66810c27192c6a00d9ecbc7",
+      "alternativeSignatures": [
+        "cf7a67d41e8f7415d089d7007de01417f73c41b842480682686b6b326042ef12"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "3e8dfae2195ff4be25bd3f9bee6d8ece4ca8968721939ae782bb6e457a4d380d": {
+      "signature": "3e8dfae2195ff4be25bd3f9bee6d8ece4ca8968721939ae782bb6e457a4d380d",
+      "alternativeSignatures": [
+        "e46a0369af1448c0687939055da27468e0acf34717487aaac58ead0d8269ec64"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "ec6168596417c7c80e639853d78bddbe9c52c925651ba205ee987b452def85e4": {
+      "signature": "ec6168596417c7c80e639853d78bddbe9c52c925651ba205ee987b452def85e4",
+      "alternativeSignatures": [
+        "343e78730252722241edfd687d643a5be92f66c94c0fe9c9247ee7eab88659a5"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "c8ba595436f022c75cb7893998c04b64bfefd966c556bf9400e52b338b7a43cb": {
+      "signature": "c8ba595436f022c75cb7893998c04b64bfefd966c556bf9400e52b338b7a43cb",
+      "alternativeSignatures": [
+        "17eaf5f69758d026b80bcb626982a29b26c78639db323185f33db8cccd84ae8b"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "14d9bf44b59382ea3316fb01edba5c49251fac10cfa0b0e1c5e4053ea2daf7a7": {
+      "signature": "14d9bf44b59382ea3316fb01edba5c49251fac10cfa0b0e1c5e4053ea2daf7a7",
+      "alternativeSignatures": [
+        "34132c90cef21d1559d791ca3374054b3498293e9af99ebaf0a97ebdf2117359"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "3c986c795cdc8d1a8bb7acbc24deda0379c05358076ad0e1a32f41df1b256bdd": {
+      "signature": "3c986c795cdc8d1a8bb7acbc24deda0379c05358076ad0e1a32f41df1b256bdd",
+      "alternativeSignatures": [
+        "b0e6adca846c6b74ccac6796037214de01c20ba2747cc9dff45496227824a875"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "011aca82cb8cfe1dbea4a8a6b80a25607d6dec9cdbac3597e523163912350420": {
+      "signature": "011aca82cb8cfe1dbea4a8a6b80a25607d6dec9cdbac3597e523163912350420",
+      "alternativeSignatures": [
+        "eef6518900464a839f05e7cc40d02cf8327e6b7759addbe887177390a51eddf3"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "46fda418b503d171bfb3682c7147b92baef31a79071436757d001bcb3ad4b54e": {
+      "signature": "46fda418b503d171bfb3682c7147b92baef31a79071436757d001bcb3ad4b54e",
+      "alternativeSignatures": [
+        "4727374690e2dd8bdc0343899bf51ea556438427a248cb068b2b8e7bbb62114d"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "12286527b005d88dd92adf2660ba351817fa98cb74e80f555c2c32c5d2adf738": {
+      "signature": "12286527b005d88dd92adf2660ba351817fa98cb74e80f555c2c32c5d2adf738",
+      "alternativeSignatures": [
+        "c3dec11b91174756f9d91e2ca3d5d5168b06696448bb296b9dcbb1faa52fbd55"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "32c95027d0378e43655c6ae1d1d94d175b5ae0a80f7a09ab5ef877c82c8613cf": {
+      "signature": "32c95027d0378e43655c6ae1d1d94d175b5ae0a80f7a09ab5ef877c82c8613cf",
+      "alternativeSignatures": [
+        "3b8cc35f6043d60895fc2b58aa0e340f26168e7276e77d32a2290ce8f52e87a7"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "cc78cb9617ca7af85f4e3c4b66b69eceb2f29a4c288137d7605680fb7e53c2a3": {
+      "signature": "cc78cb9617ca7af85f4e3c4b66b69eceb2f29a4c288137d7605680fb7e53c2a3",
+      "alternativeSignatures": [
+        "fbd4e6e38b3845ffc0b9bdedac9c2ce0d50d084d03ad4d0742651812e6874ff5"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "6cdc0d3a20d2f088ecd23fc670de3a8f7bb5508c1b07a7cf1fff1ac99553730c": {
+      "signature": "6cdc0d3a20d2f088ecd23fc670de3a8f7bb5508c1b07a7cf1fff1ac99553730c",
+      "alternativeSignatures": [
+        "bb76fb1e8954e583891849c15b627113c7fb539971a5e5ca860b502f740e2a49"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "de33f70e911e390d996a4a308f9b4408f6a8214406728e3c445d248d82f8ff1a": {
+      "signature": "de33f70e911e390d996a4a308f9b4408f6a8214406728e3c445d248d82f8ff1a",
+      "alternativeSignatures": [
+        "7d1dff24ec0e9a88726beb96e07983aefa5b91ccbdbb5e4912f6a1dde34654c0"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "714c09b687b522c384ad4f562ad7fc22b4a3cc486f4e111da2ef9f9f7049bbd9": {
+      "signature": "714c09b687b522c384ad4f562ad7fc22b4a3cc486f4e111da2ef9f9f7049bbd9",
+      "alternativeSignatures": [
+        "c319ab28b12c0772a32e11a1b8adfbf5d31d940c26f65d547508fbbe067479c7"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "1e06dca2e60e8622f7ab1b6d423829a45efd79275e2d04d3b7e59e90a33ab23f": {
+      "signature": "1e06dca2e60e8622f7ab1b6d423829a45efd79275e2d04d3b7e59e90a33ab23f",
+      "alternativeSignatures": [
+        "39c7a88b040cff3482c94e4fbeb6364916e57407b50dcaaa3caac5b5c82e2f54"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "fa9ab2615b17451b8be359729cbb2033d6b751055f1d5507d410a9970fa7b6b9": {
+      "signature": "fa9ab2615b17451b8be359729cbb2033d6b751055f1d5507d410a9970fa7b6b9",
+      "alternativeSignatures": [
+        "1bfcb8fc5f208a70423fe991a2164b47bae0b1c5a82fbff7be1f697af9a80d57"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "7829029d09896ea48155d39aeb7a276362ec333577a412b4361e3f8c732d77d9": {
+      "signature": "7829029d09896ea48155d39aeb7a276362ec333577a412b4361e3f8c732d77d9",
+      "alternativeSignatures": [
+        "350163c77a00a7bb7ed3832ece99c9b6998bf27dbe208e0dde6063114312ee13"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "7d646d44fc117d94d024aeb65acccd6a6c78ea2f7a67a9925ec0720ca14fc16d": {
+      "signature": "7d646d44fc117d94d024aeb65acccd6a6c78ea2f7a67a9925ec0720ca14fc16d",
+      "alternativeSignatures": [
+        "b6cd355613757ef82eba700719a1957211688374b0841271340c10a65ca913ba"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "bd38e663d8369975f5316d23deb644cc0cfa497eaaa67be0ff4481034449f5e1": {
+      "signature": "bd38e663d8369975f5316d23deb644cc0cfa497eaaa67be0ff4481034449f5e1",
+      "alternativeSignatures": [
+        "58d85902d6fb46a3b3e3134486a43278b8aae8d545b239f67d5e871814d367a2"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "7879c1c8cf92a1865ce7cecb206d8617f80f52515bd89cc2cebb2c6686464969": {
+      "signature": "7879c1c8cf92a1865ce7cecb206d8617f80f52515bd89cc2cebb2c6686464969",
+      "alternativeSignatures": [
+        "ed778799240957f92667a905346a8e9fb57dab582391d94652b12772c37ba475"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "00159b5fc8f7210ae119a64eb9b3d362eb27a4abc410a215e65a49e7570e3b40": {
+      "signature": "00159b5fc8f7210ae119a64eb9b3d362eb27a4abc410a215e65a49e7570e3b40",
+      "alternativeSignatures": [
+        "4b0e5cf7e1237b5597239632a5567fe76da6fe70caececa7a6024ea90a24bafd"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "df77635c5a3c4c2473f0ad93e579e4e4b24e0e4b17d3ed4f31640b1b91183ab2": {
+      "signature": "df77635c5a3c4c2473f0ad93e579e4e4b24e0e4b17d3ed4f31640b1b91183ab2",
+      "alternativeSignatures": [
+        "d01d7181bc09d681265646a3275310262609dbb4d070a86ebadf633b1f346c12"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "075eeab70a88345e6e142f97544de5be84cb85c87ba36ec229a2a4df5d482337": {
+      "signature": "075eeab70a88345e6e142f97544de5be84cb85c87ba36ec229a2a4df5d482337",
+      "alternativeSignatures": [
+        "4cc6ffe05f61e35bd7fa57a5a4b4f82d050e684f11e15ce6eade601aa86d2b11"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "1d051fae63e09ea932afddcc15ad701601e88febcff9f6f3bd3bb43b2b0013ad": {
+      "signature": "1d051fae63e09ea932afddcc15ad701601e88febcff9f6f3bd3bb43b2b0013ad",
+      "alternativeSignatures": [
+        "8f31d55c4c3ed10ad02c2e4d12464e3b94b77d86edc2935ace667abbd00b9131"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "ffa0c79114b0b79189a00bd57a00957a4aa63460964bc07f84f2b5363d5a58a6": {
+      "signature": "ffa0c79114b0b79189a00bd57a00957a4aa63460964bc07f84f2b5363d5a58a6",
+      "alternativeSignatures": [
+        "d914a6e06fa0050f1567d6ea23d8c5ac943106e09aa24c459a4c0d455f515eea"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'example.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "f9e7e5e304a91532f7615d252ba18ea11e52ba6eb28cd78f872a480423351256": {
+      "signature": "f9e7e5e304a91532f7615d252ba18ea11e52ba6eb28cd78f872a480423351256",
+      "alternativeSignatures": [
+        "13987557036db098921cee21a62d8dc557c4e4136a10220442388eb2f9f18607"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "1170328835cbf3ad28b03a4fdfc2cd7a928249fe0a50e7759031d311963413d4": {
+      "signature": "1170328835cbf3ad28b03a4fdfc2cd7a928249fe0a50e7759031d311963413d4",
+      "alternativeSignatures": [
+        "82875a950fea566c9730aa3296478ef9abad3f1231bd80959986a77f29c1acac"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "271feb22f700d2e09dd4b801f3c29d30f34893be4424d38e35de609d09d87c68": {
+      "signature": "271feb22f700d2e09dd4b801f3c29d30f34893be4424d38e35de609d09d87c68",
+      "alternativeSignatures": [
+        "61d3030143cf31b8485595afe07a84bf62f0c44601cd7621fe565f51c3348654"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'minigzip.exe'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "0ed7f92df9b8d3bf93cf6898af876e9e159b351ce0b2afeb6f153b453be5cdf9": {
+      "signature": "0ed7f92df9b8d3bf93cf6898af876e9e159b351ce0b2afeb6f153b453be5cdf9",
+      "alternativeSignatures": [
+        "d2dc95e0c5edbdb8ddf1de2e9585c7d55cc1a529edc5c3319da8ed818dc72abf"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "8b44c0c90346ba907ed150c7a506edacfc80128518e0a6d9f9c8b620512370e9": {
+      "signature": "8b44c0c90346ba907ed150c7a506edacfc80128518e0a6d9f9c8b620512370e9",
+      "alternativeSignatures": [
+        "ec7f34139c5004a583358345a8f5d7eaa061efc656e7b8e76c8bed9d38fd23c0"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "c87bc9f7b945ff1cb266377ae78d0bc261460afa6fb94a20573b5b13d5475b83": {
+      "signature": "c87bc9f7b945ff1cb266377ae78d0bc261460afa6fb94a20573b5b13d5475b83",
+      "alternativeSignatures": [
+        "c7b51f6d8f8170de4c1e7e1128b855ec4979ec9a9910db04453a163ce2984544"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
+    },
+    "39fbd14600da0545bcb702c3f754c904b5ccf5ed55062fcc526f2e61391496c5": {
+      "signature": "39fbd14600da0545bcb702c3f754c904b5ccf5ed55062fcc526f2e61391496c5",
+      "alternativeSignatures": [
+        "1db2e9df279406e82a30a1f302b5b063f6e77bfda5b329f3f397ae6767cf9c7d"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external lzsbuild/deps file 'zlib.dll'.",
+      "createdDate": "2024-02-14 20:40:55Z"
     }
   }
 }
