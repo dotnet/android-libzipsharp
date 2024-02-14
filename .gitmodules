@@ -14,7 +14,7 @@
 	branch = master
 [submodule "external/xz"]
 	path = external/xz
-	url = https://git.tukaani.org/xz.git
+	url = https://github.com/tukaani-project/xz
 [submodule "zlib"]
 	path = external/zlib
 	url = https://github.com/madler/zlib.git
