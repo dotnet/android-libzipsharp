@@ -9,7 +9,7 @@
     "default": {
       "name": "default",
       "createdDate": "2024-02-13 23:43:02Z",
-      "lastUpdatedDate": "2024-02-15 19:39:18Z"
+      "lastUpdatedDate": "2024-02-15 20:19:17Z"
     }
   },
   "results": {
@@ -45,6 +45,105 @@
       ],
       "justification": "Suppressing BA2007 triggered by the addition of -wd4996 required to build external bzip2 dependency with /sdl flag.",
       "createdDate": "2024-02-15 19:39:18Z"
+    },
+    "39b5eea31b6779ed59ae6854d2c15e17ceb93e3067a87138748fc8f02d734625": {
+      "signature": "39b5eea31b6779ed59ae6854d2c15e17ceb93e3067a87138748fc8f02d734625",
+      "alternativeSignatures": [
+        "59a87f4e078c6ab72fe39adc6139c86d18cddbcd40221114c4a683666bcaadf4"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Unable to resolve BA2007 for external lzsbuild/deps/win32 file 'example.exe'.",
+      "createdDate": "2024-02-15 20:19:17Z"
+    },
+    "4b61adeeb4b0237fbe2352c290a84dc686067351e66810c27192c6a00d9ecbc7": {
+      "signature": "4b61adeeb4b0237fbe2352c290a84dc686067351e66810c27192c6a00d9ecbc7",
+      "alternativeSignatures": [
+        "cf7a67d41e8f7415d089d7007de01417f73c41b842480682686b6b326042ef12"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Unable to resolve BA2007 for external lzsbuild/deps/win32 file 'minigzip.exe'.",
+      "createdDate": "2024-02-15 20:19:17Z"
+    },
+    "14d9bf44b59382ea3316fb01edba5c49251fac10cfa0b0e1c5e4053ea2daf7a7": {
+      "signature": "14d9bf44b59382ea3316fb01edba5c49251fac10cfa0b0e1c5e4053ea2daf7a7",
+      "alternativeSignatures": [
+        "34132c90cef21d1559d791ca3374054b3498293e9af99ebaf0a97ebdf2117359"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Unable to resolve BA2007 for external lzsbuild/deps/win32 file 'zlib.dll'.",
+      "createdDate": "2024-02-15 20:19:17Z"
+    },
+    "32c95027d0378e43655c6ae1d1d94d175b5ae0a80f7a09ab5ef877c82c8613cf": {
+      "signature": "32c95027d0378e43655c6ae1d1d94d175b5ae0a80f7a09ab5ef877c82c8613cf",
+      "alternativeSignatures": [
+        "3b8cc35f6043d60895fc2b58aa0e340f26168e7276e77d32a2290ce8f52e87a7"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Unable to resolve BA2007 for external lzsbuild/deps/win64 file 'example.exe'.",
+      "createdDate": "2024-02-15 20:19:17Z"
+    },
+    "714c09b687b522c384ad4f562ad7fc22b4a3cc486f4e111da2ef9f9f7049bbd9": {
+      "signature": "714c09b687b522c384ad4f562ad7fc22b4a3cc486f4e111da2ef9f9f7049bbd9",
+      "alternativeSignatures": [
+        "c319ab28b12c0772a32e11a1b8adfbf5d31d940c26f65d547508fbbe067479c7"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Unable to resolve BA2007 for external lzsbuild/deps/win64 file 'minigzip.exe'.",
+      "createdDate": "2024-02-15 20:19:17Z"
+    },
+    "7d646d44fc117d94d024aeb65acccd6a6c78ea2f7a67a9925ec0720ca14fc16d": {
+      "signature": "7d646d44fc117d94d024aeb65acccd6a6c78ea2f7a67a9925ec0720ca14fc16d",
+      "alternativeSignatures": [
+        "b6cd355613757ef82eba700719a1957211688374b0841271340c10a65ca913ba"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Unable to resolve BA2007 for external lzsbuild/deps/win64 file 'zlib.dll'.",
+      "createdDate": "2024-02-15 20:19:17Z"
+    },
+    "075eeab70a88345e6e142f97544de5be84cb85c87ba36ec229a2a4df5d482337": {
+      "signature": "075eeab70a88345e6e142f97544de5be84cb85c87ba36ec229a2a4df5d482337",
+      "alternativeSignatures": [
+        "4cc6ffe05f61e35bd7fa57a5a4b4f82d050e684f11e15ce6eade601aa86d2b11"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Unable to resolve BA2007 for external lzsbuild/deps/winarm64 file 'example.exe'.",
+      "createdDate": "2024-02-15 20:19:17Z"
+    },
+    "f9e7e5e304a91532f7615d252ba18ea11e52ba6eb28cd78f872a480423351256": {
+      "signature": "f9e7e5e304a91532f7615d252ba18ea11e52ba6eb28cd78f872a480423351256",
+      "alternativeSignatures": [
+        "13987557036db098921cee21a62d8dc557c4e4136a10220442388eb2f9f18607"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Unable to resolve BA2007 for external lzsbuild/deps/winarm64 file 'minigzip.exe'.",
+      "createdDate": "2024-02-15 20:19:17Z"
+    },
+    "0ed7f92df9b8d3bf93cf6898af876e9e159b351ce0b2afeb6f153b453be5cdf9": {
+      "signature": "0ed7f92df9b8d3bf93cf6898af876e9e159b351ce0b2afeb6f153b453be5cdf9",
+      "alternativeSignatures": [
+        "d2dc95e0c5edbdb8ddf1de2e9585c7d55cc1a529edc5c3319da8ed818dc72abf"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Unable to resolve BA2007 for external lzsbuild/deps/winarm64 file 'zlib.dll'.",
+      "createdDate": "2024-02-15 20:19:17Z"
     }
   }
 }
