@@ -48,8 +48,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 REM 64-bit deps
 mkdir "%DEPS_BUILD_DIR_ROOT_64%"
 cmake %COMMON_CMAKE_PARAMS% ^
-	%CPARAMS% ^
-	%LINKER_PARAMS% ^
 	-B "%DEPS_BUILD_DIR_ROOT_64%" ^
 	-DVCPKG_TARGET_TRIPLET=x64-windows-static ^
 	-DBUILD_DEPENDENCIES=ON ^
@@ -68,8 +66,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 REM 64-bit arm deps
 mkdir "%DEPS_BUILD_DIR_ROOT_ARM64%"
 cmake %COMMON_CMAKE_PARAMS% ^
-	%CPARAMS% ^
-	%LINKER_PARAMS_ARM64% ^
 	-B "%DEPS_BUILD_DIR_ROOT_ARM64%" ^
 	-DVCPKG_TARGET_TRIPLET=arm-windows-static ^
 	-DBUILD_DEPENDENCIES=ON ^
@@ -88,8 +84,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 REM 32-bit deps
 mkdir "%DEPS_BUILD_DIR_ROOT_32%"
 cmake %COMMON_CMAKE_PARAMS% ^
-	%CPARAMS% ^
-	%LINKER_PARAMS% ^
 	-B "%DEPS_BUILD_DIR_ROOT_32%" ^
 	-DVCPKG_TARGET_TRIPLET=x86-windows-static ^
 	-DBUILD_DEPENDENCIES=ON ^
