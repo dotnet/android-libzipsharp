@@ -17,25 +17,31 @@ resources:
       ref: refs/tags/release
 
 parameters:
-  - name: OneLocSourceBranch
-    default: refs/heads/main
+- name: OneLocSourceBranch
+  default: refs/heads/main
+- name: Skip1ESComplianceTasks
+  default: false
+- name: SignArtifacts
+  default: false
 
 variables:
-  - group: Xamarin-Secrets
-  - name: DisablePipelineConfigDetector
-    value: true
+- group: Xamarin-Secrets
+- name: DisablePipelineConfigDetector
+  value: true
 
 extends:
-  ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.Skip1ESComplianceTasks }}', 'true')) }}:
     template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
   ${{ else }}:
     template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   parameters:
     sdl:
-      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      ${{ if eq('${{ parameters.Skip1ESComplianceTasks }}', 'true') }}:
         enableAllTools: false
-      suppression:
-        suppressionFile: $(Build.SourcesDirectory)/.gdn/.gdnsuppress
+      codeql:
+        runSourceLanguagesInSourceAnalysis: true
+      #suppression:
+        #suppressionFile: $(Build.SourcesDirectory)/.gdn/.gdnsuppress
       sourceAnalysisPool:
         name: AzurePipelines-EO
         image: AzurePipelinesWindows2022compliantGPT
@@ -305,15 +311,15 @@ extends:
                 arguments: -p:ReferenceNuget=True -v:diag
 
       - stage: Publish
-        dependsOn: Test
-        condition: eq(variables['System.TeamProject'], 'devdiv') # only sign the packages when running on Windows, and using the private server which has the certificates
+        dependsOn: Build
+        condition: and(eq(dependencies.mac_build.result, 'Succeeded'), eq(variables['System.TeamProject'], 'devdiv')) # only sign the packages when running on Windows, and using the private server which has the certificates
         jobs:
         - template: sign-artifacts/jobs/v2.yml@internal-templates
           parameters:
             usePipelineArtifactTasks: true
             use1ESTemplate: true
             signListPath: 'SignList.xml'
-            condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+            condition: or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.SignArtifacts }}', 'true'))
 
       - stage: Localization
         dependsOn: []
