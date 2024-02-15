@@ -234,6 +234,7 @@ else()
     /Qspectre
     /guard:cf
     /sdl
+    /wd4996
   )
 
   set(LINKER_OPTIONS
