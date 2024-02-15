@@ -19,7 +19,8 @@ set ARTIFACTS_DIR_ROOT_ARM64=%ARTIFACTS_DIR_ROOT%\winarm64
 set CONFIG=RelWithDebInfo
 set COMMON_CMAKE_PARAMS=-DCMAKE_BUILD_TYPE=%CONFIG% -G "Visual Studio 17 2022"
 
-set CPARAMS=-DCMAKE_C_FLAGS_INIT="/Qspectre /sdl /guard:cf"
+set CPARAMS_DEPS=-DCMAKE_C_FLAGS_INIT="/Qspectre /guard:cf"
+set CPARAMS=-DCMAKE_C_FLAGS_INIT="/Qspectre /guard:cf /sdl"
 set CXXPARAMS=-DCMAKE_CXX_FLAGS_INIT="/W3"
 set LINKER_PARAMS=-DCMAKE_EXE_LINKER_FLAGS_INIT="/PROFILE /DYNAMICBASE /CETCOMPAT /guard:cf"
 set LINKER_PARAMS_ARM64=-DCMAKE_EXE_LINKER_FLAGS_INIT="/PROFILE /DYNAMICBASE /guard:cf"
@@ -48,6 +49,9 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 REM 64-bit deps
 mkdir "%DEPS_BUILD_DIR_ROOT_64%"
 cmake %COMMON_CMAKE_PARAMS% ^
+	%CPARAMS_DEPS% ^
+	%CXXPARAMS% ^
+	%LINKER_PARAMS% ^
 	-B "%DEPS_BUILD_DIR_ROOT_64%" ^
 	-DVCPKG_TARGET_TRIPLET=x64-windows-static ^
 	-DBUILD_DEPENDENCIES=ON ^
@@ -66,6 +70,9 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 REM 64-bit arm deps
 mkdir "%DEPS_BUILD_DIR_ROOT_ARM64%"
 cmake %COMMON_CMAKE_PARAMS% ^
+	%CPARAMS_DEPS% ^
+	%CXXPARAMS% ^
+	%LINKER_PARAMS_ARM64% ^
 	-B "%DEPS_BUILD_DIR_ROOT_ARM64%" ^
 	-DVCPKG_TARGET_TRIPLET=arm-windows-static ^
 	-DBUILD_DEPENDENCIES=ON ^
@@ -84,6 +91,9 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 REM 32-bit deps
 mkdir "%DEPS_BUILD_DIR_ROOT_32%"
 cmake %COMMON_CMAKE_PARAMS% ^
+	%CPARAMS_DEPS% ^
+	%CXXPARAMS% ^
+	%LINKER_PARAMS% ^
 	-B "%DEPS_BUILD_DIR_ROOT_32%" ^
 	-DVCPKG_TARGET_TRIPLET=x86-windows-static ^
 	-DBUILD_DEPENDENCIES=ON ^

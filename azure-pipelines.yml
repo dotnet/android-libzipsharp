@@ -41,7 +41,7 @@ extends:
       codeql:
         runSourceLanguagesInSourceAnalysis: true
       suppression:
-        suppressionFile: $(Build.SourcesDirectory)/.gdn/.gdnsuppress
+        suppressionFile: $(Build.SourcesDirectory)\.gdn\.gdnsuppress
       sourceAnalysisPool:
         name: AzurePipelines-EO
         image: AzurePipelinesWindows2022compliantGPT
