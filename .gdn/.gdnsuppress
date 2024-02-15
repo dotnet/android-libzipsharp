@@ -13,6 +13,17 @@
     }
   },
   "results": {
+    "106ebf57147abe7cd400e99216306929d7fa316d10e3d30dc218c74b9bd7795e": {
+      "signature": "106ebf57147abe7cd400e99216306929d7fa316d10e3d30dc218c74b9bd7795e",
+      "alternativeSignatures": [
+        "f7e9384d5be4600dadfdbeceff23d1468f682e9d6998ce6d54f9379bbe1e535a"
+      ],
+      "memberOf": [
+        "default"
+      ],
+      "justification": "Reference to an external vcpkg .ps1 file.",
+      "createdDate": "2024-02-13 23:43:02Z"
+    },
     "cb309d5a322c6d545bc8304bc6bc21953f5d953dcc2ef54f9f66e9d2a41cd5af": {
       "signature": "cb309d5a322c6d545bc8304bc6bc21953f5d953dcc2ef54f9f66e9d2a41cd5af",
       "alternativeSignatures": [
