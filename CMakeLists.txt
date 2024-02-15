@@ -228,7 +228,20 @@ if(UNIX)
     LINKER:-z,relro
     LINKER:-z,noexecstack
     LINKER:--no-undefined
-    )
+  )
+else()
+  set(COMMON_COMPILE_OPTIONS
+    /Qspectre
+    /guard:cf
+    /sdl
+  )
+
+  set(LINKER_OPTIONS
+    LINKER:/PROFILE
+    LINKER:/DYNAMICBASE
+    LINKER:/CETCOMPAT
+    LINKER:/guard:cf
+  )
 endif()
 
 if(APPLE AND BUILD_LIBZIP)
