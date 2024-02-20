@@ -28,6 +28,10 @@ variables:
 - group: Xamarin-Secrets
 - name: DisablePipelineConfigDetector
   value: true
+- name: WindowsPoolImage1ESPT
+  value: 1ESPT-Windows2022
+- name: LinuxPoolImage1ESPT
+  value: 1ESPT-Ubuntu22.04
 
 extends:
   ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.Skip1ESComplianceTasks }}', 'true')) }}:
@@ -44,14 +48,16 @@ extends:
         suppressionFile: $(Build.SourcesDirectory)\.gdn\.gdnsuppress
       sourceAnalysisPool:
         name: AzurePipelines-EO
-        image: AzurePipelinesWindows2022compliantGPT
+        image: $(WindowsPoolImage1ESPT)
+        os: windows
     stages:
       - stage: Build
         jobs:
         - job: buildWindows
           pool:
             name: AzurePipelines-EO
-            image: AzurePipelinesWindows2022compliantGPT
+            image: $(WindowsPoolImage1ESPT)
+            os: windows
           variables:
             Codeql.Enabled: true
           templateContext:
@@ -93,7 +99,7 @@ extends:
         - job: buildLinux
           pool:
             name: AzurePipelines-EO
-            image: AzurePipelinesUbuntu22.04compliantGPT
+            image: $(LinuxPoolImage1ESPT)
             os: linux
           templateContext:
             outputs:
@@ -219,7 +225,7 @@ extends:
           displayName: 'Test Linux'
           pool:
             name: AzurePipelines-EO
-            image: AzurePipelinesUbuntu22.04compliantGPT
+            image: $(LinuxPoolImage1ESPT)
             os: linux
           steps:
             - template: yaml-templates/use-dot-net.yaml@self
@@ -283,7 +289,8 @@ extends:
           displayName: 'Test Windows'
           pool:
             name: AzurePipelines-EO
-            image: AzurePipelinesWindows2022compliantGPT
+            image: $(WindowsPoolImage1ESPT)
+            os: windows
           steps:
             - template: yaml-templates/use-dot-net.yaml@self
               parameters:
@@ -312,14 +319,13 @@ extends:
 
       - stage: Publish
         dependsOn: Build
-        condition: and(eq(dependencies.mac_build.result, 'Succeeded'), eq(variables['System.TeamProject'], 'devdiv')) # only sign the packages when running on Windows, and using the private server which has the certificates
+        condition: and(eq(dependencies.Build.result, 'Succeeded'), eq(variables['System.TeamProject'], 'devdiv'), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.SignArtifacts }}', 'true'))) # only sign the packages when running on Windows, and using the private server which has the certificates
         jobs:
         - template: sign-artifacts/jobs/v2.yml@internal-templates
           parameters:
             usePipelineArtifactTasks: true
             use1ESTemplate: true
             signListPath: 'SignList.xml'
-            condition: or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.SignArtifacts }}', 'true'))
 
       - stage: Localization
         dependsOn: []
