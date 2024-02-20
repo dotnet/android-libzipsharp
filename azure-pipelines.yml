@@ -219,7 +219,7 @@ extends:
         dependsOn: Build
         variables:
           DotNetCoreVersion: 3.1.201
-          DotNetVersion: 7.0.203
+          DotNetVersion: 7.0.x
         jobs:
         - job: testlinux
           displayName: 'Test Linux'
