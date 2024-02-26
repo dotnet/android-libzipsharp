@@ -387,12 +387,13 @@ extends:
           workspace:
             clean: all
           steps:
-          - task: DownloadBuildArtifacts@0
-            displayName: download artifacts
+          - task: DownloadPipelineArtifact@2
+            displayName: download nuget artifact
             inputs:
-              artifactName: NuGet
+              artifactName: nuget
               downloadPath: $(Build.StagingDirectory)
-    
+              itemPattern: '*.nupkg'
+
           - task: ExtractFiles@1
             displayName: Extract nuget
             inputs:
