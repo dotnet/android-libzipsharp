@@ -28,9 +28,9 @@ parameters:
 
 variables:
 - group: Xamarin-Secrets
-- name : ApiScanSoftwareName
+- name: ApiScanSoftwareName
   value: VS
-- name : ApiScanSoftwareVersion
+- name: ApiScanSoftwareVersion
   value: 17
 - name: DisablePipelineConfigDetector
   value: true
