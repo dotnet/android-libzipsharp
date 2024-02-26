@@ -28,6 +28,10 @@ parameters:
 
 variables:
 - group: Xamarin-Secrets
+- name : ApiScanSoftwareName
+  value: VS
+- name : ApiScanSoftwareVersion
+  value: 17
 - name: DisablePipelineConfigDetector
   value: true
 - name: WindowsPoolImage1ESPT
@@ -401,18 +405,18 @@ extends:
               Contents: |
                 $(Build.SourcesDirectory)\nuget\**\?(*.dll|*.exe|*.pdb)
                 !$(Build.SourcesDirectory)\**\runtimes\win-arm64\native\libzipsharpnative*.dll
-              TargetFolder: $(Build.StagingDirectory)\apiscan
+              TargetFolder: $(Agent.TempDirectory)
     
-          - powershell: Get-ChildItem -Path "$(Build.StagingDirectory)\apiscan" -Recurse
+          - powershell: Get-ChildItem -Path "$(Agent.TempDirectory)" -Recurse
             displayName: List Files for APIScan
     
           - task: APIScan@2
             displayName: Run APIScan
             inputs:
-              softwareFolder: $(Build.StagingDirectory)\apiscan
+              softwareFolder: $(Agent.TempDirectory)
               symbolsFolder: 'SRV*http://symweb;$(Build.StagingDirectory)\apiscan'
-              softwareName: $(ApiScanName)
-              softwareVersionNum: $(Build.SourceBranchName)-$(Build.SourceVersion)
+              softwareName: $(ApiScanSoftwareName)
+              softwareVersionNum: $(ApiScanSoftwareVersion)
               toolVersion: Latest
             env:
               AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId);TenantId=$(ApiScanTenant);AppKey=$(ApiScanSecret)
