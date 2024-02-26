@@ -415,7 +415,7 @@ extends:
             displayName: Run APIScan
             inputs:
               softwareFolder: $(Agent.TempDirectory)
-              symbolsFolder: 'SRV*http://symweb;$(Build.StagingDirectory)\apiscan'
+              symbolsFolder: 'SRV*http://symweb;$(Agent.TempDirectory)'
               softwareName: $(ApiScanSoftwareName)
               softwareVersionNum: $(ApiScanSoftwareVersion)
               toolVersion: Latest
