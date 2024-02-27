@@ -31,7 +31,7 @@ variables:
 - name: ApiScanSoftwareName
   value: VS
 - name: ApiScanSoftwareVersion
-  value: 17
+  value: 17.10
 - name: DisablePipelineConfigDetector
   value: true
 - name: WindowsPoolImage1ESPT
@@ -406,16 +406,16 @@ extends:
               Contents: |
                 $(Build.SourcesDirectory)\nuget\**\?(*.dll|*.exe|*.pdb)
                 !$(Build.SourcesDirectory)\**\runtimes\win-arm64\native\libzipsharpnative*.dll
-              TargetFolder: $(Agent.TempDirectory)
+              TargetFolder: $(Agent.TempDirectory)\T
     
-          - powershell: Get-ChildItem -Path "$(Agent.TempDirectory)" -Recurse
+          - powershell: Get-ChildItem -Path "$(Agent.TempDirectory)\T" -Recurse
             displayName: List Files for APIScan
     
           - task: APIScan@2
             displayName: Run APIScan
             inputs:
-              softwareFolder: $(Agent.TempDirectory)
-              symbolsFolder: 'SRV*http://symweb;$(Agent.TempDirectory)'
+              softwareFolder: $(Agent.TempDirectory)\T
+              symbolsFolder: 'SRV*http://symweb;$(Agent.TempDirectory)\T'
               softwareName: $(ApiScanSoftwareName)
               softwareVersionNum: $(ApiScanSoftwareVersion)
               toolVersion: Latest
