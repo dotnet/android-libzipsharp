@@ -382,7 +382,10 @@ extends:
         jobs:
         - job: api_scan
           displayName: API Scan
-          pool: $(MicroBuildPoolName)
+          pool:
+            name: Maui-1ESPT
+            image: $(WindowsPoolImage1ESPT)
+            os: windows
           timeoutInMinutes: 360
           workspace:
             clean: all
