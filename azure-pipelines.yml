@@ -19,6 +19,8 @@ resources:
 parameters:
 - name: OneLocSourceBranch
   default: refs/heads/main
+- name: ApiScanSourceBranch
+  default: refs/heads/main
 - name: Skip1ESComplianceTasks
   default: false
 - name: SignArtifacts
@@ -26,12 +28,18 @@ parameters:
 
 variables:
 - group: Xamarin-Secrets
+- name: ApiScanSoftwareName
+  value: VS
+- name: ApiScanSoftwareVersion
+  value: 17.10
 - name: DisablePipelineConfigDetector
   value: true
 - name: WindowsPoolImage1ESPT
   value: 1ESPT-Windows2022
 - name: LinuxPoolImage1ESPT
   value: 1ESPT-Ubuntu22.04
+- name: MicroBuildPoolName
+  value: VSEngSS-MicroBuild2022-1ES
 
 extends:
   ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.Skip1ESComplianceTasks }}', 'true')) }}:
@@ -335,7 +343,7 @@ extends:
         jobs:
         - job: OneLocBuild
           displayName: OneLocBuild
-          pool: VSEngSS-MicroBuild2022-1ES
+          pool: $(MicroBuildPoolName)
           timeoutInMinutes: 30
           variables:
           - group: Xamarin-Secrets
@@ -368,3 +376,75 @@ extends:
               isShouldReusePrSelected: true
               isAutoCompletePrSelected: false
               isUseLfLineEndingsSelected: true
+
+      - stage: Compliance
+        displayName: Compliance
+        dependsOn: Build
+        condition: and(eq(dependencies.Build.result, 'Succeeded'), eq(variables['Build.SourceBranch'], '${{ parameters.ApiScanSourceBranch }}'))
+        jobs:
+        - job: api_scan
+          displayName: API Scan
+          pool:
+            name: Maui-1ESPT
+            image: $(WindowsPoolImage1ESPT)
+            os: windows
+          timeoutInMinutes: 360
+          workspace:
+            clean: all
+          steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: download nuget artifact
+            inputs:
+              artifactName: nuget
+              downloadPath: $(Build.StagingDirectory)
+              itemPattern: '*.nupkg'
+
+          - task: ExtractFiles@1
+            displayName: Extract nuget
+            inputs:
+              archiveFilePatterns: $(Build.StagingDirectory)\**\*.nupkg
+              destinationFolder: $(Build.SourcesDirectory)\nuget
+    
+          - task: CopyFiles@2
+            displayName: Collect Files for APIScan
+            inputs:
+              Contents: |
+                $(Build.SourcesDirectory)\nuget\**\?(*.dll|*.exe|*.pdb)
+                !$(Build.SourcesDirectory)\**\runtimes\win-arm64\native\libzipsharpnative*.dll
+              TargetFolder: $(Agent.TempDirectory)\T
+    
+          - powershell: Get-ChildItem -Path "$(Agent.TempDirectory)\T" -Recurse
+            displayName: List Files for APIScan
+    
+          - task: APIScan@2
+            displayName: Run APIScan
+            inputs:
+              softwareFolder: $(Agent.TempDirectory)\T
+              symbolsFolder: 'SRV*http://symweb;$(Agent.TempDirectory)\T'
+              softwareName: $(ApiScanSoftwareName)
+              softwareVersionNum: $(ApiScanSoftwareVersion)
+              toolVersion: Latest
+            env:
+              AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId);TenantId=$(ApiScanTenant);AppKey=$(ApiScanSecret)
+    
+          - task: SdtReport@2
+            displayName: Guardian Export - Security Report
+            inputs:
+              GdnExportAllTools: false
+              GdnExportGdnToolApiScan: true
+              GdnExportOutputSuppressionFile: apiscan.gdnsuppress
+    
+          - task: PublishSecurityAnalysisLogs@3
+            displayName: Publish Guardian Artifacts
+            inputs:
+              ArtifactName: APIScan Logs
+              ArtifactType: Container
+              AllTools: false
+              APIScan: true
+              ToolLogsNotFoundAction: Warning
+    
+          - task: PostAnalysis@2
+            displayName: Fail Build on Guardian Issues
+            inputs:
+              GdnBreakAllTools: false
+              GdnBreakGdnToolApiScan: true
