@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.18)
 #
 # TODO:
 #
-#  * Windows: use vcpkg to build bzip2 and lzma (vcpkg can be used as a cmake subproject)
+#  * Windows: use vcpkg to build bzip2 (vcpkg can be used as a cmake subproject)
 #  * Include portions of Mono.Posix native code (if necessary and when the new Mono.Posix is ready)
 #  * Add support Android builds
 #  * Add support for iOS/tvOS/macCatalyst builds
@@ -12,7 +12,6 @@ cmake_minimum_required(VERSION 3.18)
 
 option(BUILD_DEPENDENCIES "Build only libzip dependencies" OFF)
 option(BUILD_LIBZIP "Build libzip and libZipSharp" OFF)
-option(ENABLE_XZ "Enable XZ (LZMA compression) in the build" OFF)
 option(ENABLE_ZLIBNG "Use zlib-ng instead of zlib" OFF)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE True CACHE BOOL "Always build position independent code" FORCE)
@@ -22,7 +21,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE True CACHE BOOL "Always build position indep
 #
 
 #
-# libzip, zlib-ng, xz
+# libzip, zlib-ng
 #
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build only as a static library" FORCE)
 
@@ -47,10 +46,6 @@ set(ENABLE_OPENSSL OFF CACHE BOOL "Do not use OpenSSL for libzip" FORCE)
 set(ENABLE_MBEDTLS OFF CACHE BOOL "Do not use mbedtls for libzip" FORCE)
 set(ENABLE_WINDOWS_CRYPTO OFF CACHE BOOL "Do not use Windows Crypto" FORCE)
 set(ENABLE_ZSTD ON CACHE BOOL "Use zstd in libzip" FORCE)
-
-if(NOT ENABLE_XZ)
-  set(ENABLE_LZMA OFF CACHE BOOL "Do not use XZ for libzip" FORCE)
-endif()
 
 #
 # zstd
@@ -345,17 +340,6 @@ if(BUILD_DEPENDENCIES)
     "${ZLIB_EXTERN}"
     )
 
-if(NOT WIN32 AND ENABLE_XZ)
-  add_subdirectory(external/xz)
-
-  target_compile_options(
-    liblzma
-    PRIVATE
-    ${LZS_C_FLAGS}
-    -fvisibility=hidden
-    )
-endif()
-
   add_subdirectory(external/zstd/build/cmake)
   if(UNIX)
     set(ZSTD_EXTERN "-DZSTDLIB_VISIBILITY=__attribute__((visibility(\"hidden\")))")
@@ -426,14 +410,6 @@ else()
   set(ZLIB_ROOT "${ARTIFACTS_ROOT_DIR}" CACHE STRING "" FORCE)
   set(BZip2_ROOT "${ARTIFACTS_ROOT_DIR}" CACHE STRING "" FORCE)
 
-  if(ENABLE_XZ)
-    if(WIN32)
-      find_package(LibLZMA CONFIG REQUIRED)
-    else()
-      set(LibLZMA_ROOT "${ARTIFACTS_ROOT_DIR}" CACHE STRING "" FORCE)
-    endif()
-  endif()
-
   list(PREPEND CMAKE_PREFIX_PATH "${ARTIFACTS_ROOT_DIR}")
 
   if(WIN32)
@@ -499,11 +475,6 @@ else()
     LIBZIPSHARP_VERSION="${LZS_VERSION}"
     )
 
-  if(ENABLE_XZ)
-    message(STATUS "LZMA: ${LIBLZMA_INCLUDE_DIR}")
-  else()
-    message(STATUS "LZMA: DISABLED")
-  endif()
   message(STATUS "ZSTD: ${Zstd_INCLUDE_DIR}")
   message(STATUS "ZLIB: ${ZLIB_INCLUDE_DIR}")
   message(STATUS "BZ2: ${BZIP2_INCLUDE_DIR}")
@@ -516,20 +487,6 @@ else()
     ${Zstd_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/external/libzip
     )
-
-  if(ENABLE_XZ)
-    target_include_directories(
-      ${PROJECT_NAME}
-      PRIVATE
-      ${LIBLZMA_INCLUDE_DIR}
-      )
-
-    target_compile_definitions(
-      ${PROJECT_NAME}
-      PRIVATE
-      HAVE_XZ=1
-      )
-  endif()
 
   target_compile_options(
     ${PROJECT_NAME}
@@ -606,27 +563,15 @@ else()
     set(BZ2_PATH "${CMAKE_BINARY_DIR}/libbz2-fat.a")
     set(ZSTD_PATH "${CMAKE_BINARY_DIR}/libzstd-fat.a")
 
-    if(ENABLE_XZ)
-      set(LZMA_PATH "${CMAKE_BINARY_DIR}/liblzma-fat.a")
-    endif()
-
     make_fat_archive("${ARTIFACTS_ROOT_DIR}/lib/libz.a" "${ARTIFACTS_OTHER_ROOT_DIR}/lib/libz.a" "${ZLIB_PATH}")
     make_fat_archive("${ARTIFACTS_ROOT_DIR}/lib/libbz2.a" "${ARTIFACTS_OTHER_ROOT_DIR}/lib/libbz2.a" "${BZ2_PATH}")
     make_fat_archive("${ARTIFACTS_ROOT_DIR}/lib/libzstd.a" "${ARTIFACTS_OTHER_ROOT_DIR}/lib/libzstd.a" "${ZSTD_PATH}")
-
-    if(ENABLE_XZ)
-      make_fat_archive("${ARTIFACTS_ROOT_DIR}/lib/liblzma.a" "${ARTIFACTS_OTHER_ROOT_DIR}/lib/liblzma.a" "${LZMA_PATH}")
-    endif()
 
     set(LIBS
       ${ZLIB_PATH}
       ${BZ2_PATH}
       ${ZSTD_PATH}
       )
-
-    if(ENABLE_XZ)
-      list(APPEND LIBS ${LZMA_PATH})
-    endif()
   else()
     if(WIN32)
       if(ENABLE_ZLIBNG)
@@ -640,20 +585,12 @@ else()
         ${ARTIFACTS_ROOT_DIR}/lib/bz2.lib
         ${ARTIFACTS_ROOT_DIR}/lib/zstd.lib
         )
-
-      if(ENABLE_XZ)
-        list(APPEND LIBS LibLZMA::LibLZMA)
-      endif()
     else()
       set(LIBS
         ${ARTIFACTS_ROOT_DIR}/lib/libz.a
         ${ARTIFACTS_ROOT_DIR}/lib/libbz2.a
         ${ARTIFACTS_ROOT_DIR}/lib/libzstd.a
         )
-
-      if(ENABLE_XZ)
-        list(APPEND LIBS ${ARTIFACTS_ROOT_DIR}/lib/liblzma.a)
-      endif()
     endif()
   endif()
 

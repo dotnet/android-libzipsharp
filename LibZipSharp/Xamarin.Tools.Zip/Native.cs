@@ -47,7 +47,6 @@ namespace Xamarin.Tools.Zip
 			public string zlib;
 			public string zlibng;
 			public string zstd;
-			public string lzma;
 			public string libzipsharp;
 		};
 
@@ -149,7 +148,6 @@ namespace Xamarin.Tools.Zip
 				Zlib = ret.zlib ?? String.Empty,
 				ZlibNG = ret.zlibng ?? String.Empty,
 				ZStd = ret.zstd ?? String.Empty,
-				LZMA = ret.lzma ?? String.Empty,
 				LibZipSharp = ret.libzipsharp ?? String.Empty
 			};
 		}

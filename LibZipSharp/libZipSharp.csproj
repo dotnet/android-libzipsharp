@@ -59,7 +59,6 @@
         <None Include="..\LICENSE" PackagePath="Licences" Pack="true" />
         <None Include="$(_ExternalDir)\libzip\LICENSE" PackagePath="Licences\libzip" Pack="true" />
         <None Include="$(_ExternalDir)\bzip2\LICENSE" PackagePath="Licences\bzip2" Pack="true" />
-        <None Include="$(_ExternalDir)\xz\COPYING.LGPLv2.1" PackagePath="Licences\liblzma" Pack="true" />
         <None Include="$(_ExternalDir)\zlib-ng\LICENSE.md" PackagePath="Licences\zlib-ng" Pack="true" />
     </ItemGroup>
     <ItemGroup>

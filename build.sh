@@ -30,7 +30,6 @@ JOBS=""
 CONFIGURATION="RelWithDebInfo"
 REBUILD="no"
 VERBOSE="no"
-USE_XZ="no"
 USE_ZLIBNG="no"
 
 # The color block is pilfered from the dotnet installer script
@@ -79,7 +78,6 @@ where OPTIONS are one or more of:
   -n|--ninja PATH            use ninja at PATH instead of the default of '${NINJA}'
   -m|--cmake PATH            use cmake at PATH instead of the default of '${CMAKE}'
 
-  -x|--xz                    use the XZ library for LZMA support (default: ${USE_XZ})
   -g|--zlib-ng               use the zlib-ng library instead of zlib (default: ${USE_ZLIBNG}
   -c|--configuration NAME    build using configuration NAME instead of the default of '${CONFIGURATION}'
   -j|--jobs NUM              run at most this many build jobs in parallel
@@ -124,16 +122,11 @@ function cmake_configure()
     fi
     shift
 
-    local use_xz
-    if [ "${USE_XZ}" == "yes" ]; then
-        use_xz="-DENABLE_XZ=ON"
-    fi
-
     run_cmake_common \
         -B "${build_dir}" \
         -S "${MY_DIR}" \
         -G "${GENERATOR}" \
-        -DCMAKE_BUILD_TYPE="${CONFIGURATION}" ${use_xz} \
+        -DCMAKE_BUILD_TYPE="${CONFIGURATION}" \
         "$@"
 }
 
@@ -234,11 +227,6 @@ while (( "$#" )); do
                 missing_argument "$1"
             fi
             ;;
-
-        -x|--xz)
-			USE_XZ="yes"
-			GENERATOR="Unix Makefiles"
-			shift ;;
 
 		-g|--zlib-ng) USE_ZLIBNG="yes"; shift ;;
 
@@ -347,7 +335,3 @@ cmake_configure "${LZS_BUILD_DIR}" -DBUILD_LIBZIP=ON "-DARTIFACTS_ROOT_DIR=${ART
 
 print_banner "Building libZipSharpNative"
 cmake_build "${LZS_BUILD_DIR}"
-
-if [ "${USE_XZ}" == "yes" ]; then
-    echo "${BRIGHT_BLUE}DON'T FORGET TO BUILD THE MANAGED CODE WITH THE /p:UseXZ=True OPTION!${NORMAL}"
-fi
