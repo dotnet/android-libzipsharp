@@ -10,7 +10,6 @@ struct LZSVersions
 	const char *zlib;
 	const char *zlibng;
 	const char *zstd;
-	const char *lzma;
 	const char *libzipsharp;
 };
 

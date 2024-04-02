@@ -9,7 +9,6 @@
     <LibZipSharpBundleAllNativeLibraries>true</LibZipSharpBundleAllNativeLibraries>
     <ReferenceNuget Condition="'$(ReferenceNuget)' == ''">False</ReferenceNuget>
     <DefineConstants Condition="'$(OS)' == 'Windows_NT'">$(DefineConstants);WINDOWS</DefineConstants>
-    <DefineConstants Condition=" '$(UseXZ)' == 'True' ">$(DefineConstants);HAVE_XZ</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
