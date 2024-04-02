@@ -43,9 +43,6 @@ popd
 external\vcpkg\vcpkg.exe integrate install
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-external\vcpkg\vcpkg.exe install liblzma:x64-windows-static liblzma:x86-windows-static liblzma:arm-windows-static
-if %errorlevel% neq 0 exit /b %errorlevel%
-
 REM 64-bit deps
 mkdir "%DEPS_BUILD_DIR_ROOT_64%"
 cmake %COMMON_CMAKE_PARAMS% ^

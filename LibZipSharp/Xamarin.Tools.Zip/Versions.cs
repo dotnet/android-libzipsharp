@@ -22,10 +22,6 @@ namespace Xamarin.Tools.Zip
 			get; internal set;
 		}
 
-		public string LZMA {
-			get; internal set;
-		}
-
 		public string LibZipSharp {
 			get; internal set;
 		}
