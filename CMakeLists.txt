@@ -409,6 +409,7 @@ else()
 
   set(ZLIB_ROOT "${ARTIFACTS_ROOT_DIR}" CACHE STRING "" FORCE)
   set(BZip2_ROOT "${ARTIFACTS_ROOT_DIR}" CACHE STRING "" FORCE)
+  set(ENABLE_LZMA False CACHE BOOL "Disable lzma support, even if detected" FORCE)
 
   list(PREPEND CMAKE_PREFIX_PATH "${ARTIFACTS_ROOT_DIR}")
 
