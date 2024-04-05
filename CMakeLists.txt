@@ -321,6 +321,7 @@ if(BUILD_DEPENDENCIES)
   if(ENABLE_ZLIBNG)
     add_subdirectory(external/zlib-ng)
   else()
+    set(ZLIB_BUILD_EXAMPLES False CACHE BOOL "Don't build zlib examples")
     add_subdirectory(external/zlib)
   endif()
 
@@ -628,8 +629,8 @@ else()
       WORKING_DIRECTORY "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
       COMMAND rm lib${PROJECT_NAME}-${LT_RELEASE}.so
       COMMAND rm lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_RELEASE}
-      COMMAND ln lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION} lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION_SHORT}
-      COMMAND ln lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION} lib${PROJECT_NAME}-${LT_RELEASE}.so
+      COMMAND ln -f lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION} lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION_SHORT}
+      COMMAND ln -f lib${PROJECT_NAME}-${LT_RELEASE}.so.${LT_VERSION} lib${PROJECT_NAME}-${LT_RELEASE}.so
     )
   endif()
 endif()

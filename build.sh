@@ -251,14 +251,6 @@ if [ -z "${NINJA}" ]; then
     die ninja binary must be specified
 fi
 
-if [ "${USE_ZLIBNG}" == "no" ]; then
-	ZLIB_CMAKELISTS_PATH="${ZLIB_DIR}/CMakeLists.txt"
-	if ! $(grep 'lzs: disable-examples' "${ZLIB_CMAKELISTS_PATH}" > /dev/null 2>&1); then
-		print_banner Applying zlib patch
-		$(cd "${ZLIB_DIR}"; git apply "${MY_DIR}/zlib-changes.patch")
-	fi
-fi
-
 if [ "${REBUILD}" == "yes" ]; then
     rm -rf "${BUILD_DIR_ROOT}"
     rm -rf "${ARTIFACTS_DIR_ROOT}"
