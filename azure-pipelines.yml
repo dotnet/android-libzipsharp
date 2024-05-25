@@ -343,7 +343,10 @@ extends:
         jobs:
         - job: OneLocBuild
           displayName: OneLocBuild
-          pool: $(MicroBuildPoolName)
+          pool:
+            name: AzurePipelines-EO
+            demands:
+            - ImageOverride -equals 1ESPT-Windows2022
           timeoutInMinutes: 30
           variables:
           - group: Xamarin-Secrets
