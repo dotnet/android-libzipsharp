@@ -345,7 +345,7 @@ namespace Tests {
 				}
 
 				stream.Position = 0;
-				using (var zip = ZipArchive.Open (stream)) {
+				using (var zip = ZipArchive.Open (stream, strictConsistencyChecks: true)) {
 					Assert.AreEqual (3, zip.EntryCount);
 					foreach (var e in zip) {
 						Console.WriteLine (e.FullName);
@@ -354,7 +354,7 @@ namespace Tests {
 				}
 
 				stream.Position = 0;
-				using (var zip = ZipArchive.Open (stream)) {
+				using (var zip = ZipArchive.Open (stream, strictConsistencyChecks: true)) {
 					Assert.AreEqual (2, zip.EntryCount);
 					zip.AddEntry ("info.json", File.ReadAllText (filePath), Encoding.UTF8, CompressionMethod.Deflate);
 				}
@@ -373,6 +373,40 @@ namespace Tests {
 						}
 
 					}
+				}
+			}
+		}
+
+		[Test]
+		public void EnumerateOnEmptyThenAddFiles ()
+		{
+			File.WriteAllText ("file1.txt", TEXT);
+			File.WriteAllText ("file2.txt", TEXT);
+			string filePath = Path.GetFullPath ("file1.txt");
+			if (File.Exists ("enumerateonempty.zip"))
+				File.Delete ("enumerateonempty.zip");
+
+			
+			using (var stream = File.Create ("test-archive-write.zip"))
+			using (var zip = ZipArchive.Create (stream)) {
+				foreach (var entry in zip) {
+					Console.Write (entry.FullName);
+				}
+				ZipEntry e;
+				e = zip.AddFile (filePath, "/path/ZipTestCopy1.exe");
+				filePath = Path.GetFullPath ("file2.txt");
+				e = zip.AddFile (filePath, "/path/ZipTestCopy2.exe");
+
+				foreach (var entry in zip) {
+					Console.Write (entry.FullName);
+				}
+
+				zip.Close ();
+			}
+
+			using (var zip = ZipArchive.Open ("test-archive-write.zip", FileMode.Open, strictConsistencyChecks: true)) {
+				foreach (var entry in zip) {
+					Console.Write (entry.FullName);
 				}
 			}
 		}

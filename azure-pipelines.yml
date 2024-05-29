@@ -105,6 +105,11 @@ extends:
                 archiveType: 7z
                 replaceExistingArchive: true
                 archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-arm-x64.7z
+            - script: |
+                7z t $(Build.ArtifactStagingDirectory)\libzip-windows-arm-x64.7z
+                7z t $(Build.ArtifactStagingDirectory)\libzip-windows-x64.7z
+                7z t $(Build.ArtifactStagingDirectory)\libzip-windows-x86.7z
+              displayName: Test Archives
 
         - job: buildLinux
           pool:

@@ -6,7 +6,7 @@
         {
             "label": "Build LibZipSharp",
             "type": "shell",
-            "command": "msbuild LibZipSharp/libZipSharp.csproj /restore /t:Build",
+            "command": "dotnet build LibZipSharp/libZipSharp.csproj -t:Build",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -18,7 +18,7 @@
         {
             "label": "Pack LibZipSharp Nuget",
             "type": "shell",
-            "command": "msbuild LibZipSharp/libZipSharp.csproj /t:Pack",
+            "command": "dotnet pack LibZipSharp/libZipSharp.csproj",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -30,7 +30,7 @@
         {
             "label": "Clean LibZipSharp",
             "type": "shell",
-            "command": "msbuild LibZipSharp/libZipSharp.csproj /restore /t:Clean",
+            "command": "dotnet build LibZipSharp/libZipSharp.csproj -t:Clean",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -42,7 +42,7 @@
         {
             "label": "Build LibZipSharp Unit Tests",
             "type": "shell",
-            "command": "msbuild LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj /restore /t:Build /p:ReferenceNuget=False",
+            "command": "dotnet build LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj -t:Build -p:ReferenceNuget=False",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -51,17 +51,5 @@
                 "$msCompile"
             ]
         },
-        {
-            "label": "Run LibZipSharp Unit Tests",
-            "type": "shell",
-            "command": "msbuild LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj /restore /t:RunNunitTests /p:ReferenceNuget=False",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
-            "problemMatcher": [
-                "$msCompile"
-            ]
-        }
     ]
 }
