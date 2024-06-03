@@ -196,7 +196,7 @@ namespace Xamarin.Tools.Zip
 		/// </summary>
 		/// <param name="stream">The stream to open</param>
 		/// <param name="options">Platform-specific options</param>
-		/// <param name="strictConsistencyChecks"></param>
+		/// <param name="strictConsistencyChecks">Perform strict consistency checks.</param>
 		public static ZipArchive Open (Stream stream, IPlatformOptions options = null, bool strictConsistencyChecks = false)
 		{
 			OpenFlags flags = OpenFlags.None;
@@ -210,6 +210,7 @@ namespace Xamarin.Tools.Zip
 		/// </summary>
 		/// <param name="stream">The stream to create the arhive in</param>
 		/// <param name="options">Platform-specific options</param>
+		/// <param name="strictConsistencyChecks">Perform strict consistency checks.</param>
 		public static ZipArchive Create (Stream stream, IPlatformOptions options = null, bool strictConsistencyChecks = false)
 		{
 			OpenFlags flags = OpenFlags.Create | OpenFlags.Truncate;

@@ -4,7 +4,7 @@
     <PropertyGroup>
         <AssemblyName>libZipSharp</AssemblyName>
         <AssemblyTitle>libZipSharp</AssemblyTitle>
-        <TargetFrameworks>net7.0;netstandard2.0;net45;netcoreapp3.1</TargetFrameworks>
+        <TargetFrameworks>$(_DotNetTargetFramework);netstandard2.0;net45;netcoreapp3.1</TargetFrameworks>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <RootNamespace>Xamarin.Tools.Zip</RootNamespace>
@@ -46,7 +46,7 @@
     <Import Project="libZipSharp.targets" />
 
     <ItemGroup>
-        <None Include="$(IntermediateOutputPath)/net7.0/$(XamarinLibZipSharpTargetsName)" PackagePath="build" Pack="true" />
+        <None Include="$(IntermediateOutputPath)/$(_DotNetTargetFramework)/$(XamarinLibZipSharpTargetsName)" PackagePath="build" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\Darwin\$(_NativeLibraryBaseName).dylib" PackagePath="runtimes\osx\native\$(_NativeLibraryBaseName).dylib" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\win64\$(_NativeLibraryBaseName).dll" PackagePath="runtimes\win-x64\native\$(_NativeLibraryBaseName).dll" Pack="true" />
         <None Include="$(_NativeBuildDir)\lib\win64\$(_NativeLibraryBaseName).pdb" PackagePath="runtimes\win-x64\native\$(_NativeLibraryBaseName).pdb" Pack="true" />
