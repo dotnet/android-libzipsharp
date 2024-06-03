@@ -28,6 +28,7 @@ using System;
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -195,9 +196,13 @@ namespace Xamarin.Tools.Zip
 		/// </summary>
 		/// <param name="stream">The stream to open</param>
 		/// <param name="options">Platform-specific options</param>
-		public static ZipArchive Open (Stream stream, IPlatformOptions options = null)
+		/// <param name="strictConsistencyChecks"></param>
+		public static ZipArchive Open (Stream stream, IPlatformOptions options = null, bool strictConsistencyChecks = false)
 		{
-			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.None, options);
+			OpenFlags flags = OpenFlags.None;
+			if (strictConsistencyChecks)
+				flags |= OpenFlags.CheckCons;
+			return ZipArchive.CreateInstanceFromStream (stream, flags, options);
 		}
 
 		/// <summary>
@@ -205,9 +210,12 @@ namespace Xamarin.Tools.Zip
 		/// </summary>
 		/// <param name="stream">The stream to create the arhive in</param>
 		/// <param name="options">Platform-specific options</param>
-		public static ZipArchive Create (Stream stream, IPlatformOptions options = null)
+		public static ZipArchive Create (Stream stream, IPlatformOptions options = null, bool strictConsistencyChecks = false)
 		{
-			return ZipArchive.CreateInstanceFromStream (stream, OpenFlags.Create | OpenFlags.Truncate, options);
+			OpenFlags flags = OpenFlags.Create | OpenFlags.Truncate;
+			if (strictConsistencyChecks)
+				flags |= OpenFlags.CheckCons;
+			return ZipArchive.CreateInstanceFromStream (stream, flags, options);
 		}
 
 		/// <summary>
@@ -788,6 +796,7 @@ namespace Xamarin.Tools.Zip
 		internal static unsafe Int64 stream_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd)
 		{
 			byte [] buffer = null;
+			Native.zip_error_t error;
 			int length = (int)len;
 			var handle = GCHandle.FromIntPtr (state);
 			if (!handle.IsAllocated)
@@ -833,22 +842,18 @@ namespace Xamarin.Tools.Zip
 						return -1;
 					}
 
-					long firstOffset, secondOffset;
+					SeekOrigin seek = Native.ConvertWhence (args.whence);
 					if (args.offset > Int64.MaxValue) {
 						// Stream.Seek uses a signed 64-bit value for the offset, we need to split it up
-						firstOffset = Int64.MaxValue;
-						secondOffset = (long)(args.offset - Int64.MaxValue);
+						if (!Seek (destination, seek, Int64.MaxValue) || !Seek (destination, seek, (long)(args.offset - Int64.MaxValue))) {
+							return -1;
+						}
 					} else {
-						firstOffset = (long)args.offset;
-						secondOffset = 0;
+						if (!Seek (destination, seek, (long)args.offset)) {
+							return -1;
+						}
 					}
-
-					SeekOrigin seek = Native.ConvertWhence (args.whence);
-					Native.zip_error_t error;
-
-					if (!SeekIfNeeded (destination, seek, firstOffset) || !SeekIfNeeded (destination, seek, secondOffset)) {
-						return -1;
-					}
+					
 					break;
 
 				case SourceCommand.Seek:
@@ -856,7 +861,7 @@ namespace Xamarin.Tools.Zip
 					if (offset < 0) {
 						return offset;
 					}
-					if (offset != stream.Seek (offset, SeekOrigin.Begin)) {
+					if (!Seek (stream, SeekOrigin.Begin, offset)) {
 						return -1;
 					}
 					break;
@@ -962,12 +967,8 @@ namespace Xamarin.Tools.Zip
 
 			return 0;
 
-			bool SeekIfNeeded (Stream s, SeekOrigin origin, long offset)
+			bool Seek (Stream s, SeekOrigin origin, long offset)
 			{
-				if (offset == 0) {
-					return true;
-				}
-
 				return s.Seek (offset, origin) == offset;
 			}
 		}
