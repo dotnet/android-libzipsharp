@@ -6,6 +6,7 @@
     <_LibZipSharpAssemblyVersion>$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch)</_LibZipSharpAssemblyVersion>
     <_NativeLibraryVersionForName>$(_LibZipSharpAssemblyVersionMajor)-$(_LibZipSharpAssemblyVersionMinor)</_NativeLibraryVersionForName>
     <_NativeLibraryBaseName>libZipSharpNative-$(_NativeLibraryVersionForName)</_NativeLibraryBaseName>
+    <_DotNetTargetFramework>net7.0</_DotNetTargetFramework>
 
     <!--
       Nuget Version. You can append things like -alpha-1 etc to this value.
