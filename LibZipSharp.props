@@ -1,8 +1,8 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <_LibZipSharpAssemblyVersionMajor>3</_LibZipSharpAssemblyVersionMajor>
-    <_LibZipSharpAssemblyVersionMinor>2</_LibZipSharpAssemblyVersionMinor>
-    <_LibZipSharpAssemblyVersionPatch>1</_LibZipSharpAssemblyVersionPatch>
+    <_LibZipSharpAssemblyVersionMinor>3</_LibZipSharpAssemblyVersionMinor>
+    <_LibZipSharpAssemblyVersionPatch>0</_LibZipSharpAssemblyVersionPatch>
     <_LibZipSharpAssemblyVersion>$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch)</_LibZipSharpAssemblyVersion>
     <_NativeLibraryVersionForName>$(_LibZipSharpAssemblyVersionMajor)-$(_LibZipSharpAssemblyVersionMinor)</_NativeLibraryVersionForName>
     <_NativeLibraryBaseName>libZipSharpNative-$(_NativeLibraryVersionForName)</_NativeLibraryBaseName>
