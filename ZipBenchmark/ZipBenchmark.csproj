@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(MSBuildThisFileDirectory)..\LibZipSharp.props" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(OS)' == 'Unix'">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Unix'">
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="$(_NativeBuildDir)\win32\RelWithDebInfo\$(_NativeLibraryBaseName).dll" Condition=" Exists ('$(_NativeBuildDir)\win32\RelWithDebInfo\$(_NativeLibraryBaseName).dll') ">
+      <Link>$(_NativeLibraryBaseName).dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(_NativeBuildDir)\win64\RelWithDebInfo\$(_NativeLibraryBaseName).dll" Condition=" Exists ('$(_NativeBuildDir)\win64\RelWithDebInfo\$(_NativeLibraryBaseName).dll') ">
+      <Link>x64\$(_NativeLibraryBaseName).dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(_NativeBuildDir)\lib\Darwin\$(_NativeLibraryBaseName).dylib" Condition="Exists ('$(_NativeBuildDir)\lib\Darwin\$(_NativeLibraryBaseName).dylib')">
+      <Link>$(_NativeLibraryBaseName).dylib</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(_NativeBuildDir)\lib\Linux\$(_NativeLibraryBaseName).so" Condition="Exists ('$(_NativeBuildDir)\lib\Linux\$(_NativeLibraryBaseName).so')">
+      <Link>$(_NativeLibraryBaseName).so</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+    <PackageReference Include="Mono.Unix" Version="$(_MonoPosixNugetVersion)" />
+    <ProjectReference Include="..\LibZipSharp\libZipSharp.csproj">
+      <Project>{E248B2CA-303B-4645-ADDC-9D4459D550FD}</Project>
+      <Name>libZipSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

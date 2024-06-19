@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.18)
 
 option(BUILD_DEPENDENCIES "Build only libzip dependencies" OFF)
 option(BUILD_LIBZIP "Build libzip and libZipSharp" OFF)
-option(ENABLE_ZLIBNG "Use zlib-ng instead of zlib" OFF)
+option(ENABLE_ZLIBNG "Use zlib-ng instead of zlib" ON)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE True CACHE BOOL "Always build position independent code" FORCE)
 
@@ -320,22 +320,24 @@ set(LZS_CXX_LINKER_FLAGS "${_CHECKED_FLAGS}")
 if(BUILD_DEPENDENCIES)
   if(ENABLE_ZLIBNG)
     add_subdirectory(external/zlib-ng)
+    set(ZLIB_STATIC_TARGET_NAME "zlib")
   else()
     set(ZLIB_BUILD_EXAMPLES False CACHE BOOL "Don't build zlib examples")
     add_subdirectory(external/zlib)
+    set(ZLIB_STATIC_TARGET_NAME "zlibstatic")
   endif()
 
   if(UNIX)
     set(ZLIB_EXTERN "-DZEXTERN=__attribute__((visibility(\"hidden\")))")
     target_compile_options(
-      zlibstatic
+      ${ZLIB_STATIC_TARGET_NAME}
       PRIVATE
       -fvisibility=hidden
       )
   endif()
 
   target_compile_options(
-    zlibstatic
+    ${ZLIB_STATIC_TARGET_NAME}
     PRIVATE
     ${LZS_C_FLAGS}
     "${ZLIB_EXTERN}"
