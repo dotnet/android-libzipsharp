@@ -30,7 +30,7 @@ JOBS=""
 CONFIGURATION="RelWithDebInfo"
 REBUILD="no"
 VERBOSE="no"
-USE_ZLIBNG="no"
+USE_ZLIBNG="yes"
 
 # The color block is pilfered from the dotnet installer script
 #
@@ -260,8 +260,14 @@ if [ "${OS}" == "Darwin" ]; then
     get_osx_supported_architectures
 fi
 
+if [ "${USE_ZLIBNG}" != "no" ]; then
+	ENABLE_ZLIBNG="ON"
+else
+    ENABLE_ZLIBNG="OFF"
+fi
+
 if [ "${OS}" == "Darwin" ]; then
-	MAKE="gmake"
+    MAKE="gmake"
     X86_NATIVE="no"
     X86_BUILD_DIR=""
     X86_ARTIFACTS_DIR=""
@@ -290,7 +296,12 @@ if [ "${OS}" == "Darwin" ]; then
 
     if [ -n "${OSX_SUPPORTS_ARM64}" ]; then
         print_banner "Configuring dependency libraries for ${OSX_SUPPORTS_ARM64}"
-        cmake_configure "${ARM64_BUILD_DIR}" -DBUILD_DEPENDENCIES=ON -DCMAKE_OSX_ARCHITECTURES=${OSX_SUPPORTS_ARM64} "-DARTIFACTS_ROOT_DIR=${ARM64_ARTIFACTS_DIR}" "-DCMAKE_INSTALL_PREFIX=${ARM64_ARTIFACTS_DIR}"
+        cmake_configure "${ARM64_BUILD_DIR}" \
+                        -DBUILD_DEPENDENCIES=ON \
+                        -DCMAKE_OSX_ARCHITECTURES=${OSX_SUPPORTS_ARM64} \
+                        "-DARTIFACTS_ROOT_DIR=${ARM64_ARTIFACTS_DIR}" \
+                        "-DCMAKE_INSTALL_PREFIX=${ARM64_ARTIFACTS_DIR}" \
+                        -DENABLE_ZLIBNG=${ENABLE_ZLIBNG}
 
         print_banner "Configuring dependency libraries for ${OSX_SUPPORTS_ARM64}"
         cmake_build "${ARM64_BUILD_DIR}"
@@ -301,7 +312,12 @@ if [ "${OS}" == "Darwin" ]; then
 
     if [ -n "${OSX_SUPPORTS_X86_64}" ]; then
         print_banner "Configuring dependency libraries for ${OSX_SUPPORTS_X86_64}"
-        cmake_configure "${X86_BUILD_DIR}" -DBUILD_DEPENDENCIES=ON -DCMAKE_OSX_ARCHITECTURES=${OSX_SUPPORTS_X86_64} "-DARTIFACTS_ROOT_DIR=${X86_ARTIFACTS_DIR}" "-DCMAKE_INSTALL_PREFIX=${X86_ARTIFACTS_DIR}"
+        cmake_configure "${X86_BUILD_DIR}" \
+                        -DBUILD_DEPENDENCIES=ON \
+                        -DCMAKE_OSX_ARCHITECTURES=${OSX_SUPPORTS_X86_64} \
+                        "-DARTIFACTS_ROOT_DIR=${X86_ARTIFACTS_DIR}" \
+                        "-DCMAKE_INSTALL_PREFIX=${X86_ARTIFACTS_DIR}" \
+                        -DENABLE_ZLIBNG=${ENABLE_ZLIBNG}
 
         print_banner "Configuring dependency libraries for ${OSX_SUPPORTS_X86_64}"
         cmake_build "${X86_BUILD_DIR}"
@@ -310,10 +326,14 @@ if [ "${OS}" == "Darwin" ]; then
         cmake_install "${X86_BUILD_DIR}"
     fi
 else
-	MAKE="make"
+    MAKE="make"
 
     print_banner "Configuring dependency libraries"
-    cmake_configure "${DEPS_BUILD_DIR}" -DBUILD_DEPENDENCIES=ON "-DARTIFACTS_ROOT_DIR=${ARTIFACTS_DIR_ROOT}" "-DCMAKE_INSTALL_PREFIX=${ARTIFACTS_DIR_ROOT}"
+    cmake_configure "${DEPS_BUILD_DIR}" \
+                    -DBUILD_DEPENDENCIES=ON \
+                    "-DARTIFACTS_ROOT_DIR=${ARTIFACTS_DIR_ROOT}" \
+                    "-DCMAKE_INSTALL_PREFIX=${ARTIFACTS_DIR_ROOT}" \
+                    -DENABLE_ZLIBNG=${ENABLE_ZLIBNG}
 
     print_banner "Building dependency libraries"
     cmake_build "${DEPS_BUILD_DIR}"
@@ -323,7 +343,11 @@ else
 fi
 
 print_banner "Configuring libZipSharpNative"
-cmake_configure "${LZS_BUILD_DIR}" -DBUILD_LIBZIP=ON "-DARTIFACTS_ROOT_DIR=${ARTIFACTS_DIR_ROOT}" "-DARTIFACTS_OTHER_ROOT_DIR=${ARTIFACTS_OTHER_DIR_ROOT}"
+cmake_configure "${LZS_BUILD_DIR}" \
+                -DBUILD_LIBZIP=ON \
+                "-DARTIFACTS_ROOT_DIR=${ARTIFACTS_DIR_ROOT}" \
+                "-DARTIFACTS_OTHER_ROOT_DIR=${ARTIFACTS_OTHER_DIR_ROOT}" \
+                -DENABLE_ZLIBNG=${ENABLE_ZLIBNG}
 
 print_banner "Building libZipSharpNative"
 cmake_build "${LZS_BUILD_DIR}"
