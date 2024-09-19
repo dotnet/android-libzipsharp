@@ -202,5 +202,20 @@ namespace Xamarin.Tools.Zip
 		/// Operation cancelled
 		/// </summary>
 		Cancelled      = 32,
+
+		/// <summary>
+		/// Unexpected length of data
+		/// </summary>
+		DataLength     =  33,
+
+		/// <summary>
+		/// Not allowed in torrentzip
+		/// </summary>
+		NotAllowed     = 34,
+
+		/// <summary>
+		/// Possibly truncated or corrupted zip archive
+		/// </summary>
+		TruncatedZip   =  35,
 	}
 }
