@@ -2,7 +2,7 @@
   <PropertyGroup>
     <_LibZipSharpAssemblyVersionMajor>3</_LibZipSharpAssemblyVersionMajor>
     <_LibZipSharpAssemblyVersionMinor>5</_LibZipSharpAssemblyVersionMinor>
-    <_LibZipSharpAssemblyVersionPatch>0</_LibZipSharpAssemblyVersionPatch>
+    <_LibZipSharpAssemblyVersionPatch>1</_LibZipSharpAssemblyVersionPatch>
     <_LibZipSharpAssemblyVersion>$(_LibZipSharpAssemblyVersionMajor).$(_LibZipSharpAssemblyVersionMinor).$(_LibZipSharpAssemblyVersionPatch)</_LibZipSharpAssemblyVersion>
     <_NativeLibraryVersionForName>$(_LibZipSharpAssemblyVersionMajor)-$(_LibZipSharpAssemblyVersionMinor)</_NativeLibraryVersionForName>
     <_NativeLibraryBaseName>libZipSharpNative-$(_NativeLibraryVersionForName)</_NativeLibraryBaseName>
