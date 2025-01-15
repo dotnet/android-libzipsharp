@@ -145,7 +145,7 @@ extends:
             - buildWindows
           pool:
             name: Azure Pipelines
-            vmImage: macOS-12
+            vmImage: macOS-14
             os: macOS
           templateContext:
             outputs:
@@ -271,7 +271,7 @@ extends:
           displayName: 'Test MacOS'
           pool:
             name: Azure Pipelines
-            vmImage: macOS-12
+            vmImage: macOS-14
             os: macOS
           steps:
             - template: yaml-templates/use-dot-net.yaml@self
