@@ -16,6 +16,12 @@
         <DelaySign>false</DelaySign>
         <AssemblyOriginatorKeyFile>product.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DefineConstants>$(DefineConstants);RELEASE;TRACE</DefineConstants>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>portable</DebugType>
+        <Optimize>true</Optimize>
+    </PropertyGroup>
     <PropertyGroup>
         <!-- Assembly Info -->
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
