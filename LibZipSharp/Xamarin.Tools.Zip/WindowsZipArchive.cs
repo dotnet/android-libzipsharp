@@ -44,7 +44,7 @@ namespace Xamarin.Tools.Zip
 		{
 		}
 
-		internal WindowsZipArchive (Stream stream, WindowsPlatformOptions options, OpenFlags flags) : base (stream, options, flags)
+		internal WindowsZipArchive (Stream stream, WindowsPlatformOptions options, OpenFlags flags, bool useTempFile) : base (stream, options, flags, useTempFile)
 		{
 		}
 

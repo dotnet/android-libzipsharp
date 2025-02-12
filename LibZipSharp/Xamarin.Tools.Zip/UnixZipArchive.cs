@@ -44,7 +44,7 @@ namespace Xamarin.Tools.Zip
 		{
 		}
 
-		internal UnixZipArchive (Stream stream, UnixPlatformOptions options, OpenFlags flags) : base (stream, options, flags)
+		internal UnixZipArchive (Stream stream, UnixPlatformOptions options, OpenFlags flags, bool useTempFile) : base (stream, options, flags, useTempFile)
 		{
 		}
 

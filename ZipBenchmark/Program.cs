@@ -44,14 +44,19 @@ class App
 {
 	public static int Main (string [] args)
         {
-		if (args.Length == 0) {
-			Console.WriteLine ($"Usage: ZipBenchmark path/to/a/large/file/to/compress");
-			Console.WriteLine ();
-			return 1;
-		}
+		// if (args.Length == 0) {
+		// 	Console.WriteLine ($"Usage: ZipBenchmark path/to/a/large/file/to/compress");
+		// 	Console.WriteLine ();
+		// 	return 1;
+		// }
 
-		LargeFileCompression.InputFilePath = args[0];
-		var summary = BenchmarkRunner.Run<LargeFileCompression> ();
+		// LargeFileCompression.InputFilePath = args[0];
+		var summary = BenchmarkRunner.Run<Performance> ();
+		// Console.WriteLine ("Running...");
+		// Console.ReadLine ();
+		// var p = new Performance ();
+		// p.Setup ();
+		// p.LibZipSharpCreateZip ();
 		return 0;
 	}
 }

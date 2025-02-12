@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Mime;
 using System.Runtime.InteropServices;
 using System.Text;
 using Xamarin.Tools.Zip.Properties;
@@ -42,9 +43,10 @@ namespace Xamarin.Tools.Zip
 	public abstract partial class ZipArchive : IDisposable, IEnumerable <ZipEntry>
 	{
 		internal class CallbackContext {
-			public Stream Source { get; set; } = null;
-			public Stream Destination {get; set;} = null;
-			public string DestinationFileName {get; set; } = null;
+			public Stream Source = null;
+			public Stream Destination = null;
+			public string DestinationFileName = null;
+			public bool UseTempFile = true;
 		}
 		public const EntryPermissions DefaultFilePermissions = EntryPermissions.OwnerRead | EntryPermissions.OwnerWrite | EntryPermissions.GroupRead | EntryPermissions.WorldRead;
 		public const EntryPermissions DefaultDirectoryPermissions = EntryPermissions.OwnerAll | EntryPermissions.GroupRead | EntryPermissions.GroupExecute |  EntryPermissions.WorldRead | EntryPermissions.WorldExecute;
@@ -106,7 +108,7 @@ namespace Xamarin.Tools.Zip
 			Options = options;
 		}
 
-		internal ZipArchive (Stream stream, IPlatformOptions options, OpenFlags flags = OpenFlags.RDOnly)
+		internal ZipArchive (Stream stream, IPlatformOptions options, OpenFlags flags = OpenFlags.RDOnly, bool useTempFile = true)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -115,6 +117,7 @@ namespace Xamarin.Tools.Zip
 			CallbackContext context = new CallbackContext () {
 				Source = stream,
 				Destination = null,
+				UseTempFile = useTempFile,
 			};
 			var contextHandle = GCHandle.Alloc (context, GCHandleType.Normal);
 			IntPtr source = Native.zip_source_function_create (callback, GCHandle.ToIntPtr (contextHandle), out errorp);
@@ -197,12 +200,13 @@ namespace Xamarin.Tools.Zip
 		/// <param name="stream">The stream to open</param>
 		/// <param name="options">Platform-specific options</param>
 		/// <param name="strictConsistencyChecks">Perform strict consistency checks.</param>
-		public static ZipArchive Open (Stream stream, IPlatformOptions options = null, bool strictConsistencyChecks = false)
+		/// <param name="useTempFile">Use a temporary file for the archive</param>
+		public static ZipArchive Open (Stream stream, IPlatformOptions options = null, bool strictConsistencyChecks = false, bool useTempFile = true)
 		{
 			OpenFlags flags = OpenFlags.None;
 			if (strictConsistencyChecks)
 				flags |= OpenFlags.CheckCons;
-			return ZipArchive.CreateInstanceFromStream (stream, flags, options);
+			return ZipArchive.CreateInstanceFromStream (stream, flags, options, useTempFile);
 		}
 
 		/// <summary>
@@ -211,12 +215,13 @@ namespace Xamarin.Tools.Zip
 		/// <param name="stream">The stream to create the arhive in</param>
 		/// <param name="options">Platform-specific options</param>
 		/// <param name="strictConsistencyChecks">Perform strict consistency checks.</param>
-		public static ZipArchive Create (Stream stream, IPlatformOptions options = null, bool strictConsistencyChecks = false)
+		/// <param name="useTempFile">Use a temporary file for the archive</param>
+		public static ZipArchive Create (Stream stream, IPlatformOptions options = null, bool strictConsistencyChecks = false, bool useTempFile = true)
 		{
 			OpenFlags flags = OpenFlags.Create | OpenFlags.Truncate;
 			if (strictConsistencyChecks)
 				flags |= OpenFlags.CheckCons;
-			return ZipArchive.CreateInstanceFromStream (stream, flags, options);
+			return ZipArchive.CreateInstanceFromStream (stream, flags, options, useTempFile);
 		}
 
 		/// <summary>
@@ -231,8 +236,9 @@ namespace Xamarin.Tools.Zip
 		/// <param name="defaultExtractionDir">default target directory</param>
 		/// <param name="strictConsistencyChecks">Perform strict consistency checks.</param>
 		/// <param name="options">Platform-specific options, or <c>null</c> if none necessary (the default)</param>
+		/// <param name="useTempFile">Use a temporary file for the archive</param>
 		/// <returns>Opened ZIP archive</returns>
-		public static ZipArchive Open (string path, FileMode mode, string defaultExtractionDir = null, bool strictConsistencyChecks = false, IPlatformOptions options = null)
+		public static ZipArchive Open (string path, FileMode mode, string defaultExtractionDir = null, bool strictConsistencyChecks = false, IPlatformOptions options = null, bool useTempFile = true)
 		{
 			if (String.IsNullOrEmpty (path))
 				throw new ArgumentException (string.Format (Resources.MustNotBeNullOrEmpty_string, nameof (path)), nameof (path));
@@ -316,7 +322,7 @@ namespace Xamarin.Tools.Zip
 		/// Extracts all the entries from the archive and places them in the
 		/// directory indicated by the <paramref name="destinationDirectory"/> parameter.
 		/// If <paramref name="destinationDirectory"/> is <c>null</c> or empty, the default destination directory
-		/// as passed to <see cref="ZipArchive.Open (string,FileMode,string,bool,IPlatformOptions)"/> is used.
+		/// as passed to <see cref="ZipArchive.Open (string,FileMode,string,bool,IPlatformOptions, bool)"/> is used.
 		/// </summary>
 		/// <returns>The all.</returns>
 		/// <param name="destinationDirectory">Destination directory.</param>
@@ -362,7 +368,7 @@ namespace Xamarin.Tools.Zip
 			sources.Add (stream);
 			string destPath = EnsureArchivePath (archivePath);
 			var context = new CallbackContext () {
-				Source = stream,
+				Source = stream
 			};
 			var handle = GCHandle.Alloc (context, GCHandleType.Normal);
 			IntPtr h = GCHandle.ToIntPtr (handle);
@@ -796,7 +802,10 @@ namespace Xamarin.Tools.Zip
 
 		internal static unsafe Int64 stream_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd)
 		{
+#if NET6_0_OR_GREATER
+#else
 			byte [] buffer = null;
+#endif
 			Native.zip_error_t error;
 			int length = (int)len;
 			var handle = GCHandle.FromIntPtr (state);
@@ -828,6 +837,14 @@ namespace Xamarin.Tools.Zip
 					return (Int64)destination.Position;
 
 				case SourceCommand.Write:
+#if NET6_0_OR_GREATER
+					unsafe
+					{
+						byte* ptr = (byte*)data;
+						destination.Write(new ReadOnlySpan<byte>(ptr, length));
+					}
+					return length;
+#else
 					buffer = ArrayPool<byte>.Shared.Rent (length);
 					try {
 						Marshal.Copy (data, buffer, 0, length);
@@ -836,7 +853,7 @@ namespace Xamarin.Tools.Zip
 					} finally {
 						ArrayPool<byte>.Shared.Return (buffer);
 					}
-
+#endif
 				case SourceCommand.SeekWrite:
 					Native.zip_source_args_seek_t args;
 					if (!Native.ZipSourceGetArgs (data, len, out args)) {
@@ -895,6 +912,14 @@ namespace Xamarin.Tools.Zip
 
 				case SourceCommand.Read:
 					length = (int)Math.Min (stream.Length - stream.Position, length);
+#if NET6_0_OR_GREATER
+					unsafe
+					{
+						byte* ptr = (byte*)data.ToPointer();
+						int bytesRead = stream.Read(new Span<byte>(ptr, length));
+						return bytesRead;
+					}
+#else
 					buffer = ArrayPool<byte>.Shared.Rent (length);
 					try {
 						int bytesRead = 0;
@@ -909,11 +934,16 @@ namespace Xamarin.Tools.Zip
 					} finally {
 						ArrayPool<byte>.Shared.Return (buffer);
 					}
+#endif
 				case SourceCommand.BeginWrite:
 					try {
-						string tempFile = Path.GetTempFileName ();
-						context.Destination = File.Open (tempFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-						context.DestinationFileName = tempFile;
+						if (context.UseTempFile) {
+							string tempFile = Path.GetTempFileName ();
+							context.Destination = File.Open (tempFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+							context.DestinationFileName = tempFile;
+						} else {
+							context.Destination = new MemoryStream ();
+						}
 					} catch (IOException) {
 						// ok use a memory stream as a backup
 						context.Destination = new MemoryStream ();

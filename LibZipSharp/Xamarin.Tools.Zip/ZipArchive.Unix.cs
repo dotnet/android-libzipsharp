@@ -16,13 +16,13 @@ namespace Xamarin.Tools.Zip
 			}
 		}
 
-		static ZipArchive CreateInstanceFromStream (Stream stream, OpenFlags flags = OpenFlags.RDOnly, IPlatformOptions options = null)
+		static ZipArchive CreateInstanceFromStream (Stream stream, OpenFlags flags = OpenFlags.RDOnly, IPlatformOptions options = null, bool useTempFile = true)
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {
-				return new UnixZipArchive (stream, EnsureOptions (options) as UnixPlatformOptions, flags);
+				return new UnixZipArchive (stream, EnsureOptions (options) as UnixPlatformOptions, flags, useTempFile);
 			}
 			else {
-				return new WindowsZipArchive (stream, EnsureOptions (options) as WindowsPlatformOptions, flags);
+				return new WindowsZipArchive (stream, EnsureOptions (options) as WindowsPlatformOptions, flags, useTempFile);
 			}
 		}
 
