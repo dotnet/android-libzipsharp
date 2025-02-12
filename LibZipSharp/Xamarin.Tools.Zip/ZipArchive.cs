@@ -376,7 +376,7 @@ namespace Xamarin.Tools.Zip
 			long index = Native.zip_file_add (archive, destPath, source, overwriteExisting ? OperationFlags.Overwrite : OperationFlags.None);
 			if (index < 0)
 				throw GetErrorException ();
-			if (Native.zip_set_file_compression (archive, (ulong)index, compressionMethod, 9) < 0)
+			if (Native.zip_set_file_compression (archive, (ulong)index, compressionMethod, 0) < 0)
 				throw GetErrorException ();
 			if (permissions == EntryPermissions.Default)
 				permissions = DefaultFilePermissions;
@@ -457,7 +457,7 @@ namespace Xamarin.Tools.Zip
 			long index = PlatformServices.Instance.StoreSpecialFile (this, sourcePath, archivePath, out compressionMethod);
 			if (index < 0)
 				throw GetErrorException ();
-			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : compressionMethod, 9) < 0)
+			if (Native.zip_set_file_compression (archive, (ulong)index, isDir ? CompressionMethod.Store : compressionMethod, 0) < 0)
 				throw GetErrorException ();
 			PlatformServices.Instance.SetEntryPermissions (this, sourcePath, (ulong)index, permissions);
 			ZipEntry entry = ReadEntry ((ulong)index);
