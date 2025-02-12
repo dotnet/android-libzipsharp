@@ -62,7 +62,7 @@ public class Performance
     public void LibZipSharpCreateZip ()
     {
         using var stream = new MemoryStream ();
-        using (var zip = ZipArchive.Create (stream, strictConsistencyChecks: false)) {
+        using (var zip = ZipArchive.Create (stream, strictConsistencyChecks: false, useTempFile: false)) {
             foreach (var file in files) {
                 zip.AddEntry (file.Value, file.Key);
             }
@@ -88,7 +88,7 @@ public class Performance
     {
         using var ms = new MemoryStream ();
         libZip!.Position = 0;
-        using (var zi = ZipArchive.Open (libZip)) {
+        using (var zi = ZipArchive.Open (libZip, useTempFile: false)) {
             foreach (var entry in zi) {
                 ms.Position= 0;
                 entry.Extract (ms);
