@@ -382,13 +382,14 @@ namespace Xamarin.Tools.Zip
 				permissions = DefaultFilePermissions;
 			PlatformServices.Instance.SetEntryPermissions (this, (ulong)index, permissions, false);
 			ZipEntry entry = ReadEntry ((ulong)index);
-			IList<ExtraField> fields = new List<ExtraField> ();
 			ExtraField_ExtendedTimestamp timestamp = new ExtraField_ExtendedTimestamp (entry, 0, modificationTime: modificationTime ?? DateTime.UtcNow);
-			fields.Add (timestamp);
-			if (!PlatformServices.Instance.WriteExtraFields (this, entry, fields))
+			timestamp.Encode ();
+			if (!PlatformServices.Instance.WriteExtraFields (this, entry, timestamp)) {
 				throw GetErrorException ();
+			}
 			return entry;
 		}
+
 
 		/// <summary>
 		/// Adds the file to archive directory. The file is added to either the root directory of
@@ -461,16 +462,16 @@ namespace Xamarin.Tools.Zip
 				throw GetErrorException ();
 			PlatformServices.Instance.SetEntryPermissions (this, sourcePath, (ulong)index, permissions);
 			ZipEntry entry = ReadEntry ((ulong)index);
-			IList<ExtraField> fields = new List<ExtraField> ();
 			ExtraField_ExtendedTimestamp timestamp = new ExtraField_ExtendedTimestamp (
 				entry, 0,
 				createTime: File.GetCreationTimeUtc (sourcePath),
 				accessTime: File.GetLastAccessTimeUtc (sourcePath),
 				modificationTime: File.GetLastWriteTimeUtc (sourcePath)
 			);
-			fields.Add (timestamp);
-			if (!PlatformServices.Instance.WriteExtraFields (this, entry, fields))
+			timestamp.Encode ();
+			if (!PlatformServices.Instance.WriteExtraFields (this, entry, timestamp)) {
 				throw GetErrorException ();
+			}
 			return entry;
 		}
 
@@ -915,7 +916,7 @@ namespace Xamarin.Tools.Zip
 #if NET6_0_OR_GREATER
 					unsafe
 					{
-						byte* ptr = (byte*)data.ToPointer();
+						byte* ptr = (byte*)data;
 						int bytesRead = stream.Read(new Span<byte>(ptr, length));
 						return bytesRead;
 					}
