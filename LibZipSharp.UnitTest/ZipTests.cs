@@ -330,7 +330,7 @@ namespace Tests {
 		}
 
 		[Test]
-		public void InMemoryZipFile ()
+		public void InMemoryZipFile ([Values (true, false)] bool useTempFile)
 		{
 			string filePath = Path.GetFullPath ("info.json");
 			if (!File.Exists (filePath)) {
@@ -338,14 +338,14 @@ namespace Tests {
 			}
 			string fileRoot = Path.GetDirectoryName (filePath);
 			using (var stream = new MemoryStream ()) {
-				using (var zip = ZipArchive.Create (stream)) {
+				using (var zip = ZipArchive.Create (stream, useTempFile: useTempFile)) {
 					zip.AddFile (filePath, "info.json");
 					zip.AddFile (Path.Combine (fileRoot, "characters_players.json"), "characters_players.json");
 					zip.AddFile (Path.Combine (fileRoot, "object_spawn.json"), "object_spawn.json");
 				}
 
 				stream.Position = 0;
-				using (var zip = ZipArchive.Open (stream, strictConsistencyChecks: true)) {
+				using (var zip = ZipArchive.Open (stream, strictConsistencyChecks: true, useTempFile: useTempFile)) {
 					Assert.AreEqual (3, zip.EntryCount);
 					foreach (var e in zip) {
 						Console.WriteLine (e.FullName);
@@ -354,13 +354,13 @@ namespace Tests {
 				}
 
 				stream.Position = 0;
-				using (var zip = ZipArchive.Open (stream, strictConsistencyChecks: true)) {
+				using (var zip = ZipArchive.Open (stream, strictConsistencyChecks: true, useTempFile: useTempFile)) {
 					Assert.AreEqual (2, zip.EntryCount);
 					zip.AddEntry ("info.json", File.ReadAllText (filePath), Encoding.UTF8, CompressionMethod.Deflate);
 				}
 
 				stream.Position = 0;
-				using (var zip = ZipArchive.Open (stream)) {
+				using (var zip = ZipArchive.Open (stream, useTempFile: useTempFile)) {
 					Assert.AreEqual (3, zip.EntryCount);
 					Assert.IsTrue (zip.ContainsEntry ("info.json"));
 					var entry1 = zip.ReadEntry ("info.json");
