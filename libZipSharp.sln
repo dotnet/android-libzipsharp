@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libZipSharp", "LibZipSharp\libZipSharp.csproj", "{E248B2CA-303B-4645-ADDC-9D4459D550FD}"
@@ -8,6 +8,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTest", "UnitTest", "{6F41E830-1A60-4DE8-B061-10D9164D9F5B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibZipSharp.UnitTest", "LibZipSharp.UnitTest\LibZipSharp.UnitTest.csproj", "{E66B5FB9-2470-4563-BF28-0C57108369D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZipBenchmark", "ZipBenchmark\ZipBenchmark.csproj", "{A94C6974-76CE-4BA9-83A2-69FCBCA77118}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{E66B5FB9-2470-4563-BF28-0C57108369D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E66B5FB9-2470-4563-BF28-0C57108369D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E66B5FB9-2470-4563-BF28-0C57108369D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A94C6974-76CE-4BA9-83A2-69FCBCA77118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A94C6974-76CE-4BA9-83A2-69FCBCA77118}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A94C6974-76CE-4BA9-83A2-69FCBCA77118}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A94C6974-76CE-4BA9-83A2-69FCBCA77118}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

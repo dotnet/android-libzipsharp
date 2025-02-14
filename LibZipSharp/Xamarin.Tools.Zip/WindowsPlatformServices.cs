@@ -230,6 +230,11 @@ namespace Xamarin.Tools.Zip
 
 		public bool WriteExtraFields (ZipArchive archive, ZipEntry entry, IList<ExtraField> extraFields)
 		{
+			return WriteExtraFields (archive, entry, extraFields.ToArray ());
+		}
+
+		public bool WriteExtraFields (ZipArchive archive, ZipEntry entry, params ExtraField[] extraFields)
+		{
 			if (entry == null)
 				return false;
 
