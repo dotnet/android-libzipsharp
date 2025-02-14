@@ -803,8 +803,7 @@ namespace Xamarin.Tools.Zip
 
 		internal static unsafe Int64 stream_callback (IntPtr state, IntPtr data, UInt64 len, SourceCommand cmd)
 		{
-#if NET6_0_OR_GREATER
-#else
+#if !NET6_0_OR_GREATER
 			byte [] buffer = null;
 #endif
 			Native.zip_error_t error;
