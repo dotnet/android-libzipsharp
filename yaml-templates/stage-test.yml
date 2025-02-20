@@ -1,0 +1,120 @@
+parameters:
+- name: use1ESTemplate
+  type: boolean
+  default: true
+- name: publishTaskPrefix
+  type: string
+  default: 1ES.
+
+stages:
+- stage: Test
+  dependsOn: Build
+  variables:
+    DotNetCoreVersion: 3.1.201
+    DotNetVersion: 7.0.406
+  jobs:
+  - job: testlinux
+    displayName: 'Test Linux'
+    ${{ if eq(parameters.use1ESTemplate, true) }}:
+      pool:
+        name: AzurePipelines-EO
+        image: $(LinuxPoolImage1ESPT)
+        os: linux
+    ${{ else }}:
+      pool:
+        name: Azure Pipelines
+        vmImage: $(LinuxPoolImageHosted)
+    steps:
+    - template: /yaml-templates/use-dot-net.yaml
+      parameters:
+        version: $(DotNetCoreVersion)
+    - template: /yaml-templates/use-dot-net.yaml
+      parameters:
+        version: $(DotNetVersion)
+    - task: DownloadPipelineArtifact@2
+      displayName: download artifacts
+      inputs:
+        artifactName: nuget
+        downloadPath: $(Build.SourcesDirectory)
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+      inputs:
+        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+        configuration: Release
+        arguments: -p:ReferenceNuget=True -v:diag
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Unit tests for .net'
+      inputs:
+        command: test
+        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+        configuration: Release
+        arguments: -p:ReferenceNuget=True -v:diag
+
+  - job: testmacos
+    displayName: 'Test MacOS'
+    pool:
+      name: Azure Pipelines
+      vmImage: macOS-14
+      os: macOS
+    steps:
+    - template: /yaml-templates/use-dot-net.yaml
+      parameters:
+        version: $(DotNetCoreVersion)
+    - template: /yaml-templates/use-dot-net.yaml
+      parameters:
+        version: $(DotNetVersion)
+    - task: DownloadPipelineArtifact@2
+      displayName: download artifacts
+      inputs:
+        artifactName: nuget
+        downloadPath: $(Build.SourcesDirectory)
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+      inputs:
+        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+        configuration: Release
+        arguments: -p:ReferenceNuget=True -v:diag
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Tests under .net'
+      inputs:
+        command: test
+        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+        configuration: Release
+        arguments: -p:ReferenceNuget=True -v:diag
+
+  - job: testwindows
+    displayName: 'Test Windows'
+    ${{ if eq(parameters.use1ESTemplate, true) }}:
+      pool:
+        name: AzurePipelines-EO
+        image: $(WindowsPoolImage1ESPT)
+        os: windows
+    ${{ else }}:
+      pool:
+        name: Azure Pipelines
+        vmImage: $(WindowsPoolImageHosted)
+    steps:
+    - template: /yaml-templates/use-dot-net.yaml
+      parameters:
+        version: $(DotNetCoreVersion)
+    - template: /yaml-templates/use-dot-net.yaml
+      parameters:
+        version: $(DotNetVersion)
+    - task: DownloadPipelineArtifact@2
+      displayName: download artifacts
+      inputs:
+        artifactName: nuget
+        downloadPath: $(Build.SourcesDirectory)
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+      inputs:
+        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+        configuration: Release
+        arguments: -p:ReferenceNuget=True -v:diag
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Tests LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+      inputs:
+        command: test
+        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
+        configuration: Release
+        arguments: -p:ReferenceNuget=True -v:diag

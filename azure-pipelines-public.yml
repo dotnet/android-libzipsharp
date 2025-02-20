@@ -1,0 +1,26 @@
+trigger: none
+
+pr:
+- main
+- release/*
+
+variables:
+- group: Xamarin-Secrets
+- name: ApiScanSoftwareName
+  value: VS
+- name: ApiScanSoftwareVersion
+  value: 17.10
+- name: DisablePipelineConfigDetector
+  value: true
+- template: /yaml-templates/variables.yml@self
+
+stages:
+- template: yaml-templates/stage-build.yml@self
+  parameters:
+    use1ESTemplate: false
+    publishTaskPrefix: ''
+
+- template: yaml-templates/stage-test.yml@self
+  parameters:
+    use1ESTemplate: false
+    publishTaskPrefix: ''
