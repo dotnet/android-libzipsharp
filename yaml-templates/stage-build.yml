@@ -1,0 +1,181 @@
+parameters:
+- name: use1ESTemplate
+  type: boolean
+  default: true
+- name: publishTaskPrefix
+  type: string
+  default: 1ES.
+
+stages:
+- stage: Build
+  jobs:
+  - job: buildWindows
+    ${{ if eq(parameters.use1ESTemplate, true) }}:
+      pool:
+        name: AzurePipelines-EO
+        image: $(WindowsPoolImage1ESPT)
+        os: windows
+    ${{ else }}:
+      pool:
+        name: Azure Pipelines
+        vmImage: $(WindowsPoolImageHosted)
+    steps:
+    - script: |
+        echo "Hello"
+        git submodule update --init --recursive
+      displayName: "Update Submodules"
+    - script: |
+        build_windows.bat
+      displayName: "Build"
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: lzsbuild\lib\win32\RelWithDebInfo\
+        includeRootFolder: false
+        archiveType: tar
+        tarCompression: bz2
+        replaceExistingArchive: true
+        archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x86.tar.bz2
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: lzsbuild\lib\win64\RelWithDebInfo\
+        includeRootFolder: false
+        archiveType: tar
+        tarCompression: bz2
+        replaceExistingArchive: true
+        archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x64.tar.bz2
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: lzsbuild\lib\winarm64\RelWithDebInfo\
+        includeRootFolder: false
+        archiveType: tar
+        tarCompression: bz2
+        replaceExistingArchive: true
+        archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-arm-x64.tar.bz2
+    - task: ${{ parameters.publishTaskPrefix }}PublishPipelineArtifact@1
+      displayName: upload artifacts
+      inputs:
+        artifactName: native - windows
+        targetPath: $(Build.ArtifactStagingDirectory)
+
+  - job: buildLinux
+    ${{ if eq(parameters.use1ESTemplate, true) }}:
+      pool:
+        name: AzurePipelines-EO
+        image: $(LinuxPoolImage1ESPT)
+        os: linux
+    ${{ else }}:
+      pool:
+        name: Azure Pipelines
+        vmImage: $(LinuxPoolImageHosted)
+    steps:
+    - bash: |
+        sudo dpkg --add-architecture i386
+        sudo apt -y update
+        sudo apt -f -u install ninja-build -y
+        git submodule update --init --recursive
+      displayName: 'Install Tools'
+    - bash: |
+        ./build.sh -v
+      displayName: 'Build Linux x64'
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: lzsbuild/lib/Linux/
+        includeRootFolder: false
+        archiveType: tar
+        tarCompression: bz2
+        replaceExistingArchive: true
+        archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x64.tar.bz2
+    - task: ${{ parameters.publishTaskPrefix }}PublishPipelineArtifact@1
+      displayName: upload artifacts
+      inputs:
+        artifactName: native - linux
+        targetPath: $(Build.ArtifactStagingDirectory)
+
+  - job: buildMacOS
+    dependsOn:
+      - buildLinux
+      - buildWindows
+    pool:
+      name: Azure Pipelines
+      vmImage: macOS-14
+      os: macOS
+    steps:
+    - bash: |
+        brew install ninja
+        git submodule update --init --recursive
+      displayName: 'Install toolchain'
+    - bash: |
+        ./build.sh -v
+        mkdir -p lzsbuild/lib/Linux
+        mkdir -p lzsbuild/lib/win64
+        mkdir -p lzsbuild/lib/win32
+        find lzsbuild -name '*ZipSharpNative*'
+      displayName: 'Build native'
+    - task: DownloadPipelineArtifact@2
+      displayName: download windows artifacts
+      inputs:
+        artifactName: native - windows
+        downloadPath: $(Build.ArtifactStagingDirectory)
+    - task: DownloadPipelineArtifact@2
+      displayName: download linux artifacts
+      inputs:
+        artifactName: native - linux
+        downloadPath: $(Build.ArtifactStagingDirectory)
+    - task: ExtractFiles@1
+      displayName: Extract 64 bit Linux native
+      inputs:
+        archiveFilePatterns: $(Build.ArtifactStagingDirectory)/libzip-linux-x64.tar.bz2
+        destinationFolder: lzsbuild/lib/Linux
+    - task: ExtractFiles@1
+      displayName: Extract 64 bit Windows native
+      inputs:
+        archiveFilePatterns: $(Build.ArtifactStagingDirectory)/libzip-windows-x64.tar.bz2
+        destinationFolder: lzsbuild/lib/win64
+    - task: ExtractFiles@1
+      displayName: Extract 64 bit ARM Windows native
+      inputs:
+        archiveFilePatterns: $(Build.ArtifactStagingDirectory)/libzip-windows-arm-x64.tar.bz2
+        destinationFolder: lzsbuild/lib/winarm64
+    - task: ExtractFiles@1
+      displayName: Extract 32 bit Windows native
+      inputs:
+        archiveFilePatterns: $(Build.ArtifactStagingDirectory)/libzip-windows-x86.tar.bz2
+        destinationFolder: lzsbuild/lib/win32
+    - bash: |
+        rm $(Build.ArtifactStagingDirectory)/libzip-linux-*.tar.bz2
+        rm $(Build.ArtifactStagingDirectory)/libzip-windows-*.tar.bz2
+      displayName: 'Find libzip'
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution libZipSharp.csproj'
+      inputs:
+        projects:  LibZipSharp/libZipSharp.csproj
+        configuration: Release
+        arguments: -v:diag -p:RunningOnCI=true
+    - task: DotNetCoreCLI@2
+      displayName: NuGet pack libZipSharp
+      inputs:
+        projects:  LibZipSharp/libZipSharp.csproj
+        configuration: Release
+        arguments: -t:Pack
+    - task: CopyFiles@2
+      displayName: Copy nupkg
+      inputs:
+        contents: 'LibZipSharp/*.nupkg'
+        flattenFolders: true
+        targetFolder: $(Build.ArtifactStagingDirectory)
+    - task: CopyFiles@2
+      displayName: Copy SignList
+      inputs:
+        contents: 'SignList.xml'
+        targetFolder: $(Build.ArtifactStagingDirectory)
+    - task: CopyFiles@2
+      displayName: Copy snupkg
+      inputs:
+        contents: 'LibZipSharp/*.snupkg'
+        flattenFolders: true
+        targetFolder: $(Build.ArtifactStagingDirectory)
+    - task: ${{ parameters.publishTaskPrefix }}PublishPipelineArtifact@1
+      displayName: upload artifacts
+      inputs:
+        artifactName: nuget
+        targetPath: $(Build.ArtifactStagingDirectory)

@@ -34,12 +34,7 @@ variables:
   value: 17.10
 - name: DisablePipelineConfigDetector
   value: true
-- name: WindowsPoolImage1ESPT
-  value: 1ESPT-Windows2022
-- name: LinuxPoolImage1ESPT
-  value: 1ESPT-Ubuntu22.04
-- name: MicroBuildPoolName
-  value: VSEngSS-MicroBuild2022-1ES
+- template: /yaml-templates/variables.yml@self
 
 extends:
   ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.Skip1ESComplianceTasks }}', 'true')) }}:
@@ -61,413 +56,147 @@ extends:
         image: $(WindowsPoolImage1ESPT)
         os: windows
     stages:
-      - stage: Build
-        jobs:
-        - job: buildWindows
-          pool:
-            name: AzurePipelines-EO
-            image: $(WindowsPoolImage1ESPT)
-            os: windows
-          variables:
-            Codeql.Enabled: true
-          templateContext:
-            outputs:
-            - output: pipelineArtifact
-              displayName: upload artifacts
-              artifactName: native - windows
-              targetPath: $(Build.ArtifactStagingDirectory)
-          steps:
-            - script: |
-                echo "Hello"
-                git submodule update --init --recursive
-              displayName: "Update Submodules"
-            - script: |
-                build_windows.bat
-              displayName: "Build"
-            - task: ArchiveFiles@2
-              inputs:
-                rootFolderOrFile: lzsbuild\lib\win32\RelWithDebInfo\
-                includeRootFolder: false
-                archiveType: tar
-                tarCompression: bz2
-                replaceExistingArchive: true
-                archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x86.tar.bz2
-            - task: ArchiveFiles@2
-              inputs:
-                rootFolderOrFile: lzsbuild\lib\win64\RelWithDebInfo\
-                includeRootFolder: false
-                archiveType: tar
-                tarCompression: bz2
-                replaceExistingArchive: true
-                archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-x64.tar.bz2
-            - task: ArchiveFiles@2
-              inputs:
-                rootFolderOrFile: lzsbuild\lib\winarm64\RelWithDebInfo\
-                includeRootFolder: false
-                archiveType: tar
-                tarCompression: bz2
-                replaceExistingArchive: true
-                archiveFile: $(Build.ArtifactStagingDirectory)\libzip-windows-arm-x64.tar.bz2
+    - template: /yaml-templates/stage-build.yml@self
 
-        - job: buildLinux
-          pool:
-            name: AzurePipelines-EO
-            image: $(LinuxPoolImage1ESPT)
-            os: linux
-          templateContext:
-            outputs:
-            - output: pipelineArtifact
-              displayName: upload artifacts
-              artifactName: native - linux
-              targetPath: $(Build.ArtifactStagingDirectory)
-          steps:
-            - bash: |
-                sudo dpkg --add-architecture i386
-                sudo apt -y update
-                sudo apt -f -u install ninja-build -y
-                git submodule update --init --recursive
-              displayName: 'Install Tools'
-            - bash: |
-                ./build.sh -v
-              displayName: 'Build Linux x64'
-            - task: ArchiveFiles@2
-              inputs:
-                rootFolderOrFile: lzsbuild/lib/Linux/
-                includeRootFolder: false
-                archiveType: tar
-                tarCompression: bz2
-                replaceExistingArchive: true
-                archiveFile: $(Build.ArtifactStagingDirectory)/libzip-linux-x64.tar.bz2
+    - template: /yaml-templates/stage-test.yml@self
 
-        - job: buildMacOS
-          dependsOn:
-            - buildlinux
-            - buildWindows
-          pool:
-            name: Azure Pipelines
-            vmImage: macOS-14
-            os: macOS
-          templateContext:
-            outputs:
-            - output: pipelineArtifact
-              displayName: upload artifacts
-              artifactName: nuget
-              targetPath: $(Build.ArtifactStagingDirectory)
-          steps:
-            - bash: |
-                brew install ninja
-                git submodule update --init --recursive
-              displayName: 'Install toolchain'
-            - bash: |
-                ./build.sh -v
-                mkdir -p lzsbuild/lib/Linux
-                mkdir -p lzsbuild/lib/win64
-                mkdir -p lzsbuild/lib/win32
-                find lzsbuild -name '*ZipSharpNative*'
-              displayName: 'Build native'
-            - task: DownloadPipelineArtifact@2
-              displayName: download windows artifacts
-              inputs:
-                artifactName: native - windows
-                downloadPath: $(Build.ArtifactStagingDirectory)
-            - task: DownloadPipelineArtifact@2
-              displayName: download linux artifacts
-              inputs:
-                artifactName: native - linux
-                downloadPath: $(Build.ArtifactStagingDirectory)
-            - task: ExtractFiles@1
-              displayName: Extract 64 bit Linux native
-              inputs:
-                archiveFilePatterns: $(Build.ArtifactStagingDirectory)/libzip-linux-x64.tar.bz2
-                destinationFolder: lzsbuild/lib/Linux
-            - task: ExtractFiles@1
-              displayName: Extract 64 bit Windows native
-              inputs:
-                archiveFilePatterns: $(Build.ArtifactStagingDirectory)/libzip-windows-x64.tar.bz2
-                destinationFolder: lzsbuild/lib/win64
-            - task: ExtractFiles@1
-              displayName: Extract 64 bit ARM Windows native
-              inputs:
-                archiveFilePatterns: $(Build.ArtifactStagingDirectory)/libzip-windows-arm-x64.tar.bz2
-                destinationFolder: lzsbuild/lib/winarm64
-            - task: ExtractFiles@1
-              displayName: Extract 32 bit Windows native
-              inputs:
-                archiveFilePatterns: $(Build.ArtifactStagingDirectory)/libzip-windows-x86.tar.bz2
-                destinationFolder: lzsbuild/lib/win32
-            - bash: |
-                rm $(Build.ArtifactStagingDirectory)/libzip-linux-*.tar.bz2
-                rm $(Build.ArtifactStagingDirectory)/libzip-windows-*.tar.bz2
-              displayName: 'Find libzip'
-            - task: DotNetCoreCLI@2
-              displayName: 'Build solution libZipSharp.csproj'
-              inputs:
-                projects:  LibZipSharp/libZipSharp.csproj
-                configuration: Release
-                arguments: -v:diag -p:RunningOnCI=true
-            - task: DotNetCoreCLI@2
-              displayName: NuGet pack libZipSharp
-              inputs:
-                projects:  LibZipSharp/libZipSharp.csproj
-                configuration: Release
-                arguments: -t:Pack
-            - task: CopyFiles@2
-              displayName: Copy nupkg
-              inputs:
-                contents: 'LibZipSharp/*.nupkg'
-                flattenFolders: true
-                targetFolder: $(Build.ArtifactStagingDirectory)
-            - task: CopyFiles@2
-              displayName: Copy SignList
-              inputs:
-                contents: 'SignList.xml'
-                targetFolder: $(Build.ArtifactStagingDirectory)
-            - task: CopyFiles@2
-              displayName: Copy snupkg
-              inputs:
-                contents: 'LibZipSharp/*.snupkg'
-                flattenFolders: true
-                targetFolder: $(Build.ArtifactStagingDirectory)
+    - stage: Publish
+      dependsOn: Build
+      condition: and(eq(dependencies.Build.result, 'Succeeded'), eq(variables['System.TeamProject'], 'DevDiv'), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.SignArtifacts }}', 'true'))) # only sign the packages when running on Windows, and using the private server which has the certificates
+      jobs:
+      - template: sign-artifacts/jobs/v2.yml@internal-templates
+        parameters:
+          usePipelineArtifactTasks: true
+          use1ESTemplate: true
+          signListPath: 'SignList.xml'
 
-      - stage: Test
-        dependsOn: Build
+    - stage: Localization
+      dependsOn: []
+      condition: and(eq(variables['System.TeamProject'], 'DevDiv'), eq(variables['Build.SourceBranch'], '${{ parameters.OneLocSourceBranch }}'))
+      jobs:
+      - job: OneLocBuild
+        displayName: OneLocBuild
+        pool:
+          name: AzurePipelines-EO
+          demands:
+          - ImageOverride -equals 1ESPT-Windows2022
+        timeoutInMinutes: 30
         variables:
-          DotNetCoreVersion: 3.1.201
-          DotNetVersion: 7.0.406
-        jobs:
-        - job: testlinux
-          displayName: 'Test Linux'
-          pool:
-            name: AzurePipelines-EO
-            image: $(LinuxPoolImage1ESPT)
-            os: linux
-          steps:
-            - template: yaml-templates/use-dot-net.yaml@self
-              parameters:
-                version: $(DotNetCoreVersion)
-            - template: yaml-templates/use-dot-net.yaml@self
-              parameters:
-                version: $(DotNetVersion)
-            - task: DownloadPipelineArtifact@2
-              displayName: download artifacts
-              inputs:
-                artifactName: nuget
-                downloadPath: $(Build.SourcesDirectory)
-            - task: DotNetCoreCLI@2
-              displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-              inputs:
-                projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-                configuration: Release
-                arguments: -p:ReferenceNuget=True -v:diag
-            - task: DotNetCoreCLI@2
-              displayName: 'Run Unit tests for .net'
-              inputs:
-                command: test
-                projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-                configuration: Release
-                arguments: -p:ReferenceNuget=True -v:diag
+        - group: Xamarin-Secrets
+        workspace:
+          clean: all
+        templateContext:
+          outputs:
+          - output: pipelineArtifact
+            displayName: Publish Localization Files
+            condition: succeededOrFailed()
+            targetPath: $(Build.StagingDirectory)/loc
+            artifactName: Loc
+        steps:
+        - checkout: self
+          clean: true
 
-        - job: testmacos
-          displayName: 'Test MacOS'
-          pool:
-            name: Azure Pipelines
-            vmImage: macOS-14
-            os: macOS
-          steps:
-            - template: yaml-templates/use-dot-net.yaml@self
-              parameters:
-                version: $(DotNetCoreVersion)
-            - template: yaml-templates/use-dot-net.yaml@self
-              parameters:
-                version: $(DotNetVersion)
-            - task: DownloadPipelineArtifact@2
-              displayName: download artifacts
-              inputs:
-                artifactName: nuget
-                downloadPath: $(Build.SourcesDirectory)
-            - task: DotNetCoreCLI@2
-              displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-              inputs:
-                projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-                configuration: Release
-                arguments: -p:ReferenceNuget=True -v:diag
-            - task: DotNetCoreCLI@2
-              displayName: 'Run Tests under .net'
-              inputs:
-                command: test
-                projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-                configuration: Release
-                arguments: -p:ReferenceNuget=True -v:diag
+        # https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/1es-security-configuration/configuration-guides/pat-burndown-guidance#authentication-from-pipelines
+        # Requires Azure client 2.x
+        - task: AzureCLI@2
+          displayName: 'Set AzDO.OneLocBuildToken'
+          enabled: true
+          inputs:
+            azureSubscription: 'VSEng-AzureDevOps-ceapex-OneLocBuild'   # Azure DevOps service connection
+            scriptType: 'pscore'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              # if this fails, check out this bash script that includes diagnostics:
+              # https://gist.github.com/johnterickson/19f80a3e969e39f1000d118739176e62
+              # Note that the resource is specified to limit the token to Azure DevOps
+              $token = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
+              Write-Host "##vso[task.setvariable variable=AzDO.OneLocBuildToken;issecret=true]${token}"
 
-        - job: testwindows
-          displayName: 'Test Windows'
-          pool:
-            name: AzurePipelines-EO
-            image: $(WindowsPoolImage1ESPT)
-            os: windows
-          steps:
-            - template: yaml-templates/use-dot-net.yaml@self
-              parameters:
-                version: $(DotNetCoreVersion)
-            - template: yaml-templates/use-dot-net.yaml@self
-              parameters:
-                version: $(DotNetVersion)
-            - task: DownloadPipelineArtifact@2
-              displayName: download artifacts
-              inputs:
-                artifactName: nuget
-                downloadPath: $(Build.SourcesDirectory)
-            - task: DotNetCoreCLI@2
-              displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-              inputs:
-                projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-                configuration: Release
-                arguments: -p:ReferenceNuget=True -v:diag
-            - task: DotNetCoreCLI@2
-              displayName: 'Run Tests LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-              inputs:
-                command: test
-                projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-                configuration: Release
-                arguments: -p:ReferenceNuget=True -v:diag
-
-      - stage: Publish
-        dependsOn: Build
-        condition: and(eq(dependencies.Build.result, 'Succeeded'), eq(variables['System.TeamProject'], 'devdiv'), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.SignArtifacts }}', 'true'))) # only sign the packages when running on Windows, and using the private server which has the certificates
-        jobs:
-        - template: sign-artifacts/jobs/v2.yml@internal-templates
-          parameters:
-            usePipelineArtifactTasks: true
-            use1ESTemplate: true
-            signListPath: 'SignList.xml'
-
-      - stage: Localization
-        dependsOn: []
-        condition: and(eq(variables['System.TeamProject'], 'DevDiv'), eq(variables['Build.SourceBranch'], '${{ parameters.OneLocSourceBranch }}'))
-        jobs:
-        - job: OneLocBuild
+        - task: OneLocBuild@2
           displayName: OneLocBuild
-          pool:
-            name: AzurePipelines-EO
-            demands:
-            - ImageOverride -equals 1ESPT-Windows2022
-          timeoutInMinutes: 30
-          variables:
-          - group: Xamarin-Secrets
-          workspace:
-            clean: all
-          templateContext:
-            outputs:
-            - output: pipelineArtifact
-              displayName: Publish Localization Files
-              condition: succeededOrFailed()
-              targetPath: $(Build.StagingDirectory)/loc
-              artifactName: Loc
-          steps:
-          - checkout: self
-            clean: true
+          env:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          inputs:
+            locProj: Localize/LocProject.json
+            outDir: $(Build.StagingDirectory)
+            packageSourceAuth: patAuth
+            patVariable: $(AzDO.OneLocBuildToken)
+            isCreatePrSelected: true
+            repoType: gitHub
+            gitHubPatVariable: $(github--pat--vs-mobiletools-engineering-service2)
+            prSourceBranchPrefix: locpr
+            isShouldReusePrSelected: true
+            isAutoCompletePrSelected: false
+            isUseLfLineEndingsSelected: true
 
-          # https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/1es-security-configuration/configuration-guides/pat-burndown-guidance#authentication-from-pipelines
-          # Requires Azure client 2.x
-          - task: AzureCLI@2
-            displayName: 'Set AzDO.OneLocBuildToken'
-            enabled: true
-            inputs:
-              azureSubscription: 'VSEng-AzureDevOps-ceapex-OneLocBuild'   # Azure DevOps service connection
-              scriptType: 'pscore'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                # if this fails, check out this bash script that includes diagnostics:
-                # https://gist.github.com/johnterickson/19f80a3e969e39f1000d118739176e62
-                # Note that the resource is specified to limit the token to Azure DevOps
-                $token = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
-                Write-Host "##vso[task.setvariable variable=AzDO.OneLocBuildToken;issecret=true]${token}"
+    - stage: Compliance
+      displayName: Compliance
+      dependsOn: Build
+      condition: and(eq(dependencies.Build.result, 'Succeeded'), eq(variables['System.TeamProject'], 'DevDiv'), eq(variables['Build.SourceBranch'], '${{ parameters.ApiScanSourceBranch }}'))
+      jobs:
+      - job: api_scan
+        displayName: API Scan
+        pool:
+          name: Maui-1ESPT
+          image: $(WindowsPoolImage1ESPT)
+          os: windows
+        timeoutInMinutes: 360
+        workspace:
+          clean: all
+        steps:
+        - task: DownloadPipelineArtifact@2
+          displayName: download nuget artifact
+          inputs:
+            artifactName: nuget
+            downloadPath: $(Build.StagingDirectory)
+            itemPattern: '*.nupkg'
 
-          - task: OneLocBuild@2
-            displayName: OneLocBuild
-            env:
-              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-            inputs:
-              locProj: Localize/LocProject.json
-              outDir: $(Build.StagingDirectory)
-              packageSourceAuth: patAuth
-              patVariable: $(AzDO.OneLocBuildToken)
-              isCreatePrSelected: true
-              repoType: gitHub
-              gitHubPatVariable: $(github--pat--vs-mobiletools-engineering-service2)
-              prSourceBranchPrefix: locpr
-              isShouldReusePrSelected: true
-              isAutoCompletePrSelected: false
-              isUseLfLineEndingsSelected: true
+        - task: ExtractFiles@1
+          displayName: Extract nuget
+          inputs:
+            archiveFilePatterns: $(Build.StagingDirectory)\**\*.nupkg
+            destinationFolder: $(Build.SourcesDirectory)\nuget
 
-      - stage: Compliance
-        displayName: Compliance
-        dependsOn: Build
-        condition: and(eq(dependencies.Build.result, 'Succeeded'), eq(variables['Build.SourceBranch'], '${{ parameters.ApiScanSourceBranch }}'))
-        jobs:
-        - job: api_scan
-          displayName: API Scan
-          pool:
-            name: Maui-1ESPT
-            image: $(WindowsPoolImage1ESPT)
-            os: windows
-          timeoutInMinutes: 360
-          workspace:
-            clean: all
-          steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: download nuget artifact
-            inputs:
-              artifactName: nuget
-              downloadPath: $(Build.StagingDirectory)
-              itemPattern: '*.nupkg'
+        - task: CopyFiles@2
+          displayName: Collect Files for APIScan
+          inputs:
+            Contents: |
+              $(Build.SourcesDirectory)\nuget\**\?(*.dll|*.exe|*.pdb)
+              !$(Build.SourcesDirectory)\**\runtimes\win-arm64\native\libzipsharpnative*.dll
+            TargetFolder: $(Agent.TempDirectory)\T
 
-          - task: ExtractFiles@1
-            displayName: Extract nuget
-            inputs:
-              archiveFilePatterns: $(Build.StagingDirectory)\**\*.nupkg
-              destinationFolder: $(Build.SourcesDirectory)\nuget
-    
-          - task: CopyFiles@2
-            displayName: Collect Files for APIScan
-            inputs:
-              Contents: |
-                $(Build.SourcesDirectory)\nuget\**\?(*.dll|*.exe|*.pdb)
-                !$(Build.SourcesDirectory)\**\runtimes\win-arm64\native\libzipsharpnative*.dll
-              TargetFolder: $(Agent.TempDirectory)\T
-    
-          - powershell: Get-ChildItem -Path "$(Agent.TempDirectory)\T" -Recurse
-            displayName: List Files for APIScan
-    
-          - task: APIScan@2
-            displayName: Run APIScan
-            inputs:
-              softwareFolder: $(Agent.TempDirectory)\T
-              symbolsFolder: 'SRV*http://symweb;$(Agent.TempDirectory)\T'
-              softwareName: $(ApiScanSoftwareName)
-              softwareVersionNum: $(ApiScanSoftwareVersion)
-              toolVersion: Latest
-            env:
-              AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanMAUI1ESPTManagedId)
-    
-          - task: SdtReport@2
-            displayName: Guardian Export - Security Report
-            inputs:
-              GdnExportAllTools: false
-              GdnExportGdnToolApiScan: true
-              GdnExportOutputSuppressionFile: apiscan.gdnsuppress
-    
-          - task: PublishSecurityAnalysisLogs@3
-            displayName: Publish Guardian Artifacts
-            inputs:
-              ArtifactName: APIScan Logs
-              ArtifactType: Container
-              AllTools: false
-              APIScan: true
-              ToolLogsNotFoundAction: Warning
-    
-          - task: PostAnalysis@2
-            displayName: Fail Build on Guardian Issues
-            inputs:
-              GdnBreakAllTools: false
-              GdnBreakGdnToolApiScan: true
+        - powershell: Get-ChildItem -Path "$(Agent.TempDirectory)\T" -Recurse
+          displayName: List Files for APIScan
+
+        - task: APIScan@2
+          displayName: Run APIScan
+          inputs:
+            softwareFolder: $(Agent.TempDirectory)\T
+            symbolsFolder: 'SRV*http://symweb;$(Agent.TempDirectory)\T'
+            softwareName: $(ApiScanSoftwareName)
+            softwareVersionNum: $(ApiScanSoftwareVersion)
+            toolVersion: Latest
+          env:
+            AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanMAUI1ESPTManagedId)
+
+        - task: SdtReport@2
+          displayName: Guardian Export - Security Report
+          inputs:
+            GdnExportAllTools: false
+            GdnExportGdnToolApiScan: true
+            GdnExportOutputSuppressionFile: apiscan.gdnsuppress
+
+        - task: PublishSecurityAnalysisLogs@3
+          displayName: Publish Guardian Artifacts
+          inputs:
+            ArtifactName: APIScan Logs
+            ArtifactType: Container
+            AllTools: false
+            APIScan: true
+            ToolLogsNotFoundAction: Warning
+
+        - task: PostAnalysis@2
+          displayName: Fail Build on Guardian Issues
+          inputs:
+            GdnBreakAllTools: false
+            GdnBreakGdnToolApiScan: true

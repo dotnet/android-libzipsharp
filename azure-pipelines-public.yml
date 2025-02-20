@@ -1,0 +1,19 @@
+trigger: none
+
+pr:
+- main
+- release/*
+
+variables:
+- template: /yaml-templates/variables.yml
+
+stages:
+- template: /yaml-templates/stage-build.yml
+  parameters:
+    use1ESTemplate: false
+    publishTaskPrefix: ''
+
+- template: /yaml-templates/stage-test.yml
+  parameters:
+    use1ESTemplate: false
+    publishTaskPrefix: ''
