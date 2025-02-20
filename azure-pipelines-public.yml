@@ -12,15 +12,15 @@ variables:
   value: 17.10
 - name: DisablePipelineConfigDetector
   value: true
-- template: /yaml-templates/variables.yml@self
+- template: /yaml-templates/variables.yml
 
 stages:
-- template: yaml-templates/stage-build.yml@self
+- template: /yaml-templates/stage-build.yml
   parameters:
     use1ESTemplate: false
     publishTaskPrefix: ''
 
-- template: yaml-templates/stage-test.yml@self
+- template: /yaml-templates/stage-test.yml
   parameters:
     use1ESTemplate: false
     publishTaskPrefix: ''

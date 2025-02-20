@@ -56,9 +56,9 @@ extends:
         image: $(WindowsPoolImage1ESPT)
         os: windows
     stages:
-    - template: yaml-templates/stage-build.yml@self
+    - template: /yaml-templates/stage-build.yml@self
 
-    - template: yaml-templates/stage-test.yml@self
+    - template: /yaml-templates/stage-test.yml@self
 
     - stage: Publish
       dependsOn: Build
