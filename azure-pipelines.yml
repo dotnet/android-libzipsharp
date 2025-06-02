@@ -69,7 +69,6 @@ extends:
         os: windows
       sourceRepositoriesToScan:
         exclude:
-        - repository: yaml-templates
         - repository: internal-templates
     stages:
     - template: /yaml-templates/stage-build.yml@self
@@ -85,6 +84,7 @@ extends:
           usePipelineArtifactTasks: true
           use1ESTemplate: true
           signListPath: 'SignList.xml'
+          templateResourceName: internal-templates
 
     - stage: Localization
       dependsOn: []
