@@ -67,6 +67,9 @@ extends:
         name: AzurePipelines-EO
         image: $(WindowsPoolImage1ESPT)
         os: windows
+      sourceRepositoriesToScan:
+        exclude:
+        - repository: internal-templates
     stages:
     - template: /yaml-templates/stage-build.yml@self
 
