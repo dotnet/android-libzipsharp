@@ -85,6 +85,7 @@ extends:
           use1ESTemplate: true
           signListPath: 'SignList.xml'
           templateResourceName: internal-templates
+          checkoutType: self
 
     - stage: Localization
       dependsOn: []
