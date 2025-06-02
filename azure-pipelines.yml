@@ -69,6 +69,7 @@ extends:
         os: windows
       sourceRepositoriesToScan:
         exclude:
+        - repository: yaml-templates
         - repository: internal-templates
     stages:
     - template: /yaml-templates/stage-build.yml@self
