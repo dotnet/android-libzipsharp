@@ -4,12 +4,24 @@ trigger:
       - main
       - refs/tags/*
 
+schedules:
+- cron: "0 6 * * *"
+  displayName: Run daily at 6:00 UTC
+  branches:
+    include:
+    - main
+- cron: "0 6 * * Sunday"
+  displayName: Run weekly on Sunday at 6:00 UTC
+  branches:
+    include:
+    - main
+  always: true
+
 resources:
   repositories:
     - repository: internal-templates
-      type: github
-      name: xamarin/yaml-templates
-      endpoint: xamarin
+      type: git
+      name: DevDiv/Xamarin.yaml-templates
       ref: refs/heads/main
     - repository: 1esPipelines
       type: git
@@ -55,6 +67,9 @@ extends:
         name: AzurePipelines-EO
         image: $(WindowsPoolImage1ESPT)
         os: windows
+      sourceRepositoriesToScan:
+        exclude:
+        - repository: internal-templates
     stages:
     - template: /yaml-templates/stage-build.yml@self
 
@@ -69,6 +84,8 @@ extends:
           usePipelineArtifactTasks: true
           use1ESTemplate: true
           signListPath: 'SignList.xml'
+          templateResourceName: internal-templates
+          checkoutType: self
 
     - stage: Localization
       dependsOn: []
@@ -132,7 +149,7 @@ extends:
     - stage: Compliance
       displayName: Compliance
       dependsOn: Build
-      condition: and(eq(dependencies.Build.result, 'Succeeded'), eq(variables['System.TeamProject'], 'DevDiv'), eq(variables['Build.SourceBranch'], '${{ parameters.ApiScanSourceBranch }}'))
+      condition: and(eq(dependencies.Build.result, 'Succeeded'), eq(variables['System.TeamProject'], 'DevDiv'), eq(variables['Build.SourceBranch'], '${{ parameters.ApiScanSourceBranch }}'), ne(variables['Build.Reason'], 'Schedule'))
       jobs:
       - job: api_scan
         displayName: API Scan
