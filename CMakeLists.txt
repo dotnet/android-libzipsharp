@@ -230,6 +230,7 @@ else()
     /guard:cf
     /sdl
     /wd4996
+    /W3
   )
 
   set(LINKER_OPTIONS
