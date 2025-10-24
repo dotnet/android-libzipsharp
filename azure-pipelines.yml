@@ -2,6 +2,8 @@ trigger:
   branches:
     include:
       - main
+      - copilot/*
+      - dev/*
       - refs/tags/*
 
 schedules:
@@ -49,10 +51,10 @@ variables:
 - template: /yaml-templates/variables.yml@self
 
 extends:
-  ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.Skip1ESComplianceTasks }}', 'true')) }}:
-    template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
-  ${{ else }}:
+  ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), ne('${{ parameters.Skip1ESComplianceTasks }}', 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
     template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  ${{ else }}:
+    template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
   parameters:
     sdl:
       ${{ if eq('${{ parameters.Skip1ESComplianceTasks }}', 'true') }}:
