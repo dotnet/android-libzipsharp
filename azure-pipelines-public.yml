@@ -1,8 +1,7 @@
 trigger: none
 
 pr:
-- main
-- release/*
+- '*'
 
 variables:
 - template: /yaml-templates/variables.yml
