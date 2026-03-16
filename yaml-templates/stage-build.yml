@@ -145,18 +145,10 @@ stages:
         rm $(Build.ArtifactStagingDirectory)/libzip-linux-*.tar.bz2
         rm $(Build.ArtifactStagingDirectory)/libzip-windows-*.tar.bz2
       displayName: 'Find libzip'
-    - task: DotNetCoreCLI@2
+    - script: dotnet build LibZipSharp/libZipSharp.csproj -c Release -v:diag -p:RunningOnCI=true
       displayName: 'Build solution libZipSharp.csproj'
-      inputs:
-        projects:  LibZipSharp/libZipSharp.csproj
-        configuration: Release
-        arguments: -v:diag -p:RunningOnCI=true
-    - task: DotNetCoreCLI@2
+    - script: dotnet build LibZipSharp/libZipSharp.csproj -c Release -t:Pack
       displayName: NuGet pack libZipSharp
-      inputs:
-        projects:  LibZipSharp/libZipSharp.csproj
-        configuration: Release
-        arguments: -t:Pack
     - task: CopyFiles@2
       displayName: Copy nupkg
       inputs:
