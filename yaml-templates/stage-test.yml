@@ -36,19 +36,16 @@ stages:
       inputs:
         artifactName: nuget
         downloadPath: $(Build.SourcesDirectory)
-    - task: DotNetCoreCLI@2
+    - script: dotnet build LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj -c Release -p:ReferenceNuget=True -v:diag
       displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-      inputs:
-        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-        configuration: Release
-        arguments: -p:ReferenceNuget=True -v:diag
-    - task: DotNetCoreCLI@2
+    - script: dotnet test LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj -c Release -p:ReferenceNuget=True -v:diag --logger trx --results-directory $(Build.SourcesDirectory)/TestResults
       displayName: 'Run Unit tests for .net'
+    - task: PublishTestResults@2
+      displayName: Publish test results
+      condition: succeededOrFailed()
       inputs:
-        command: test
-        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-        configuration: Release
-        arguments: -p:ReferenceNuget=True -v:diag
+        testResultsFormat: VSTest
+        testResultsFiles: '$(Build.SourcesDirectory)/TestResults/**/*.trx'
 
   - job: testmacos
     displayName: 'Test MacOS'
@@ -68,19 +65,16 @@ stages:
       inputs:
         artifactName: nuget
         downloadPath: $(Build.SourcesDirectory)
-    - task: DotNetCoreCLI@2
+    - script: dotnet build LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj -c Release -p:ReferenceNuget=True -v:diag
       displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-      inputs:
-        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-        configuration: Release
-        arguments: -p:ReferenceNuget=True -v:diag
-    - task: DotNetCoreCLI@2
+    - script: dotnet test LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj -c Release -p:ReferenceNuget=True -v:diag --logger trx --results-directory $(Build.SourcesDirectory)/TestResults
       displayName: 'Run Tests under .net'
+    - task: PublishTestResults@2
+      displayName: Publish test results
+      condition: succeededOrFailed()
       inputs:
-        command: test
-        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-        configuration: Release
-        arguments: -p:ReferenceNuget=True -v:diag
+        testResultsFormat: VSTest
+        testResultsFiles: '$(Build.SourcesDirectory)/TestResults/**/*.trx'
 
   - job: testwindows
     displayName: 'Test Windows'
@@ -105,16 +99,13 @@ stages:
       inputs:
         artifactName: nuget
         downloadPath: $(Build.SourcesDirectory)
-    - task: DotNetCoreCLI@2
+    - script: dotnet build LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj -c Release -p:ReferenceNuget=True -v:diag
       displayName: 'Build solution LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
-      inputs:
-        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-        configuration: Release
-        arguments: -p:ReferenceNuget=True -v:diag
-    - task: DotNetCoreCLI@2
+    - script: dotnet test LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj -c Release -p:ReferenceNuget=True -v:diag --logger trx --results-directory $(Build.SourcesDirectory)/TestResults
       displayName: 'Run Tests LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj'
+    - task: PublishTestResults@2
+      displayName: Publish test results
+      condition: succeededOrFailed()
       inputs:
-        command: test
-        projects:  LibZipSharp.UnitTest/LibZipSharp.UnitTest.csproj
-        configuration: Release
-        arguments: -p:ReferenceNuget=True -v:diag
+        testResultsFormat: VSTest
+        testResultsFiles: '$(Build.SourcesDirectory)/TestResults/**/*.trx'
