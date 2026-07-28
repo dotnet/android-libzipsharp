@@ -19,8 +19,10 @@ steps:
       }
       if ("${{ parameters.version }}") {
         $InstallArgs = @('-Version', "${{ parameters.version }}")
-      } else {
+      } elseif ("${{ parameters.channel }}") {
         $InstallArgs = @('-Channel', "${{ parameters.channel }}")
+      } else {
+        throw "use-dot-net.yaml requires either a 'version' or a 'channel' parameter."
       }
       Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile dotnet-install.ps1
       & .\dotnet-install.ps1 @InstallArgs -InstallDir $DotNetRoot -Verbose
@@ -32,13 +34,16 @@ steps:
       DOTNET_ROOT=~/.dotnet/
       if [[ "${{ parameters.remove_dotnet }}" == "true" ]] ; then rm -rfv $DOTNET_ROOT; fi
       if [[ -n "${{ parameters.version }}" ]] ; then
-        INSTALL_ARGS="--version ${{ parameters.version }}"
+        INSTALL_ARGS=(--version "${{ parameters.version }}")
+      elif [[ -n "${{ parameters.channel }}" ]] ; then
+        INSTALL_ARGS=(--channel "${{ parameters.channel }}")
       else
-        INSTALL_ARGS="--channel ${{ parameters.channel }}"
+        echo "use-dot-net.yaml requires either a 'version' or a 'channel' parameter." >&2
+        exit 1
       fi
       curl -L https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
       chmod +x dotnet-install.sh
-      ./dotnet-install.sh $INSTALL_ARGS --install-dir $DOTNET_ROOT --verbose
+      ./dotnet-install.sh "${INSTALL_ARGS[@]}" --install-dir $DOTNET_ROOT --verbose
       PATH="$DOTNET_ROOT:$PATH"
       dotnet --list-sdks
       echo "##vso[task.setvariable variable=DOTNET_ROOT]$DOTNET_ROOT"
