@@ -1,4 +1,8 @@
 variables:
+- name: DotNetChannel
+  value: '8.0'
+- name: DotNetCoreChannel
+  value: '3.1'
 - name: WindowsPoolImage1ESPT
   value: 1ESPT-Windows2022
 - name: LinuxPoolImage1ESPT
