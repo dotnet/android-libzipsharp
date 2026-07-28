@@ -9,9 +9,6 @@ parameters:
 stages:
 - stage: Test
   dependsOn: Build
-  variables:
-    DotNetCoreVersion: 3.1.201
-    DotNetVersion: 8.0.419
   jobs:
   - job: testlinux
     displayName: 'Test Linux'
@@ -27,10 +24,10 @@ stages:
     steps:
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        version: $(DotNetCoreVersion)
+        channel: $(DotNetCoreChannel)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        version: $(DotNetVersion)
+        channel: $(DotNetChannel)
     - task: DownloadPipelineArtifact@2
       displayName: download artifacts
       inputs:
@@ -56,10 +53,10 @@ stages:
     steps:
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        version: $(DotNetCoreVersion)
+        channel: $(DotNetCoreChannel)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        version: $(DotNetVersion)
+        channel: $(DotNetChannel)
     - task: DownloadPipelineArtifact@2
       displayName: download artifacts
       inputs:
@@ -90,10 +87,10 @@ stages:
     steps:
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        version: $(DotNetCoreVersion)
+        channel: $(DotNetCoreChannel)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        version: $(DotNetVersion)
+        channel: $(DotNetChannel)
     - task: DownloadPipelineArtifact@2
       displayName: download artifacts
       inputs:
