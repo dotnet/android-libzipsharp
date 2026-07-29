@@ -18,9 +18,9 @@ steps:
         Remove-Item -Recurse $DotNetRoot -Verbose
       }
       if ("${{ parameters.version }}") {
-        $InstallArgs = @('-Version', "${{ parameters.version }}")
+        $InstallArgs = @{ Version = "${{ parameters.version }}" }
       } elseif ("${{ parameters.channel }}") {
-        $InstallArgs = @('-Channel', "${{ parameters.channel }}")
+        $InstallArgs = @{ Channel = "${{ parameters.channel }}" }
       } else {
         throw "use-dot-net.yaml requires either a 'version' or a 'channel' parameter."
       }
