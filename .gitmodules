@@ -10,7 +10,7 @@
 	branch = develop
 [submodule "external/bzip2"]
 	path = external/bzip2
-	url = https://gitlab.com/bzip2/bzip2.git
+	url = https://github.com/libarchive/bzip2.git
 	branch = master
 [submodule "zlib"]
 	path = external/zlib
