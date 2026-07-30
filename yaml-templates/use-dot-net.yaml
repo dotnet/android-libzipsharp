@@ -2,7 +2,10 @@
 # We prefer this over the UseDotNet task so that we can always clean up old/unstable versions on disk.
 
 parameters:
-  version: $(DotNetCoreVersion)
+  # A floating channel such as "8.0", which installs the latest GA SDK from that channel.
+  channel: ''
+  # An exact SDK version such as "3.1.201". Takes precedence over `channel` when set.
+  version: ''
   remove_dotnet: false
 
 steps:
@@ -14,32 +17,36 @@ steps:
       if ("${{ parameters.remove_dotnet }}" -eq $true) {
         Remove-Item -Recurse $DotNetRoot -Verbose
       }
+      if ("${{ parameters.version }}") {
+        $InstallArgs = @{ Version = "${{ parameters.version }}" }
+      } elseif ("${{ parameters.channel }}") {
+        $InstallArgs = @{ Channel = "${{ parameters.channel }}" }
+      } else {
+        throw "use-dot-net.yaml requires either a 'version' or a 'channel' parameter."
+      }
       Invoke-WebRequest -Uri "https://dot.net/v1/dotnet-install.ps1" -OutFile dotnet-install.ps1
-      & .\dotnet-install.ps1 -Version ${{ parameters.version }} -InstallDir $DotNetRoot -Verbose
+      & .\dotnet-install.ps1 @InstallArgs -InstallDir $DotNetRoot -Verbose
       & dotnet --list-sdks
-    displayName: install .NET Core ${{ parameters.version }}
+    displayName: install .NET ${{ parameters.version }}${{ parameters.channel }}
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
-  - bash: >
-      DOTNET_ROOT=~/.dotnet/ &&
-      (if [[ "${{ parameters.remove_dotnet }}" == "true" ]] ; then rm -rfv $DOTNET_ROOT; fi) &&
-      curl -L https://dot.net/v1/dotnet-install.sh > dotnet-install.sh &&
-      chmod +x dotnet-install.sh &&
-      ./dotnet-install.sh --version ${{ parameters.version }} --install-dir $DOTNET_ROOT --verbose &&
-      PATH="$DOTNET_ROOT:$PATH" &&
-      dotnet --list-sdks &&
-      echo "##vso[task.setvariable variable=DOTNET_ROOT]$DOTNET_ROOT" &&
+  - bash: |
+      set -e
+      DOTNET_ROOT=~/.dotnet/
+      if [[ "${{ parameters.remove_dotnet }}" == "true" ]] ; then rm -rfv $DOTNET_ROOT; fi
+      if [[ -n "${{ parameters.version }}" ]] ; then
+        INSTALL_ARGS=(--version "${{ parameters.version }}")
+      elif [[ -n "${{ parameters.channel }}" ]] ; then
+        INSTALL_ARGS=(--channel "${{ parameters.channel }}")
+      else
+        echo "use-dot-net.yaml requires either a 'version' or a 'channel' parameter." >&2
+        exit 1
+      fi
+      curl -L https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
+      chmod +x dotnet-install.sh
+      ./dotnet-install.sh "${INSTALL_ARGS[@]}" --install-dir $DOTNET_ROOT --verbose
+      PATH="$DOTNET_ROOT:$PATH"
+      dotnet --list-sdks
+      echo "##vso[task.setvariable variable=DOTNET_ROOT]$DOTNET_ROOT"
       echo "##vso[task.setvariable variable=PATH]$PATH"
-    displayName: install .NET Core ${{ parameters.version }}
-    condition: and(succeeded(), eq(variables['agent.os'], 'Darwin'))
-  - bash: >
-      DOTNET_ROOT=~/.dotnet/ &&
-      (if [[ "${{ parameters.remove_dotnet }}" == "true" ]] ; then rm -rfv $DOTNET_ROOT; fi) &&
-      curl -L https://dot.net/v1/dotnet-install.sh > dotnet-install.sh &&
-      chmod +x dotnet-install.sh &&
-      ./dotnet-install.sh --version ${{ parameters.version }} --install-dir $DOTNET_ROOT --verbose &&
-      PATH="$DOTNET_ROOT:$PATH" &&
-      dotnet --list-sdks &&
-      echo "##vso[task.setvariable variable=DOTNET_ROOT]$DOTNET_ROOT" &&
-      echo "##vso[task.setvariable variable=PATH]$PATH"
-    displayName: install .NET Core ${{ parameters.version }}
-    condition: and(succeeded(), eq(variables['agent.os'], 'Linux'))
+    displayName: install .NET ${{ parameters.version }}${{ parameters.channel }}
+    condition: and(succeeded(), in(variables['agent.os'], 'Darwin', 'Linux'))

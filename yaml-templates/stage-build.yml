@@ -100,6 +100,12 @@ stages:
       vmImage: macOS-14
       os: macOS
     steps:
+    - template: /yaml-templates/use-dot-net.yaml
+      parameters:
+        channel: $(DotNetCoreChannel)
+    - template: /yaml-templates/use-dot-net.yaml
+      parameters:
+        channel: $(DotNetChannel)
     - bash: |
         brew install ninja
         git submodule update --init --recursive
