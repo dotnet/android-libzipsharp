@@ -1,4 +1,6 @@
 variables:
+- name: DotNetVersion
+  value: '10.0.x'
 - name: DotNetCoreVersion
   value: '3.1.x'
 - name: WindowsPoolImage1ESPT

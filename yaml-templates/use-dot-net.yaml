@@ -1,17 +1,11 @@
 parameters:
 - name: version
   type: string
-  default: ''
-- name: useGlobalJson
-  type: boolean
-  default: false
 
 steps:
 - task: UseDotNet@2
   displayName: install .NET SDK
   inputs:
     packageType: sdk
-    useGlobalJson: ${{ parameters.useGlobalJson }}
-    ${{ if eq(parameters.useGlobalJson, false) }}:
-      version: ${{ parameters.version }}
+    version: ${{ parameters.version }}
     performMultiLevelLookup: false

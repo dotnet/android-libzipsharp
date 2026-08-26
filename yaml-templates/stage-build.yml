@@ -105,7 +105,7 @@ stages:
         version: $(DotNetCoreVersion)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        useGlobalJson: true
+        version: $(DotNetVersion)
     - bash: |
         brew install ninja
         git submodule update --init --recursive

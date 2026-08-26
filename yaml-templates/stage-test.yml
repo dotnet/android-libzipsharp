@@ -27,7 +27,7 @@ stages:
         version: $(DotNetCoreVersion)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        useGlobalJson: true
+        version: $(DotNetVersion)
     - task: DownloadPipelineArtifact@2
       displayName: download artifacts
       inputs:
@@ -56,7 +56,7 @@ stages:
         version: $(DotNetCoreVersion)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        useGlobalJson: true
+        version: $(DotNetVersion)
     - task: DownloadPipelineArtifact@2
       displayName: download artifacts
       inputs:
@@ -90,7 +90,7 @@ stages:
         version: $(DotNetCoreVersion)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        useGlobalJson: true
+        version: $(DotNetVersion)
     - task: DownloadPipelineArtifact@2
       displayName: download artifacts
       inputs:
