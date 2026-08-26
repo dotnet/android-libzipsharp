@@ -24,10 +24,10 @@ stages:
     steps:
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        channel: $(DotNetCoreChannel)
+        version: $(DotNetCoreVersion)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        channel: $(DotNetChannel)
+        useGlobalJson: true
     - task: DownloadPipelineArtifact@2
       displayName: download artifacts
       inputs:
@@ -53,10 +53,10 @@ stages:
     steps:
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        channel: $(DotNetCoreChannel)
+        version: $(DotNetCoreVersion)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        channel: $(DotNetChannel)
+        useGlobalJson: true
     - task: DownloadPipelineArtifact@2
       displayName: download artifacts
       inputs:
@@ -87,10 +87,10 @@ stages:
     steps:
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        channel: $(DotNetCoreChannel)
+        version: $(DotNetCoreVersion)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        channel: $(DotNetChannel)
+        useGlobalJson: true
     - task: DownloadPipelineArtifact@2
       displayName: download artifacts
       inputs:
