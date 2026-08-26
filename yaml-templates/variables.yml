@@ -1,7 +1,7 @@
 variables:
-- name: DotNetVersion
+- name: DotNetChannel
   value: '10.0.x'
-- name: DotNetCoreVersion
+- name: DotNetCoreChannel
   value: '3.1.x'
 - name: WindowsPoolImage1ESPT
   value: 1ESPT-Windows2022

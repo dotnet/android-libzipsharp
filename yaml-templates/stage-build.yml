@@ -102,10 +102,10 @@ stages:
     steps:
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        version: $(DotNetCoreVersion)
+        channel: $(DotNetCoreChannel)
     - template: /yaml-templates/use-dot-net.yaml
       parameters:
-        version: $(DotNetVersion)
+        channel: $(DotNetChannel)
     - bash: |
         brew install ninja
         git submodule update --init --recursive

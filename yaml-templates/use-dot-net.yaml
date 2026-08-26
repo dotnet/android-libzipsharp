@@ -1,5 +1,5 @@
 parameters:
-- name: version
+- name: channel
   type: string
 
 steps:
@@ -7,5 +7,5 @@ steps:
   displayName: install .NET SDK
   inputs:
     packageType: sdk
-    version: ${{ parameters.version }}
+    version: ${{ parameters.channel }}
     performMultiLevelLookup: false
