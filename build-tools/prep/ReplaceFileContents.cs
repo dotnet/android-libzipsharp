@@ -99,7 +99,7 @@ namespace Xamarin.Android.BuildTools.PrepTasks
 
 		static  readonly    char[]  Separator   = new [] { '=' };
 
-		static Dictionary<string, string> GetReplacementInfo (string[] replacements)
+		Dictionary<string, string> GetReplacementInfo (string[] replacements)
 		{
 			var r = new Dictionary<string, string> (replacements?.Length ?? 0);
 			if (replacements == null || replacements.Length == 0)
