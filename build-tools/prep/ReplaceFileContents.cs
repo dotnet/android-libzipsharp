@@ -32,24 +32,18 @@ namespace Xamarin.Android.BuildTools.PrepTasks
 				}
 			}
 
-			try
-			{
+			try {
 				// Validate source file exists
-				if (!File.Exists (SourceFile.ItemSpec))
-				{
+				if (!File.Exists (SourceFile.ItemSpec)) {
 					Log.LogError ($"Source file not found: {SourceFile.ItemSpec}");
 					return false;
 				}
 
 				// Delete destination if it exists
-				if (File.Exists (DestinationFile.ItemSpec))
-				{
-					try
-					{
+				if (File.Exists (DestinationFile.ItemSpec)) {
+					try {
 						File.Delete (DestinationFile.ItemSpec);
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						Log.LogError ($"Failed to delete destination file '{DestinationFile.ItemSpec}': {ex.Message}");
 						return false;
 					}
@@ -57,17 +51,13 @@ namespace Xamarin.Android.BuildTools.PrepTasks
 
 				// Get replacement pairs
 				string[] replacements;
-				if (!String.IsNullOrEmpty (ReplacementFilePath))
-				{
-					if (!File.Exists (ReplacementFilePath))
-					{
+				if (!String.IsNullOrEmpty (ReplacementFilePath)) {
+					if (!File.Exists (ReplacementFilePath)) {
 						Log.LogError ($"Replacement file not found: {ReplacementFilePath}");
 						return false;
 					}
 					replacements = File.ReadAllLines (ReplacementFilePath);
-				}
-				else
-				{
+				} else {
 					replacements = Replacements;
 				}
 
@@ -75,13 +65,10 @@ namespace Xamarin.Android.BuildTools.PrepTasks
 				
 				// Process file with error handling
 				using (var i = File.OpenText (SourceFile.ItemSpec))
-				using (var o = File.CreateText (DestinationFile.ItemSpec))
-				{
+				using (var o = File.CreateText (DestinationFile.ItemSpec)) {
 					string line;
-					while ((line = i.ReadLine ()) != null)
-					{
-						foreach (var e in r)
-						{
+					while ((line = i.ReadLine ()) != null) {
+						foreach (var e in r) {
 							line = line.Replace (e.Key, e.Value);
 						}
 						o.WriteLine (line);
@@ -89,9 +76,7 @@ namespace Xamarin.Android.BuildTools.PrepTasks
 				}
 
 				return !Log.HasLoggedErrors;
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.LogError ($"Task {nameof (ReplaceFileContents)} failed: {ex.Message}");
 				return false;
 			}
@@ -105,30 +90,25 @@ namespace Xamarin.Android.BuildTools.PrepTasks
 			if (replacements == null || replacements.Length == 0)
 				return r;
 
-			foreach (var e in replacements)
-			{
+			foreach (var e in replacements) {
 				if (string.IsNullOrEmpty (e))
 					continue;
 
 				var kvp = e.Split (Separator, 2, StringSplitOptions.RemoveEmptyEntries);
 				
 				// Validate we have a key
-				if (kvp.Length == 0)
-				{
+				if (kvp.Length == 0) {
 					continue; // Skip malformed lines
 				}
 
-				string key = kvp[0];
-				string value = kvp.Length > 1 ? kvp[1] : "";
+				string key = kvp;
+				string value = kvp.Length > 1 ? kvp [1] : "";
 				
 				// Warn if key already exists (duplicate replacement)
-				if (r.ContainsKey (key))
-				{
+				if (r.ContainsKey (key)) {
 					Log.LogWarning ($"Duplicate replacement key: '{key}'");
-					r[key] = value; // Override with latest
-				}
-				else
-				{
+					r [key] = value; // Override with latest
+				} else {
 					r.Add (key, value);
 				}
 			}
