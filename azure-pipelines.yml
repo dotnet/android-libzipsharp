@@ -49,6 +49,8 @@ extends:
   ${{ else }}:
     template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   parameters:
+    settings:
+      networkIsolationPolicy: DefaultDeny
     sdl:
       ${{ if eq('${{ parameters.Skip1ESComplianceTasks }}', 'true') }}:
         enableAllTools: false
